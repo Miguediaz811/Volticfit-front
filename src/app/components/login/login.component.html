@@ -1,0 +1,31 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+  <div>
+    <label for="correo">Correo electrónico</label><br/>
+    <input id="correo" type="email" formControlName="correo" placeholder="correo@ejemplo.com" autocomplete="email"/>
+  </div>
+
+  <div>
+    <label for="contrasena">Contraseña</label><br/>
+    <input id="contrasena" type="password" formControlName="contrasena" placeholder="Tu contraseña" autocomplete="current-password"/>
+  </div>
+
+  <div>
+    <input type="checkbox" id="recordar" name="recordar"/>
+    <label for="recordar">Recordar sesión</label>
+    <a href="#">¿Olvidaste tu contraseña?</a>
+  </div>
+
+  <div>
+    <button type="submit" [disabled]="isLoading">Iniciar sesión</button>
+  </div>
+
+  <div>
+    <p *ngIf="errorMessage">{{ errorMessage }}</p>
+  </div>
+
+  <div>
+    <p>¿No tienes cuenta? <a routerLink="/auth/register">Regístrate gratis</a></p>
+  </div>
+
+</form>
