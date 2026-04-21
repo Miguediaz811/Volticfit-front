@@ -8,18 +8,21 @@ import {
   MessageResponse,
   RefreshTokenResponse,
 } from '../interfaces/auth.interface';
+import { RegisterRequest } from '../interfaces/register-request';
+import { RegisterResponse } from '../interfaces/register-response';
+
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  private readonly API_URL   = 'http://localhost:8080/auth';
+ private apiUrl = 'http://localhost:9090';
   private readonly TOKEN_KEY = 'volticfit_token';
 
   constructor(private http: HttpClient, private router: Router) {}
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
     return this.http
-      .post<LoginResponse>(`${this.API_URL}/login`, credentials)
+      .post<LoginResponse>(`${this.apiUrl}/login`, credentials)
       .pipe(tap(res => this.saveToken(res.jwt)));
   }
 
@@ -55,5 +58,9 @@ export class AuthService {
     } catch {
       return null;
     }
+  }
+
+  register(data: RegisterRequest): Observable<RegisterResponse> {
+    return this.http.post<RegisterResponse>(`${this.apiUrl}/auth/register`, data);
   }
 }
