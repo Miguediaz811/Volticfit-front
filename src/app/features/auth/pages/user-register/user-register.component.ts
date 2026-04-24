@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
-import { RegexPatterns } from '../../shared/validators/regex.constants';
-import { AuthService} from '../../services/auth.service';
-import { RegisterRequest } from '../../interfaces/register-request';
+import { RegexPatterns } from '../../../../shared/validators/regex.constants';
+import { AuthService} from '../../../../core/services/auth.service';
+import { RegisterRequest } from '../../../../interfaces/register-request';
 
 export function passwordMatchValidator(): ValidatorFn {
   return (group: AbstractControl): { [key: string]: boolean } | null => {
@@ -22,7 +22,7 @@ export function passwordMatchValidator(): ValidatorFn {
   templateUrl: './user-register.component.html',
   styleUrl: './user-register.component.scss'
 })
-export class RegistroComponent implements OnInit {
+export class RegisterComponent implements OnInit {
 
   formulario!: FormGroup;
 

@@ -4,16 +4,15 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { LoginComponent } from './components/login/login.component';
-import { JwtInterceptor } from './interceptors/jwt.interceptor';
-import { RegistroComponent } from './components/user-register/user-register.component';
+import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
 import { ReactiveFormsModule } from '@angular/forms';
+import { AuthModule } from './features/auth/auth.module';
+import { InputComponent } from './components/input/input.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent,
-    RegistroComponent
+    InputComponent,
   ],
   imports: [
     BrowserModule,
