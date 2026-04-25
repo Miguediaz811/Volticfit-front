@@ -6,18 +6,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
 import { ReactiveFormsModule } from '@angular/forms';
-import { AuthModule } from './features/auth/auth.module';
-import { InputComponent } from './components/input/input.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    InputComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    ReactiveFormsModule,
     HttpClientModule
   ],
   providers: [

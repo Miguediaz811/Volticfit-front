@@ -7,9 +7,9 @@ import {
   LoginResponse,
   MessageResponse,
   RefreshTokenResponse,
-} from '../../interfaces/auth.interface';
-import { RegisterRequest } from '../../interfaces/register-request';
-import { RegisterResponse } from '../../interfaces/register-response';
+} from '../../features/auth/interfaces/auth.interface';
+import { RegisterRequest } from '../../features/auth/interfaces/register-request';
+import { RegisterResponse } from '../../features/auth/interfaces/register-response';
 
 
 @Injectable({ providedIn: 'root' })

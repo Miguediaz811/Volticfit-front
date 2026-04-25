@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { RegexPatterns } from '../../../../shared/validators/regex.constants';
 import { AuthService} from '../../../../core/services/auth.service';
-import { RegisterRequest } from '../../../../interfaces/register-request';
+import { RegisterRequest } from '../../interfaces/register-request';
 
 export function passwordMatchValidator(): ValidatorFn {
   return (group: AbstractControl): { [key: string]: boolean } | null => {
