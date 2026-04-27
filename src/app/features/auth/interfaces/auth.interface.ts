@@ -1,6 +1,6 @@
 export interface LoginRequest {
-  correo: string;
-  contrasena: string;
+  email: string;
+  password: string;
 }
 
 export interface LoginResponse {

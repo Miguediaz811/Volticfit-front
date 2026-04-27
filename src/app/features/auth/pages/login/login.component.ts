@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../../core/services/auth.service';
+import { LoginRequest } from '../../interfaces/auth.interface';
+import { RegexPatterns } from '../../../../shared/validators/regex.constants';
 
 @Component({
   selector: 'app-login',
@@ -16,16 +18,16 @@ export class LoginComponent {
 
   constructor(
     private fb: FormBuilder,
-    private http: HttpClient,
+    private authService: AuthService,
     private router: Router
   ) {
     this.form = this.fb.group({
-      correo: ['', [Validators.required, Validators.pattern(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)]],
+      correo:     ['', [Validators.required, Validators.pattern(RegexPatterns.email)]],
       contrasena: ['', [Validators.required, Validators.minLength(8)]]
     });
   }
 
-  get correo() { return this.form.get('correo')!; }
+  get correo()     { return this.form.get('correo')!; }
   get contrasena() { return this.form.get('contrasena')!; }
 
   togglePassword() { this.showPassword = !this.showPassword; }
@@ -36,17 +38,19 @@ export class LoginComponent {
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.http.post<{ jwt: string }>('http://localhost:9090/auth/login', this.form.value)
-      .subscribe({
-        next: (res: { jwt: string }) => {
-          localStorage.setItem('token', res.jwt);
-          console.log('Inicio de sesión exitoso:', res);
-          this.router.navigate(['/dashboard']);
-        },
-        error: (err: any) => {
-          this.errorMessage = err.error?.error || 'Credenciales incorrectas';
-          this.isLoading = false;
-        }
-      });
+    const loginData: LoginRequest = {
+      email:    this.form.value.correo,
+      password: this.form.value.contrasena,
+    };
+
+    this.authService.login(loginData).subscribe({
+      next: () => {
+        this.router.navigate(['/dashboard']);
+      },
+      error: (err: any) => {
+        this.errorMessage = err.error?.message || 'Credenciales incorrectas';
+        this.isLoading = false;
+      }
+    });
   }
 }
