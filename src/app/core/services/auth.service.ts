@@ -11,18 +11,17 @@ import {
 import { RegisterRequest } from '../../features/auth/interfaces/register-request';
 import { RegisterResponse } from '../../features/auth/interfaces/register-response';
 
-
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
- private apiUrl = 'http://localhost:9090';
+  private apiUrl = 'http://localhost:9090';
   private readonly TOKEN_KEY = 'volticfit_token';
 
   constructor(private http: HttpClient, private router: Router) {}
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
     return this.http
-      .post<LoginResponse>(`${this.apiUrl}/login`, credentials)
+      .post<LoginResponse>(`${this.apiUrl}/auth/login`, credentials)
       .pipe(tap(res => this.saveToken(res.jwt)));
   }
 
