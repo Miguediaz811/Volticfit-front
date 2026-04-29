@@ -22,7 +22,7 @@ export class ChangePasswordComponent {
       contrasenaActual:    ['', [Validators.required]],
       nuevaContrasena:     ['', [Validators.required, Validators.minLength(8), Validators.pattern(RegexPatterns.passwordVoltic)]],
       confirmarContrasena: ['', [Validators.required]],
-    }, { validators: passwordMatchValidator() }); // 👈 validators en minúscula
+    }, { validators: passwordMatchValidator() });
   }
 
   get contrasenaActual()    { return this.formulario.get('contrasenaActual')!; }

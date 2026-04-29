@@ -5,10 +5,9 @@ import { provideHttpClient, withFetch, withInterceptorsFromDi, HTTP_INTERCEPTORS
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
-import { ForgotPasswordComponent } from './feaatures/auth/pages/forgot-password/forgot-password.component';
 
 @NgModule({
-  declarations: [AppComponent, ForgotPasswordComponent],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
