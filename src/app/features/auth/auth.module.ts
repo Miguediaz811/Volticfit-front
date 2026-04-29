@@ -5,18 +5,20 @@ import { RouterModule } from '@angular/router';
 import { AuthRoutingModule } from './auth-routing.module';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/user-register/user-register.component';
-import { InputComponent } from './components/input/input.component';
+import { SharedModule } from '../../shared/shared.module';
+import { ChangePasswordComponent } from './pages/change-password/change-password.component';
 
 @NgModule({
   declarations: [
     LoginComponent,
     RegisterComponent,
-    InputComponent,
+    ChangePasswordComponent,
   ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
     RouterModule,
+    SharedModule,
     AuthRoutingModule,
   ],
 })

@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
@@ -6,9 +7,12 @@ import {
   LoginRequest,
   LoginResponse,
   MessageResponse,
-  RefreshTokenResponse,
+  ForgotPasswordRequest,
+  VerifyCodeRequest,
+  RestorePasswordRequest,
+  ChangePasswordRequest,
 } from '../../features/auth/interfaces/auth.interface';
-import { RegisterRequest } from '../../features/auth/interfaces/register-request';
+import { RegisterRequest }  from '../../features/auth/interfaces/register-request';
 import { RegisterResponse } from '../../features/auth/interfaces/register-response';
 
 @Injectable({ providedIn: 'root' })
@@ -17,7 +21,15 @@ export class AuthService {
   private apiUrl = 'http://localhost:9090';
   private readonly TOKEN_KEY = 'volticfit_token';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
+
+  private isBrowser(): boolean {
+    return isPlatformBrowser(this.platformId);
+  }
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
     return this.http
@@ -25,16 +37,36 @@ export class AuthService {
       .pipe(tap(res => this.saveToken(res.jwt)));
   }
 
+  register(data: RegisterRequest): Observable<RegisterResponse> {
+    return this.http.post<RegisterResponse>(`${this.apiUrl}/auth/register`, data);
+  }
+
+  forgotPassword(data: ForgotPasswordRequest): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${this.apiUrl}/auth/forgot-password`, data);
+  }
+
+  verifyCode(data: VerifyCodeRequest): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${this.apiUrl}/auth/recovery/verify`, data);
+  }
+
+  restorePassword(data: RestorePasswordRequest): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${this.apiUrl}/auth/recovery/reset`, data);
+  }
+
+  changePassword(data: ChangePasswordRequest): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${this.apiUrl}/auth/change-password`, data);
+  }
+
   saveToken(token: string): void {
-    localStorage.setItem(this.TOKEN_KEY, token);
+    if (this.isBrowser()) localStorage.setItem(this.TOKEN_KEY, token);
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    return this.isBrowser() ? localStorage.getItem(this.TOKEN_KEY) : null;
   }
 
   removeToken(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
+    if (this.isBrowser()) localStorage.removeItem(this.TOKEN_KEY);
   }
 
   isAuthenticated(): boolean {
@@ -57,9 +89,5 @@ export class AuthService {
     } catch {
       return null;
     }
-  }
-
-  register(data: RegisterRequest): Observable<RegisterResponse> {
-    return this.http.post<RegisterResponse>(`${this.apiUrl}/auth/register`, data);
   }
 }
