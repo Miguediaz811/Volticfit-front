@@ -1,0 +1,9 @@
+<div>
+  <label [for]="name">{{ text }}</label>
+  <input
+    [id]="name"
+    [type]="type"
+    [placeholder]="placeholder"
+    [formControl]="$any(control)"
+  />
+</div>

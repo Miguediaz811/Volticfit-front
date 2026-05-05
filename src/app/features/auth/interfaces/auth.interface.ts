@@ -15,3 +15,22 @@ export interface MessageResponse {
 export interface RefreshTokenResponse {
   jwt: string;
 }
+
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface VerifyCodeRequest {
+  email: string;
+  token: string;
+}
+
+export interface RestorePasswordRequest {
+  email: string;
+  newPassword: string;
+}
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+}

@@ -1,101 +1,117 @@
 <nav>
-    <img src="../../../assets/images/volticfit.png" alt="VolticFit">
-    <h3>¿Ya tienes cuenta? <a routerLink="/auth/login">Iniciar sesión</a></h3>
+  <img src="../../../assets/images/volticfit.png" alt="VolticFit">
+  <h3>¿Ya tienes cuenta? <a routerLink="/auth/login">Iniciar sesión</a></h3>
 </nav>
 
-<form [formGroup]="formulario" (ngSubmit)="onSubmit()">
+<form [formGroup]="formulario" (ngSubmit)="onSubmit()" novalidate>
 
-    <div>
-        <label for="nombres">Nombres</label>
-        <input id="nombres" type="text" formControlName="nombres" placeholder="Ingrese sus nombres">
-        <div *ngIf="formulario.get('nombres')?.invalid && formulario.get('nombres')?.touched">
-            <span *ngIf="formulario.get('nombres')?.hasError('required')">El nombre es obligatorio.</span>
-            <span *ngIf="formulario.get('nombres')?.hasError('minlength')">Debe tener al menos 2 caracteres.</span>
-            <span *ngIf="formulario.get('nombres')?.hasError('pattern')">Solo se permiten letras y espacios.</span>
-        </div>
-    </div>
+  <app-input
+    name="nombres"
+    text="Nombres"
+    type="text"
+    placeholder="Ingrese sus nombres"
+    [control]="formulario.get('nombres')!"
+  />
+  <div *ngIf="formulario.get('nombres')?.invalid && formulario.get('nombres')?.touched">
+    <span *ngIf="formulario.get('nombres')?.hasError('required')">El nombre es obligatorio.</span>
+    <span *ngIf="formulario.get('nombres')?.hasError('minlength')">Debe tener al menos 2 caracteres.</span>
+    <span *ngIf="formulario.get('nombres')?.hasError('pattern')">Solo se permiten letras y espacios.</span>
+  </div>
 
-    <div>
-        <label for="apellidos">Apellidos</label>
-        <input id="apellidos" type="text" formControlName="apellidos" placeholder="Ingrese sus apellidos">
-        <div *ngIf="formulario.get('apellidos')?.invalid && formulario.get('apellidos')?.touched">
-            <span *ngIf="formulario.get('apellidos')?.hasError('required')">Los apellidos son obligatorios.</span>
-            <span *ngIf="formulario.get('apellidos')?.hasError('minlength')">Debe tener al menos 2 caracteres.</span>
-            <span *ngIf="formulario.get('apellidos')?.hasError('pattern')">Solo se permiten letras y espacios.</span>
-        </div>
-    </div>
+  <app-input
+    name="apellidos"
+    text="Apellidos"
+    type="text"
+    placeholder="Ingrese sus apellidos"
+    [control]="formulario.get('apellidos')!"
+  />
+  <div *ngIf="formulario.get('apellidos')?.invalid && formulario.get('apellidos')?.touched">
+    <span *ngIf="formulario.get('apellidos')?.hasError('required')">Los apellidos son obligatorios.</span>
+    <span *ngIf="formulario.get('apellidos')?.hasError('minlength')">Debe tener al menos 2 caracteres.</span>
+    <span *ngIf="formulario.get('apellidos')?.hasError('pattern')">Solo se permiten letras y espacios.</span>
+  </div>
 
-    <div>
-        <label for="tipo_doc">Tipo de Documento</label>
-        <select id="tipo_doc" formControlName="tipo_doc">
-            <option value="">Seleccione...</option>
-            <option *ngFor="let tipo of tiposDocumento" [value]="tipo">{{ tipo }}</option>
-        </select>
-        <div *ngIf="formulario.get('tipo_doc')?.invalid && formulario.get('tipo_doc')?.touched">
-            <span>Debe seleccionar un tipo de documento.</span>
-        </div>
-    </div>
+  <div>
+    <label for="tipo_doc">Tipo de Documento</label>
+    <select id="tipo_doc" formControlName="tipo_doc">
+      <option value="">Seleccione...</option>
+      <option *ngFor="let tipo of tiposDocumento" [value]="tipo">{{ tipo }}</option>
+    </select>
+    <span *ngIf="formulario.get('tipo_doc')?.invalid && formulario.get('tipo_doc')?.touched">
+      Debe seleccionar un tipo de documento.
+    </span>
+  </div>
 
-    <div>
-        <label for="num_doc">Número de Documento</label>
-        <input id="num_doc" type="text" formControlName="num_doc" placeholder="Ej: 1234567890">
-        <div *ngIf="formulario.get('num_doc')?.invalid && formulario.get('num_doc')?.touched">
-            <span *ngIf="formulario.get('num_doc')?.hasError('required')">El número de documento es obligatorio.</span>
-            <span *ngIf="formulario.get('num_doc')?.hasError('pattern')">Solo se permiten números.</span>
-        </div>
-    </div>
+  <app-input
+    name="num_doc"
+    text="Número de Documento"
+    type="text"
+    placeholder="Ej: 1234567890"
+    [control]="formulario.get('num_doc')!"
+  />
+  <div *ngIf="formulario.get('num_doc')?.invalid && formulario.get('num_doc')?.touched">
+    <span *ngIf="formulario.get('num_doc')?.hasError('required')">El número de documento es obligatorio.</span>
+    <span *ngIf="formulario.get('num_doc')?.hasError('pattern')">Solo se permiten números.</span>
+  </div>
 
-    <div>
-        <label for="correo">Correo Electrónico</label>
-        <input id="correo" type="email" formControlName="correo" placeholder="ejemplo@correo.com">
-        <div *ngIf="formulario.get('correo')?.invalid && formulario.get('correo')?.touched">
-            <span *ngIf="formulario.get('correo')?.hasError('required')">El correo es obligatorio.</span>
-            <span *ngIf="formulario.get('correo')?.hasError('email') || formulario.get('correo')?.hasError('pattern')">Ingrese un correo válido.</span>
-        </div>
-    </div>
+  <app-input
+    name="correo"
+    text="Correo Electrónico"
+    type="email"
+    placeholder="ejemplo@correo.com"
+    [control]="formulario.get('correo')!"
+  />
+  <div *ngIf="formulario.get('correo')?.invalid && formulario.get('correo')?.touched">
+    <span *ngIf="formulario.get('correo')?.hasError('required')">El correo es obligatorio.</span>
+    <span *ngIf="formulario.get('correo')?.hasError('email') || formulario.get('correo')?.hasError('pattern')">Ingrese un correo válido.</span>
+  </div>
 
-    <div>
-        <label for="telefono">Teléfono</label>
-        <input id="telefono" type="tel" formControlName="telefono" placeholder="Ej: 3001234567">
-        <div *ngIf="formulario.get('telefono')?.invalid && formulario.get('telefono')?.touched">
-            <span *ngIf="formulario.get('telefono')?.hasError('required')">El teléfono es obligatorio.</span>
-            <span *ngIf="formulario.get('telefono')?.hasError('pattern')">Solo números, mínimo 10 dígitos.</span>
-        </div>
-    </div>
+  <app-input
+    name="telefono"
+    text="Teléfono"
+    type="text"
+    placeholder="Ej: 3001234567"
+    [control]="formulario.get('telefono')!"
+  />
+  <div *ngIf="formulario.get('telefono')?.invalid && formulario.get('telefono')?.touched">
+    <span *ngIf="formulario.get('telefono')?.hasError('required')">El teléfono es obligatorio.</span>
+    <span *ngIf="formulario.get('telefono')?.hasError('pattern')">Solo números, mínimo 10 dígitos.</span>
+  </div>
 
-    <div>
-        <label for="contrasena">Contraseña</label>
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <input id="contrasena" [type]="mostrarContrasena ? 'text' : 'password'"
-                formControlName="contrasena" placeholder="Ingrese su contraseña">
-            <button type="button" (click)="mostrarContrasena = !mostrarContrasena">
-                {{ mostrarContrasena ? 'Ocultar' : 'Mostrar' }}
-            </button>
-        </div>
-        <div *ngIf="formulario.get('contrasena')?.invalid && formulario.get('contrasena')?.touched">
-            <span *ngIf="formulario.get('contrasena')?.hasError('required')">La contraseña es obligatoria.</span>
-            <span *ngIf="formulario.get('contrasena')?.hasError('minlength')">Debe tener al menos 8 caracteres.</span>
-            <span *ngIf="formulario.get('contrasena')?.hasError('pattern')">Debe incluir mayúscula, minúscula, número y carácter especial.</span>
-        </div>
-    </div>
+  <app-input
+    name="contrasena"
+    text="Contraseña"
+    [type]="mostrarContrasena ? 'text' : 'password'"
+    placeholder="Ingrese su contraseña"
+    [control]="formulario.get('contrasena')!"
+  />
+  <button type="button" (click)="mostrarContrasena = !mostrarContrasena">
+    {{ mostrarContrasena ? 'Ocultar' : 'Mostrar' }}
+  </button>
+  <div *ngIf="formulario.get('contrasena')?.invalid && formulario.get('contrasena')?.touched">
+    <span *ngIf="formulario.get('contrasena')?.hasError('required')">La contraseña es obligatoria.</span>
+    <span *ngIf="formulario.get('contrasena')?.hasError('minlength')">Debe tener al menos 8 caracteres.</span>
+    <span *ngIf="formulario.get('contrasena')?.hasError('pattern')">Debe incluir mayúscula, minúscula, número y carácter especial.</span>
+  </div>
 
-    <div>
-        <label for="confirmarContrasena">Confirmar Contraseña</label>
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <input id="confirmarContrasena" [type]="mostrarConfirmarContrasena ? 'text' : 'password'"
-                formControlName="confirmarContrasena" placeholder="Repita su contraseña">
-            <button type="button" (click)="mostrarConfirmarContrasena = !mostrarConfirmarContrasena">
-                {{ mostrarConfirmarContrasena ? 'Ocultar' : 'Mostrar' }}
-            </button>
-        </div>
-        <div *ngIf="formulario.get('confirmarContrasena')?.touched">
-            <span *ngIf="formulario.get('confirmarContrasena')?.hasError('required')">Debe confirmar la contraseña.</span>
-            <span *ngIf="formulario.hasError('passwordMismatch')">Las contraseñas no coinciden.</span>
-        </div>
-    </div>
+  <app-input
+    name="confirmarContrasena"
+    text="Confirmar Contraseña"
+    [type]="mostrarConfirmarContrasena ? 'text' : 'password'"
+    placeholder="Repita su contraseña"
+    [control]="formulario.get('confirmarContrasena')!"
+  />
+  <button type="button" (click)="mostrarConfirmarContrasena = !mostrarConfirmarContrasena">
+    {{ mostrarConfirmarContrasena ? 'Ocultar' : 'Mostrar' }}
+  </button>
+  <div *ngIf="formulario.get('confirmarContrasena')?.touched">
+    <span *ngIf="formulario.get('confirmarContrasena')?.hasError('required')">Debe confirmar la contraseña.</span>
+    <span *ngIf="formulario.hasError('passwordMismatch')">Las contraseñas no coinciden.</span>
+  </div>
 
-    <button type="submit">
-        Registrarse
-    </button>
+  <p *ngIf="mensajeExito">{{ mensajeExito }}</p>
+  <p *ngIf="mensajeError">{{ mensajeError }}</p>
+
+  <button type="submit">Registrarse</button>
 
 </form>

@@ -1,32 +1,33 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
 
-  <div>
-    <label for="correo">Correo electrónico</label><br/>
-    <input id="correo" type="email" formControlName="correo" placeholder="correo@ejemplo.com" autocomplete="email"/>
-  </div>
+  <app-input
+    name="correo"
+    text="Correo electrónico"
+    type="email"
+    placeholder="correo@ejemplo.com"
+    [control]="correo"
+  />
+  <span *ngIf="correo.invalid && correo.touched">Ingresa un correo válido.</span>
 
-  <div>
-    <label for="contrasena">Contraseña</label><br/>
-    <input id="contrasena" type="password" formControlName="contrasena" placeholder="Tu contraseña" autocomplete="current-password"/>
-  </div>
+  <app-input
+    name="contrasena"
+    text="Contraseña"
+    [type]="showPassword ? 'text' : 'password'"
+    placeholder="Tu contraseña"
+    [control]="contrasena"
+  />
+  <button type="button" (click)="togglePassword()">
+    {{ showPassword ? 'Ocultar' : 'Mostrar' }}
+  </button>
+  <span *ngIf="contrasena.invalid && contrasena.touched">Mínimo 8 caracteres.</span>
 
-  <div>
-    <input type="checkbox" id="recordar" name="recordar"/>
-    <label for="recordar">Recordar sesión</label>
-    <a href="#">¿Olvidaste tu contraseña?</a>
-  </div>
+  <a routerLink="/auth/forgot-password">¿Olvidaste tu contraseña?</a>
 
-  <div>
-    <button type="submit" [disabled]="isLoading">Iniciar sesión</button>
-  </div>
+  <p *ngIf="errorMessage">{{ errorMessage }}</p>
 
-  <div>
-    <p *ngIf="errorMessage">{{ errorMessage }}</p>
-  </div>
+  <button type="submit">Iniciar sesión</button>
 
-  <div>
-    <p>¿No tienes cuenta? <a routerLink="/auth/register">Regístrate gratis</a></p>
-  </div>
+  <p>¿No tienes cuenta? <a routerLink="/auth/register">Regístrate gratis</a></p>
 
 </form>
 
