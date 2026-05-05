@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { RegexPatterns } from '../../../../shared/validators/regex.constants';
-import { AuthService} from '../../../../core/services/auth.service';
-import { RegisterRequest } from '../../../../interfaces/register-request';
+import { AuthService } from '../../../../core/services/auth.service';
+import { RegisterRequest } from '../../interfaces/register-request';
 
 export function passwordMatchValidator(): ValidatorFn {
   return (group: AbstractControl): { [key: string]: boolean } | null => {
@@ -92,10 +92,20 @@ export class RegisterComponent implements OnInit {
       this.mensajeExito = '';
       this.mensajeError = '';
 
-      const { confirmarContrasena, ...registerData } = this.formulario.value as RegisterRequest & { confirmarContrasena: string };
+      const form = this.formulario.value;
+
+      const registerData: RegisterRequest = {
+        names:    form.nombres,
+        surnames: form.apellidos,
+        docType:  form.tipo_doc,
+        docNum:   form.num_doc,
+        email:    form.correo,
+        phone:    form.telefono,
+        password: form.contrasena,
+      };
 
       this.authService.register(registerData).subscribe({
-        next: (res) => {
+        next: () => {
           this.cargando = false;
           this.mensajeExito = 'Usuario registrado exitosamente.';
           this.formulario.reset();
