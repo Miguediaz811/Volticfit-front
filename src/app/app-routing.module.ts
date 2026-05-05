@@ -2,9 +2,20 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  { path: 'auth', loadChildren: () => import('./features/auth/auth.module').then(m => m.AuthModule) },
-  { path: '',     redirectTo: 'auth/register', pathMatch: 'full' },
-  { path: '**',   redirectTo: 'auth/register' },
+  {
+    path: '',
+    loadChildren: () =>
+      import('./features/home/home.module').then(m => m.HomeModule)
+  },
+  {
+    path: 'auth',
+    loadChildren: () =>
+      import('./features/auth/auth.module').then(m => m.AuthModule)
+  },
+  {
+    path: '**',
+    redirectTo: ''
+  },
 ];
 
 @NgModule({

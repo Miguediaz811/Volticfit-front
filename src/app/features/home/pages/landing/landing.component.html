@@ -1,0 +1,101 @@
+<nav class="navbar">
+  <div class="navbar__logo">
+    <img src="../../../../../assets/images/volticfit.png" alt="Voltic Fit Logo" class="navbar__logo" />
+  </div>
+  <div class="navbar__actions">
+    <button class="btn btn--outline">Iniciar Sesión</button>
+    <button class="btn btn--primary">Registrarse</button>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero__content">
+    <span class="hero__badge">
+      <span class="hero__badge__icon">⚡</span>
+      BIENVENIDO A VOLTIC FIT
+    </span>
+
+    <h1 class="hero__title">
+      Tu mejor versión<br />
+      empieza <span class="text--accent">aquí</span>
+    </h1>
+
+    <p class="hero__subtitle">
+      Entrena con los mejores equipos, instructores certificados y una comunidad
+      que te motiva a superar tus límites cada día.
+    </p>
+
+    <button class="btn btn--primary btn--lg">Comenzar Ahora</button>
+
+    <div class="hero__image-placeholder">
+      <img src="../../..//../../assets/images/landingPageImg.jpeg" alt="Gimnasio SENA">
+    </div>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="stats__container">
+    <div class="stats__item" *ngFor="let stat of stats; let i = index">
+      <span class="stats__value">{{ stat.value }}</span>
+      <span class="stats__label">{{ stat.label }}</span>
+      <div class="stats__divider" *ngIf="i < stats.length - 1"></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES SECTION -->
+<section class="features">
+  <div class="features__header">
+    <span class="section__eyebrow">¿POR QUÉ ELEGIRNOS?</span>
+    <h2 class="section__title">
+      Todo lo que <span class="text--accent">necesitas</span>
+    </h2>
+    <p class="section__subtitle">
+      Diseñamos cada detalle del gimnasio para que tu experiencia sea
+      única, cómoda y efectiva.
+    </p>
+  </div>
+
+  <div class="features__grid">
+    <div class="feature-card" *ngFor="let feature of features">
+      <div class="feature-card__icon">{{ feature.icon }}</div>
+      <h3 class="feature-card__title">{{ feature.title }}</h3>
+      <p class="feature-card__desc">{{ feature.description }}</p>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT SECTION -->
+<section class="about">
+  <div class="about__image-placeholder">
+    <img src="../../../../../assets/images/aboutUsImg.jpeg" alt="ABOUT US">
+  </div>
+
+  <div class="about__content">
+    <span class="section__eyebrow">SOBRE NOSOTROS</span>
+    <h2 class="section__title">
+      Un gimnasio<br />
+      <span class="text--accent">diferente</span>
+    </h2>
+    <p class="about__desc">
+      No somos solo un gimnasio. Somos una comunidad comprometida con tu
+      transformación física y mental, con instalaciones de primer nivel y
+      un equipo humano que te acompaña.
+    </p>
+    <ul class="about__list">
+      <li class="about__list-item" *ngFor="let point of aboutPoints">
+        <span class="aboutCheck">✓</span>
+        {{ point }}
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer__brand">
+    <img src="../../../../../assets/images/volticfit.png" alt="Voltic Fit" class="footer__logo" />
+    <p class="footer__tagline">Tu mejor versión empieza aquí.</p>
+  </div>
+  <p class="footer__copy">&copy; 2026 Voltic Fit. Todos los derechos reservados.</p>
+</footer>
