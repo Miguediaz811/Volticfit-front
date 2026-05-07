@@ -1,0 +1,395 @@
+// ═══════════════════════════════════════════
+// VARIABLES
+// ═══════════════════════════════════════════
+$primary:          #F5A623;
+$primaryDark:      #C47D0E;
+$bg:               #1A1A1A;
+$bgElevated:       #222222;
+$bgCard:           #242424;
+$bgInput:          #2A2A2A;
+$borderColor:      #2E2E2E;
+$borderFocus:      #F5A623;
+$textPrimary:      #FFFFFF;
+$textSecondary:    #9CA3AF;
+$textPlaceholder:  #555555;
+$colorError:       #EF4444;
+$colorSuccess:     #22C55E;
+$radiusCard:       14px;
+$radiusInput:      8px;
+$radiusBtn:        8px;
+
+// ═══════════════════════════════════════════
+// BREAKPOINTS
+// ═══════════════════════════════════════════
+$tablet:  768px;
+$desktop: 1024px;
+
+@mixin mobile {
+  @media (max-width: #{$tablet - 1px}) { @content; }
+}
+@mixin tablet {
+  @media (min-width: #{$tablet}) and (max-width: #{$desktop - 1px}) { @content; }
+}
+
+// ═══════════════════════════════════════════
+// HOST
+// ═══════════════════════════════════════════
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: $bg;
+  color: $textPrimary;
+  font-family: 'Barlow', sans-serif;
+}
+
+// ═══════════════════════════════════════════
+// NAVBAR
+// ═══════════════════════════════════════════
+.navbar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 16px 40px;
+  background-color: $bg;
+  border-bottom: 1px solid $borderColor;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  @include mobile {
+    padding: 12px 20px;
+  }
+
+  .back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid #2E2E2E;
+  border-radius: 8px;
+  color: #9CA3AF;
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #F5A623;
+    color: #F5A623;
+  }
+  }
+
+  &__logo {
+    height: 36px;
+    width: auto;
+    object-fit: contain;
+    justify-self: center;
+
+    @include mobile {
+      height: 28px;
+    }
+  }
+
+  &__login-text {
+    justify-self: end;
+    font-size: 0.88rem;
+    font-weight: 400;
+    color: $textSecondary;
+    margin: 0;
+
+    a {
+      color: $primary;
+      font-weight: 700;
+      text-decoration: none;
+      transition: color 0.2s;
+
+      &:hover {
+        color: $primaryDark;
+      }
+    }
+  }
+}
+
+// ═══════════════════════════════════════════
+// BANNER
+// ═══════════════════════════════════════════
+.banner {
+  background-color: $primary;
+  color: #000;
+  text-align: center;
+  padding: 10px 20px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+// ═══════════════════════════════════════════
+// PAGE LAYOUT
+// ═══════════════════════════════════════════
+.register-page {
+  display: flex;
+  justify-content: center;
+  padding: 48px 20px 80px;
+
+  @include mobile {
+    padding: 32px 16px 60px;
+  }
+}
+
+.register-wrapper {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+// ═══════════════════════════════════════════
+// SECTION CARD
+// ═══════════════════════════════════════════
+.section-card {
+  background-color: $bgCard;
+  border: 1px solid $borderColor;
+  border-radius: $radiusCard;
+  padding: 28px;
+
+  @include mobile {
+    padding: 20px;
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid $borderColor;
+  }
+
+  &__icon {
+    width: 40px;
+    height: 40px;
+    background-color: rgba($primary, 0.12);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  &__title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: $textPrimary;
+    margin: 0 0 4px;
+  }
+
+  &__subtitle {
+    font-size: 0.8rem;
+    color: $textSecondary;
+    margin: 0;
+  }
+}
+
+// ═══════════════════════════════════════════
+// FORM GRID
+// ═══════════════════════════════════════════
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+  }
+
+  &--full {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ═══════════════════════════════════════════
+// FORM FIELD
+// ═══════════════════════════════════════════
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $textSecondary;
+
+  .required {
+    color: $primary;
+    margin-left: 2px;
+  }
+}
+
+// ═══════════════════════════════════════════
+// SELECT
+// ═══════════════════════════════════════════
+select {
+  width: 100%;
+  background-color: $bgInput;
+  border: 1px solid $borderColor;
+  border-radius: $radiusInput;
+  padding: 12px 16px;
+  color: $textPrimary;
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.92rem;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239CA3AF' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  cursor: pointer;
+  transition: border-color 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: $borderFocus;
+  }
+
+  option {
+    background-color: $bgCard;
+    color: $textPrimary;
+  }
+}
+
+// ═══════════════════════════════════════════
+// PASSWORD
+// ═══════════════════════════════════════════
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  app-input {
+    flex: 1;
+  }
+
+  .password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: $textSecondary;
+    font-size: 1.1rem;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s;
+
+    &:hover {
+      color: $primary;
+    }
+  }
+}
+
+.password-hints {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 16px;
+  margin-top: 4px;
+
+  span {
+    font-size: 0.75rem;
+    color: $textSecondary;
+
+    &::before {
+      content: '○ ';
+      color: $textPlaceholder;
+    }
+
+    &.valid {
+      color: $colorSuccess;
+
+      &::before {
+        content: '● ';
+        color: $colorSuccess;
+      }
+    }
+  }
+}
+
+// ═══════════════════════════════════════════
+// FIELD ERRORS
+// ═══════════════════════════════════════════
+.field-errors {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  span {
+    font-size: 0.75rem;
+    color: $colorError;
+
+    &::before {
+      content: '⚠ ';
+    }
+  }
+}
+
+// ═══════════════════════════════════════════
+// GLOBAL MESSAGES
+// ═══════════════════════════════════════════
+.success-message {
+  background-color: rgba($colorSuccess, 0.1);
+  border: 1px solid rgba($colorSuccess, 0.3);
+  border-radius: $radiusInput;
+  padding: 12px 16px;
+  color: $colorSuccess;
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.error-message {
+  background-color: rgba($colorError, 0.1);
+  border: 1px solid rgba($colorError, 0.3);
+  border-radius: $radiusInput;
+  padding: 12px 16px;
+  color: $colorError;
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+// ═══════════════════════════════════════════
+// SUBMIT BUTTON
+// ═══════════════════════════════════════════
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  background-color: $primary;
+  color: #000;
+  border: none;
+  border-radius: $radiusBtn;
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: 8px;
+
+  &:hover {
+    background-color: $primaryDark;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

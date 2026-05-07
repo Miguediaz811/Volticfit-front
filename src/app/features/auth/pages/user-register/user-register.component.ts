@@ -24,16 +24,16 @@ export function passwordMatchValidator(): ValidatorFn {
 })
 export class RegisterComponent implements OnInit {
 
-  formulario!: FormGroup;
+  form!: FormGroup;
 
-  tiposDocumento: string[] = ['CC', 'CE', 'TI', 'PAS', 'NIT'];
+  documentTypes: string[] = ['CC', 'CE', 'TI', 'PAS', 'NIT'];
 
-  mostrarContrasena: boolean = false;
-  mostrarConfirmarContrasena: boolean = false;
+  showPassword: boolean = false;
+  showConfirmPassword: boolean = false;
 
-  cargando: boolean = false;
-  mensajeExito: string = '';
-  mensajeError: string = '';
+  loading: boolean = false;
+  successMessage: string = '';
+  errorMessage: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -41,83 +41,83 @@ export class RegisterComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.formulario = this.fb.group({
-      nombres: ['', [
+    this.form = this.fb.group({
+      firstName: ['', [
         Validators.required,
         Validators.minLength(2),
         Validators.maxLength(60),
         Validators.pattern(RegexPatterns.onlyLetters)
       ]],
 
-      apellidos: ['', [
+      lastName: ['', [
         Validators.required,
         Validators.minLength(2),
         Validators.maxLength(60),
         Validators.pattern(RegexPatterns.onlyLetters)
       ]],
 
-      tipo_doc: ['', Validators.required],
+      documentType: ['', Validators.required],
 
-      num_doc: ['', [
+      documentNumber: ['', [
         Validators.required,
         Validators.pattern(RegexPatterns.documentNumber)
       ]],
 
-      correo: ['', [
+      email: ['', [
         Validators.required,
         Validators.email,
         Validators.pattern(RegexPatterns.email)
       ]],
 
-      telefono: ['', [
+      phone: ['', [
         Validators.required,
         Validators.pattern(RegexPatterns.phone)
       ]],
 
-      contrasena: ['', [
+      password: ['', [
         Validators.required,
         Validators.minLength(8),
         Validators.pattern(RegexPatterns.passwordVoltic)
       ]],
 
-      confirmarContrasena: ['', [Validators.required]]
+      confirmPassword: ['', [Validators.required]]
     }, {
       validators: passwordMatchValidator()
     });
   }
 
   onSubmit(): void {
-    if (this.formulario.valid) {
-      this.cargando = true;
-      this.mensajeExito = '';
-      this.mensajeError = '';
+    if (this.form.valid) {
+      this.loading = true;
+      this.successMessage = '';
+      this.errorMessage = '';
 
-      const form = this.formulario.value;
+      const { firstName, lastName, documentType, documentNumber, email, phone, password } = this.form.value;
 
       const registerData: RegisterRequest = {
-        names:    form.nombres,
-        surnames: form.apellidos,
-        docType:  form.tipo_doc,
-        docNum:   form.num_doc,
-        email:    form.correo,
-        phone:    form.telefono,
-        password: form.contrasena,
+        names:    firstName,
+        surnames: lastName,
+        docType:  documentType,
+        docNum:   documentNumber,
+        email:    email,
+        phone:    phone,
+        password: password,
       };
 
       this.authService.register(registerData).subscribe({
         next: () => {
-          this.cargando = false;
-          this.mensajeExito = 'Usuario registrado exitosamente.';
-          this.formulario.reset();
-          this.formulario.markAsPristine();
-          this.formulario.markAsUntouched();
+          this.loading = false;
+          this.successMessage = 'User registered successfully.';
+          this.form.reset();
+          this.form.markAsPristine();
+          this.form.markAsUntouched();
         },
         error: (err) => {
-          this.cargando = false;
+          this.loading = false;
           if (err.status === 409) {
-            this.mensajeError = 'El correo ya está registrado.';
+            this.errorMessage = 'This email is already registered.';
           } else {
-            this.mensajeError = 'Ocurrió un error. Intente nuevamente.';
+            this.errorMessage = 'An error occurred. Please try again.';
           }
         }
       });
@@ -128,8 +128,28 @@ export class RegisterComponent implements OnInit {
   }
 
   private markAllAsTouched(): void {
-    Object.keys(this.formulario.controls).forEach(key => {
-      this.formulario.get(key)?.markAsTouched();
+    Object.keys(this.form.controls).forEach(key => {
+      this.form.get(key)?.markAsTouched();
     });
+  }
+
+  hasUppercase(): boolean {
+    const value = this.form.get('password')?.value || '';
+    return /[A-Z]/.test(value);
+  }
+
+  hasNumber(): boolean {
+    const value = this.form.get('password')?.value || '';
+    return /\d/.test(value);
+  }
+
+  hasSpecialChar(): boolean {
+    const value = this.form.get('password')?.value || '';
+    return /[@$!%*?&.#_-]/.test(value);
+  }
+
+  hasMinLength(): boolean {
+    const value = this.form.get('password')?.value || '';
+    return value.length >= 8;
   }
 }
