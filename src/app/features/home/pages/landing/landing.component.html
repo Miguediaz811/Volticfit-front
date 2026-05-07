@@ -1,10 +1,10 @@
 <nav class="navbar">
   <div class="navbar__logo">
-    <img src="../../../../../assets/images/volticfit.png" alt="Voltic Fit Logo" class="navbar__logo" />
+    <img src="assets/images/volticfit.png" alt="Voltic Fit Logo" class="navbar__logo" />
   </div>
   <div class="navbar__actions">
-    <button class="btn btn--outline">Iniciar Sesión</button>
-    <button class="btn btn--primary">Registrarse</button>
+    <button class="btn btn--outline" routerLink="/auth/login">Iniciar Sesión</button>
+    <button class="btn btn--primary" routerLink="/auth/register">Registrarse</button>
   </div>
 </nav>
 
@@ -25,7 +25,7 @@
       que te motiva a superar tus límites cada día.
     </p>
 
-    <button class="btn btn--primary btn--lg">Comenzar Ahora</button>
+    <button class="btn btn--primary btn--lg" routerLink="/auth/register">Comenzar Ahora</button>
 
     <div class="hero__image-placeholder">
       <img src="../../..//../../assets/images/landingPageImg.jpeg" alt="Gimnasio SENA">

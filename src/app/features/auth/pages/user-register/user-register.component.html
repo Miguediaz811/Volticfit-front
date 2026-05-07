@@ -1,101 +1,182 @@
-<nav>
-    <img src="../../../assets/images/volticfit.png" alt="VolticFit">
-    <h3>¿Ya tienes cuenta? <a routerLink="/auth/login">Iniciar sesión</a></h3>
+<nav class="navbar">
+  <button class="back-btn" routerLink="/">←</button>
+  <img src="assets/images/volticfit.png" alt="VolticFit" class="navbar__logo" />
+  <h3 class="navbar__login-text">¿Ya tienes cuenta? <a routerLink="/auth/login">Iniciar sesión</a></h3>
 </nav>
 
-<form [formGroup]="formulario" (ngSubmit)="onSubmit()">
+<div class="banner">
+  Únete a Voltic Fit — tu transformación comienza hoy
+</div>
 
-    <div>
-        <label for="nombres">Nombres</label>
-        <input id="nombres" type="text" formControlName="nombres" placeholder="Ingrese sus nombres">
-        <div *ngIf="formulario.get('nombres')?.invalid && formulario.get('nombres')?.touched">
-            <span *ngIf="formulario.get('nombres')?.hasError('required')">El nombre es obligatorio.</span>
-            <span *ngIf="formulario.get('nombres')?.hasError('minlength')">Debe tener al menos 2 caracteres.</span>
-            <span *ngIf="formulario.get('nombres')?.hasError('pattern')">Solo se permiten letras y espacios.</span>
-        </div>
-    </div>
+<div class="register-page">
+  <div class="register-wrapper">
 
-    <div>
-        <label for="apellidos">Apellidos</label>
-        <input id="apellidos" type="text" formControlName="apellidos" placeholder="Ingrese sus apellidos">
-        <div *ngIf="formulario.get('apellidos')?.invalid && formulario.get('apellidos')?.touched">
-            <span *ngIf="formulario.get('apellidos')?.hasError('required')">Los apellidos son obligatorios.</span>
-            <span *ngIf="formulario.get('apellidos')?.hasError('minlength')">Debe tener al menos 2 caracteres.</span>
-            <span *ngIf="formulario.get('apellidos')?.hasError('pattern')">Solo se permiten letras y espacios.</span>
-        </div>
-    </div>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
 
-    <div>
-        <label for="tipo_doc">Tipo de Documento</label>
-        <select id="tipo_doc" formControlName="tipo_doc">
-            <option value="">Seleccione...</option>
-            <option *ngFor="let tipo of tiposDocumento" [value]="tipo">{{ tipo }}</option>
-        </select>
-        <div *ngIf="formulario.get('tipo_doc')?.invalid && formulario.get('tipo_doc')?.touched">
-            <span>Debe seleccionar un tipo de documento.</span>
+      <div class="section-card">
+        <div class="section-card__header">
+          <div class="section-card__icon">👤</div>
+          <div>
+            <p class="section-card__title">Datos personales</p>
+            <p class="section-card__subtitle">Información básica de identificación</p>
+          </div>
         </div>
-    </div>
 
-    <div>
-        <label for="num_doc">Número de Documento</label>
-        <input id="num_doc" type="text" formControlName="num_doc" placeholder="Ej: 1234567890">
-        <div *ngIf="formulario.get('num_doc')?.invalid && formulario.get('num_doc')?.touched">
-            <span *ngIf="formulario.get('num_doc')?.hasError('required')">El número de documento es obligatorio.</span>
-            <span *ngIf="formulario.get('num_doc')?.hasError('pattern')">Solo se permiten números.</span>
-        </div>
-    </div>
+        <div class="form-grid">
 
-    <div>
-        <label for="correo">Correo Electrónico</label>
-        <input id="correo" type="email" formControlName="correo" placeholder="ejemplo@correo.com">
-        <div *ngIf="formulario.get('correo')?.invalid && formulario.get('correo')?.touched">
-            <span *ngIf="formulario.get('correo')?.hasError('required')">El correo es obligatorio.</span>
-            <span *ngIf="formulario.get('correo')?.hasError('email') || formulario.get('correo')?.hasError('pattern')">Ingrese un correo válido.</span>
-        </div>
-    </div>
+          <div class="form-field">
+            <label class="form-label">Nombre(s) <span class="required">*</span></label>
+            <app-input
+              name="firstName"
+              type="text"
+              placeholder="Ej. Juan David"
+              [control]="form.get('firstName')!"
+            />
+            <div class="field-errors" *ngIf="form.get('firstName')?.invalid && form.get('firstName')?.touched">
+              <span *ngIf="form.get('firstName')?.hasError('required')">El nombre es obligatorio.</span>
+              <span *ngIf="form.get('firstName')?.hasError('minlength')">Debe tener al menos 2 caracteres.</span>
+              <span *ngIf="form.get('firstName')?.hasError('pattern')">Solo se permiten letras y espacios.</span>
+            </div>
+          </div>
 
-    <div>
-        <label for="telefono">Teléfono</label>
-        <input id="telefono" type="tel" formControlName="telefono" placeholder="Ej: 3001234567">
-        <div *ngIf="formulario.get('telefono')?.invalid && formulario.get('telefono')?.touched">
-            <span *ngIf="formulario.get('telefono')?.hasError('required')">El teléfono es obligatorio.</span>
-            <span *ngIf="formulario.get('telefono')?.hasError('pattern')">Solo números, mínimo 10 dígitos.</span>
-        </div>
-    </div>
+          <div class="form-field">
+            <label class="form-label">Apellidos <span class="required">*</span></label>
+            <app-input
+              name="lastName"
+              type="text"
+              placeholder="Ej. García López"
+              [control]="form.get('lastName')!"
+            />
+            <div class="field-errors" *ngIf="form.get('lastName')?.invalid && form.get('lastName')?.touched">
+              <span *ngIf="form.get('lastName')?.hasError('required')">Los apellidos son obligatorios.</span>
+              <span *ngIf="form.get('lastName')?.hasError('minlength')">Debe tener al menos 2 caracteres.</span>
+              <span *ngIf="form.get('lastName')?.hasError('pattern')">Solo se permiten letras y espacios.</span>
+            </div>
+          </div>
 
-    <div>
-        <label for="contrasena">Contraseña</label>
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <input id="contrasena" [type]="mostrarContrasena ? 'text' : 'password'"
-                formControlName="contrasena" placeholder="Ingrese su contraseña">
-            <button type="button" (click)="mostrarContrasena = !mostrarContrasena">
-                {{ mostrarContrasena ? 'Ocultar' : 'Mostrar' }}
-            </button>
-        </div>
-        <div *ngIf="formulario.get('contrasena')?.invalid && formulario.get('contrasena')?.touched">
-            <span *ngIf="formulario.get('contrasena')?.hasError('required')">La contraseña es obligatoria.</span>
-            <span *ngIf="formulario.get('contrasena')?.hasError('minlength')">Debe tener al menos 8 caracteres.</span>
-            <span *ngIf="formulario.get('contrasena')?.hasError('pattern')">Debe incluir mayúscula, minúscula, número y carácter especial.</span>
-        </div>
-    </div>
+          <div class="form-field">
+            <label class="form-label">Correo electrónico <span class="required">*</span></label>
+            <app-input
+              name="email"
+              type="email"
+              placeholder="correo@ejemplo.com"
+              [control]="form.get('email')!"
+            />
+            <div class="field-errors" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+              <span *ngIf="form.get('email')?.hasError('required')">El correo es obligatorio.</span>
+              <span *ngIf="form.get('email')?.hasError('email') || form.get('email')?.hasError('pattern')">Ingrese un correo válido.</span>
+            </div>
+          </div>
 
-    <div>
-        <label for="confirmarContrasena">Confirmar Contraseña</label>
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <input id="confirmarContrasena" [type]="mostrarConfirmarContrasena ? 'text' : 'password'"
-                formControlName="confirmarContrasena" placeholder="Repita su contraseña">
-            <button type="button" (click)="mostrarConfirmarContrasena = !mostrarConfirmarContrasena">
-                {{ mostrarConfirmarContrasena ? 'Ocultar' : 'Mostrar' }}
-            </button>
-        </div>
-        <div *ngIf="formulario.get('confirmarContrasena')?.touched">
-            <span *ngIf="formulario.get('confirmarContrasena')?.hasError('required')">Debe confirmar la contraseña.</span>
-            <span *ngIf="formulario.hasError('passwordMismatch')">Las contraseñas no coinciden.</span>
-        </div>
-    </div>
+          <div class="form-field">
+            <label class="form-label">Número de teléfono <span class="required">*</span></label>
+            <app-input
+              name="phone"
+              type="text"
+              placeholder="+57 300 000 0000"
+              [control]="form.get('phone')!"
+            />
+            <div class="field-errors" *ngIf="form.get('phone')?.invalid && form.get('phone')?.touched">
+              <span *ngIf="form.get('phone')?.hasError('required')">El teléfono es obligatorio.</span>
+              <span *ngIf="form.get('phone')?.hasError('pattern')">Solo números, mínimo 10 dígitos.</span>
+            </div>
+          </div>
 
-    <button type="submit">
+          <div class="form-field">
+            <label class="form-label" for="documentType">Tipo de documento <span class="required">*</span></label>
+            <select id="documentType" formControlName="documentType">
+              <option value="">Selecciona...</option>
+              <option *ngFor="let type of documentTypes" [value]="type">{{ type }}</option>
+            </select>
+            <div class="field-errors" *ngIf="form.get('documentType')?.invalid && form.get('documentType')?.touched">
+              <span>Debe seleccionar un tipo de documento.</span>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label">Número de documento <span class="required">*</span></label>
+            <app-input
+              name="documentNumber"
+              type="text"
+              placeholder="Ej. 1234567890"
+              [control]="form.get('documentNumber')!"
+            />
+            <div class="field-errors" *ngIf="form.get('documentNumber')?.invalid && form.get('documentNumber')?.touched">
+              <span *ngIf="form.get('documentNumber')?.hasError('required')">El número de documento es obligatorio.</span>
+              <span *ngIf="form.get('documentNumber')?.hasError('pattern')">Solo se permiten números.</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card__header">
+          <div class="section-card__icon">🔒</div>
+          <div>
+            <p class="section-card__title">Datos de acceso</p>
+            <p class="section-card__subtitle">Credenciales para ingresar a la plataforma</p>
+          </div>
+        </div>
+
+        <div class="form-grid form-grid--full">
+
+          <div class="form-field">
+            <label class="form-label">Contraseña <span class="required">*</span></label>
+            <div class="password-wrapper">
+              <app-input
+                name="password"
+                [type]="showPassword ? 'text' : 'password'"
+                placeholder="Mínimo 8 caracteres"
+                [control]="form.get('password')!"
+              />
+              <button type="button" class="password-toggle" (click)="showPassword = !showPassword">
+                {{ showPassword ? '🙈' : '👁️' }}
+              </button>
+            </div>
+            <div class="password-hints">
+              <span [class.valid]="hasMinLength()">Mínimo 8 caracteres</span>
+<span [class.valid]="hasUppercase()">Una mayúscula</span>
+<span [class.valid]="hasNumber()">Un número</span>
+<span [class.valid]="hasSpecialChar()">Un carácter especial</span>
+            </div>
+            <div class="field-errors" *ngIf="form.get('password')?.invalid && form.get('password')?.touched">
+              <span *ngIf="form.get('password')?.hasError('required')">La contraseña es obligatoria.</span>
+              <span *ngIf="form.get('password')?.hasError('minlength')">Debe tener al menos 8 caracteres.</span>
+              <span *ngIf="form.get('password')?.hasError('pattern')">Debe incluir mayúscula, minúscula, número y carácter especial.</span>
+            </div>
+          </div>
+
+          <!-- Confirmar contraseña -->
+          <div class="form-field">
+            <label class="form-label">Confirmar contraseña <span class="required">*</span></label>
+            <div class="password-wrapper">
+              <app-input
+                name="confirmPassword"
+                [type]="showConfirmPassword ? 'text' : 'password'"
+                placeholder="Repite tu contraseña"
+                [control]="form.get('confirmPassword')!"
+              />
+              <button type="button" class="password-toggle" (click)="showConfirmPassword = !showConfirmPassword">
+                {{ showConfirmPassword ? '🙈' : '👁️' }}
+              </button>
+            </div>
+            <div class="field-errors" *ngIf="form.get('confirmPassword')?.touched">
+              <span *ngIf="form.get('confirmPassword')?.hasError('required')">Debe confirmar la contraseña.</span>
+              <span *ngIf="form.hasError('passwordMismatch')">Las contraseñas no coinciden.</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <p class="success-message" *ngIf="successMessage">{{ successMessage }}</p>
+      <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+      <button type="submit" class="submit-btn" [disabled]="form.invalid">
         Registrarse
-    </button>
+      </button>
 
-</form>
+    </form>
+  </div>
+</div>

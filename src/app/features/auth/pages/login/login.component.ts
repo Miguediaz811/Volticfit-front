@@ -8,6 +8,7 @@ import { RegexPatterns } from '../../../../shared/validators/regex.constants';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
+    styleUrl: './login.component.scss',
 })
 export class LoginComponent {
 
