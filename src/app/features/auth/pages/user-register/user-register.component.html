@@ -24,14 +24,14 @@
 
         <div class="form-grid">
 
-          <div class="form-field">
-            <label class="form-label">Nombre(s) <span class="required">*</span></label>
-            <app-input
-              name="firstName"
-              type="text"
-              placeholder="Ej. Juan David"
-              [control]="form.get('firstName')!"
-            />
+        <div class="form-field">
+          <app-input
+            name="firstName"
+            text="Nombre(s)"
+            type="text"
+            placeholder="Ej. Juan David"
+            [control]="form.get('firstName')!"
+          />
             <div class="field-errors" *ngIf="form.get('firstName')?.invalid && form.get('firstName')?.touched">
               <span *ngIf="form.get('firstName')?.hasError('required')">El nombre es obligatorio.</span>
               <span *ngIf="form.get('firstName')?.hasError('minlength')">Debe tener al menos 2 caracteres.</span>
@@ -40,13 +40,13 @@
           </div>
 
           <div class="form-field">
-            <label class="form-label">Apellidos <span class="required">*</span></label>
-            <app-input
-              name="lastName"
-              type="text"
-              placeholder="Ej. García López"
-              [control]="form.get('lastName')!"
-            />
+          <app-input
+            name="lastName"
+            text="Apellidos *"
+            type="text"
+            placeholder="Ej. Martínez Rodríguez"
+            [control]="form.get('lastName')!"
+          />
             <div class="field-errors" *ngIf="form.get('lastName')?.invalid && form.get('lastName')?.touched">
               <span *ngIf="form.get('lastName')?.hasError('required')">Los apellidos son obligatorios.</span>
               <span *ngIf="form.get('lastName')?.hasError('minlength')">Debe tener al menos 2 caracteres.</span>
@@ -55,11 +55,11 @@
           </div>
 
           <div class="form-field">
-            <label class="form-label">Correo electrónico <span class="required">*</span></label>
             <app-input
               name="email"
+              text="Correo Electronico *"
               type="email"
-              placeholder="correo@ejemplo.com"
+              placeholder="Ej. correo@gmail.com"
               [control]="form.get('email')!"
             />
             <div class="field-errors" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
@@ -69,11 +69,11 @@
           </div>
 
           <div class="form-field">
-            <label class="form-label">Número de teléfono <span class="required">*</span></label>
             <app-input
               name="phone"
-              type="text"
-              placeholder="+57 300 000 0000"
+              text="Telefono *"
+              type="number"
+              placeholder="1234567890"
               [control]="form.get('phone')!"
             />
             <div class="field-errors" *ngIf="form.get('phone')?.invalid && form.get('phone')?.touched">
@@ -94,10 +94,10 @@
           </div>
 
           <div class="form-field">
-            <label class="form-label">Número de documento <span class="required">*</span></label>
             <app-input
               name="documentNumber"
-              type="text"
+              text="Numero de documento *"
+              type="number"
               placeholder="Ej. 1234567890"
               [control]="form.get('documentNumber')!"
             />
@@ -122,14 +122,13 @@
         <div class="form-grid form-grid--full">
 
           <div class="form-field">
-            <label class="form-label">Contraseña <span class="required">*</span></label>
-            <div class="password-wrapper">
-              <app-input
-                name="password"
-                [type]="showPassword ? 'text' : 'password'"
-                placeholder="Mínimo 8 caracteres"
-                [control]="form.get('password')!"
-              />
+            <app-input
+              name="password"
+              text="Contraseña *"
+              type="password"
+              placeholder=""
+              [control]="form.get('password')!"
+            />
               <button type="button" class="password-toggle" (click)="showPassword = !showPassword">
                 {{ showPassword ? '🙈' : '👁️' }}
               </button>
@@ -147,16 +146,15 @@
             </div>
           </div>
 
-          <!-- Confirmar contraseña -->
+          
           <div class="form-field">
-            <label class="form-label">Confirmar contraseña <span class="required">*</span></label>
-            <div class="password-wrapper">
-              <app-input
-                name="confirmPassword"
-                [type]="showConfirmPassword ? 'text' : 'password'"
-                placeholder="Repite tu contraseña"
-                [control]="form.get('confirmPassword')!"
-              />
+            <app-input
+              name="firstName"
+              text="Confirmar contraseña"
+              type="text"
+              placeholder="Ej. Juan David"
+              [control]="form.get('firstName')!"
+            />
               <button type="button" class="password-toggle" (click)="showConfirmPassword = !showConfirmPassword">
                 {{ showConfirmPassword ? '🙈' : '👁️' }}
               </button>
@@ -167,9 +165,6 @@
             </div>
           </div>
 
-        </div>
-      </div>
-
       <p class="success-message" *ngIf="successMessage">{{ successMessage }}</p>
       <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
 
@@ -177,6 +172,4 @@
         Registrarse
       </button>
 
-    </form>
-  </div>
-</div>
+

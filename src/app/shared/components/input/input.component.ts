@@ -9,7 +9,7 @@ import { AbstractControl } from '@angular/forms';
 export class InputComponent {
   @Input() name: string = '';
   @Input() text: string = '';
-  @Input() type: 'password' | 'text' | 'email' = 'text';
+  @Input() type: 'number' | 'password' | 'text' | 'email' = 'text';
   @Input() placeholder: string = '';
   @Input() control!: AbstractControl;
 }

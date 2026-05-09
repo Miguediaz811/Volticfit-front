@@ -1,0 +1,59 @@
+$primary:         #F5A623;
+$bgInput:         #2A2A2A;
+$borderColor:     #2E2E2E;
+$borderFocus:     #F5A623;
+$textPrimary:     #FFFFFF;
+$textSecondary:   #9CA3AF;
+$colorError:      #EF4444;
+$radiusInput:     8px;
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $textSecondary;
+  font-family: 'Barlow', sans-serif;
+}
+
+input {
+  width: 100%;
+  background-color: $bgInput;
+  border: 1px solid $borderColor;
+  border-radius: $radiusInput;
+  padding: 12px 16px;
+  color: $textPrimary;
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.92rem;
+  transition: border-color 0.2s ease;
+  outline: none;
+
+  &::placeholder {
+    color: $textSecondary;
+    opacity: 0.5;
+  }
+
+  &:focus {
+    border-color: $borderFocus;
+  }
+
+  &.ng-invalid.ng-touched {
+    border-color: $colorError;
+  }
+
+  &.ng-valid.ng-dirty {
+    border-color: $primary;
+  }
+}
