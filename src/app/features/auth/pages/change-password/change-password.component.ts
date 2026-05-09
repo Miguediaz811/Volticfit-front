@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../../../core/services/auth.service';
 import { RegexPatterns } from '../../../../shared/validators/regex.constants';
-import { passwordMatchValidator } from '../user-register/user-register.component';
+import { passwordMatchValidator } from '../../../../shared/validators/password-match.validator';
+
 
 @Component({
   selector: 'app-change-password',

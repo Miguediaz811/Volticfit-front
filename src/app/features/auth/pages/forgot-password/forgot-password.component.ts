@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import {FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 import { RegexPatterns } from '../../../../shared/validators/regex.constants';
-import { passwordMatchValidator } from '../user-register/user-register.component';
+import { passwordMatchValidator } from '../../../../shared/validators/password-match.validator';
+
 
 type Paso = 'email' | 'codigo' | 'nuevaContrasena';
 
