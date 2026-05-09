@@ -27,7 +27,7 @@
         <div class="form-field">
           <app-input
             name="firstName"
-            text="Nombre(s)"
+            text="Nombre(s) *"
             type="text"
             placeholder="Ej. Juan David"
             [control]="form.get('firstName')!"
@@ -72,7 +72,7 @@
             <app-input
               name="phone"
               text="Telefono *"
-              type="number"
+              type="text"
               placeholder="1234567890"
               [control]="form.get('phone')!"
             />
@@ -97,7 +97,7 @@
             <app-input
               name="documentNumber"
               text="Numero de documento *"
-              type="number"
+              type="text"
               placeholder="Ej. 1234567890"
               [control]="form.get('documentNumber')!"
             />
@@ -125,14 +125,14 @@
             <app-input
               name="password"
               text="Contraseña *"
-              type="password"
-              placeholder=""
+              [type]="showPassword ? 'text' : 'password'"
+              placeholder="Mínimo 8 caracteres"
               [control]="form.get('password')!"
-            />
+            >
               <button type="button" class="password-toggle" (click)="showPassword = !showPassword">
                 {{ showPassword ? '🙈' : '👁️' }}
               </button>
-            </div>
+            </app-input>
             <div class="password-hints">
               <span [class.valid]="hasMinLength()">Mínimo 8 caracteres</span>
 <span [class.valid]="hasUppercase()">Una mayúscula</span>
@@ -149,16 +149,16 @@
           
           <div class="form-field">
             <app-input
-              name="firstName"
-              text="Confirmar contraseña"
-              type="text"
-              placeholder="Ej. Juan David"
-              [control]="form.get('firstName')!"
-            />
+              name="confirmPassword"
+              text="Confirmar contraseña *"
+              [type]="showPassword ? 'text' : 'password'"
+              placeholder="Mínimo 8 caracteres"
+              [control]="form.get('confirmPassword')!"
+            >
               <button type="button" class="password-toggle" (click)="showConfirmPassword = !showConfirmPassword">
                 {{ showConfirmPassword ? '🙈' : '👁️' }}
               </button>
-            </div>
+            </app-input>
             <div class="field-errors" *ngIf="form.get('confirmPassword')?.touched">
               <span *ngIf="form.get('confirmPassword')?.hasError('required')">Debe confirmar la contraseña.</span>
               <span *ngIf="form.hasError('passwordMismatch')">Las contraseñas no coinciden.</span>

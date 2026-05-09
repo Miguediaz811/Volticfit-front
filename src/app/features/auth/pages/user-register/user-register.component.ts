@@ -1,21 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import {FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RegexPatterns } from '../../../../shared/validators/regex.constants';
 import { AuthService } from '../../../../core/services/auth.service';
 import { RegisterRequest } from '../../interfaces/register-request';
-
-export function passwordMatchValidator(): ValidatorFn {
-  return (group: AbstractControl): { [key: string]: boolean } | null => {
-    const password = group.get('contrasena');
-    const confirmPassword = group.get('confirmarContrasena');
-
-    if (!password || !confirmPassword) return null;
-
-    return password.value === confirmPassword.value
-      ? null
-      : { passwordMismatch: true };
-  };
-}
+import { passwordMatchValidator } from '../../../../shared/validators/password-match.validator';
+import { RegisterResponse } from '../../interfaces/register-response';
 
 @Component({
   selector: 'app-user-register',
@@ -105,20 +94,16 @@ export class RegisterComponent implements OnInit {
       };
 
       this.authService.register(registerData).subscribe({
-        next: () => {
+        next: (response: RegisterResponse) => {
           this.loading = false;
-          this.successMessage = 'User registered successfully.';
+          this.successMessage = response.message;
           this.form.reset();
           this.form.markAsPristine();
           this.form.markAsUntouched();
         },
         error: (err) => {
           this.loading = false;
-          if (err.status === 409) {
-            this.errorMessage = 'This email is already registered.';
-          } else {
-            this.errorMessage = 'An error occurred. Please try again.';
-          }
+          this.errorMessage = err.error?.message;
         }
       });
 
