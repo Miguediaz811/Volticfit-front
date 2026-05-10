@@ -1,0 +1,99 @@
+$primary:       #F5A623;
+$primaryDark:   #C47D0E;
+$bg:            #1A1A1A;
+$borderColor:   #2E2E2E;
+$textSecondary: #9CA3AF;
+$tablet:        768px;
+
+@mixin mobile {
+  @media (max-width: #{$tablet - 1px}) { @content; }
+}
+
+.navbar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 16px 40px;
+  background-color: $bg;
+  border-bottom: 1px solid $borderColor;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  @include mobile {
+    padding: 12px 20px;
+  }
+
+  &__logo {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+    justify-self: center;
+    border-radius: 10px;
+
+    @include mobile {
+      height: 50px;
+    }
+  }
+
+  &__link-text {
+    justify-self: end;
+    font-size: 0.88rem;
+    font-weight: 400;
+    color: $textSecondary;
+    margin: 0;
+    white-space: nowrap;
+
+    @include mobile {
+      font-size: 0.78rem;
+    }
+
+    a {
+      color: $primary;
+      font-weight: 700;
+      text-decoration: none;
+      transition: color 0.2s;
+
+      &:hover {
+        color: $primaryDark;
+      }
+    }
+  }
+
+  &__spacer {
+    width: 100%;
+  }
+}
+
+.back-btn {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid $borderColor;
+  border-radius: 8px;
+  color: $textSecondary;
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: $primary;
+    color: $primary;
+  }
+}
+
+.banner {
+  background-color: $primary;
+  color: #000;
+  text-align: center;
+  padding: 10px 20px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  font-family: 'Barlow', sans-serif;
+}
