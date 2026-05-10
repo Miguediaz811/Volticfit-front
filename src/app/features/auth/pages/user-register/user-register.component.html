@@ -1,12 +1,10 @@
-<nav class="navbar">
-  <button class="back-btn" routerLink="/">←</button>
-  <img src="assets/images/volticfit.png" alt="VolticFit" class="navbar__logo" />
-  <h3 class="navbar__login-text">¿Ya tienes cuenta? <a routerLink="/auth/login">Iniciar sesión</a></h3>
-</nav>
-
-<div class="banner">
-  Únete a Voltic Fit — tu transformación comienza hoy
-</div>
+<app-navbar-forms
+  backRoute="/"
+  linkText="¿Ya tienes cuenta?"
+  linkLabel="Iniciar sesión"
+  linkRoute="/auth/login"
+  bannerText="Únete a Voltic Fit — tu transformación comienza hoy"
+/>
 
 <div class="register-page">
   <div class="register-wrapper">
@@ -15,7 +13,9 @@
 
       <div class="section-card">
         <div class="section-card__header">
-          <div class="section-card__icon">👤</div>
+          <div class="section-card__icon">
+            <img src="assets/images/avatar.png" alt="avatar" width="20" height="20">
+          </div>
           <div>
             <p class="section-card__title">Datos personales</p>
             <p class="section-card__subtitle">Información básica de identificación</p>
@@ -59,7 +59,7 @@
               name="email"
               text="Correo Electronico *"
               type="email"
-              placeholder="Ej. correo@gmail.com"
+              placeholder="Ej. correo@ejemplo.com"
               [control]="form.get('email')!"
             />
             <div class="field-errors" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
@@ -83,7 +83,7 @@
           </div>
 
           <div class="form-field">
-            <label class="form-label" for="documentType">Tipo de documento <span class="required">*</span></label>
+            <label class="form-label" for="documentType">Tipo de documento *</label>
             <select id="documentType" formControlName="documentType">
               <option value="">Selecciona...</option>
               <option *ngFor="let type of documentTypes" [value]="type">{{ type }}</option>
@@ -112,7 +112,9 @@
 
       <div class="section-card">
         <div class="section-card__header">
-          <div class="section-card__icon">🔒</div>
+          <div class="section-card__iconLock">
+            <img src="assets/images/candado.png" alt="candado" width="20" height="20">
+          </div>
           <div>
             <p class="section-card__title">Datos de acceso</p>
             <p class="section-card__subtitle">Credenciales para ingresar a la plataforma</p>
@@ -129,9 +131,14 @@
               placeholder="Mínimo 8 caracteres"
               [control]="form.get('password')!"
             >
-              <button type="button" class="password-toggle" (click)="showPassword = !showPassword">
-                {{ showPassword ? '🙈' : '👁️' }}
-              </button>
+            <button type="button" class="password-toggle" (click)="showPassword = !showPassword">
+              <img 
+                [src]="showPassword ? 'assets/images/esconder.png' : 'assets/images/ojo.png'"
+                alt="toggle password"
+                width="20"
+                height="20"
+              />
+            </button>
             </app-input>
             <div class="password-hints">
               <span [class.valid]="hasMinLength()">Mínimo 8 caracteres</span>
@@ -152,12 +159,17 @@
               name="confirmPassword"
               text="Confirmar contraseña *"
               [type]="showPassword ? 'text' : 'password'"
-              placeholder="Mínimo 8 caracteres"
+              placeholder="Repite tu contraseña"
               [control]="form.get('confirmPassword')!"
             >
-              <button type="button" class="password-toggle" (click)="showConfirmPassword = !showConfirmPassword">
-                {{ showConfirmPassword ? '🙈' : '👁️' }}
-              </button>
+            <button type="button" class="password-toggle" (click)="showConfirmPassword = !showConfirmPassword">
+              <img 
+                [src]="showConfirmPassword ? 'assets/images/esconder.png' : 'assets/images/ojo.png'"
+                alt="toggle password"
+                width="20"
+                height="20"
+              />
+            </button>
             </app-input>
             <div class="field-errors" *ngIf="form.get('confirmPassword')?.touched">
               <span *ngIf="form.get('confirmPassword')?.hasError('required')">Debe confirmar la contraseña.</span>
