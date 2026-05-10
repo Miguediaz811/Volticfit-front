@@ -8,10 +8,6 @@ export interface LoginResponse {
   jwt: string;
 }
 
-export interface MessageResponse {
-  message: string;
-}
-
 export interface RefreshTokenResponse {
   jwt: string;
 }
@@ -26,11 +22,12 @@ export interface VerifyCodeRequest {
 }
 
 export interface RestorePasswordRequest {
-  email: string;
+  email:       string;
+  code:        string;
   newPassword: string;
 }
 
 export interface ChangePasswordRequest {
   currentPassword: string;
-  newPassword: string;
+  newPassword:     string;
 }

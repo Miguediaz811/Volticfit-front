@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 import { RegexPatterns } from '../../../../shared/validators/regex.constants';
-import { passwordMatchValidator } from '../user-register/user-register.component';
+import { passwordMatchValidator } from '../../../../shared/validators/password-match.validator';
 
 type Paso = 'email' | 'codigo' | 'nuevaContrasena';
 
@@ -23,7 +23,8 @@ export class ForgotPasswordComponent {
   mensajeError      = '';
   mostrarContrasena = false;
 
-  private emailGuardado = '';
+  private emailGuardado  = '';
+  private codigoGuardado = '';
 
   constructor(
     private fb: FormBuilder,
@@ -44,13 +45,14 @@ export class ForgotPasswordComponent {
     }, { validators: passwordMatchValidator() });
   }
 
-  get correo()             { return this.emailForm.get('correo')!; }
-  get codigo()             { return this.codigoForm.get('codigo')!; }
-  get nuevaContrasena()    { return this.passwordForm.get('nuevaContrasena')!; }
-  get confirmarContrasena(){ return this.passwordForm.get('confirmarContrasena')!; }
+  get correo()              { return this.emailForm.get('correo')!; }
+  get codigo()              { return this.codigoForm.get('codigo')!; }
+  get nuevaContrasena()     { return this.passwordForm.get('nuevaContrasena')!; }
+  get confirmarContrasena() { return this.passwordForm.get('confirmarContrasena')!; }
 
   toggleContrasena() { this.mostrarContrasena = !this.mostrarContrasena; }
 
+  // Paso 1: enviar correo
   enviarEmail(): void {
     if (this.emailForm.invalid) { this.emailForm.markAllAsTouched(); return; }
 
@@ -59,24 +61,27 @@ export class ForgotPasswordComponent {
 
     this.authService.forgotPassword({ email: this.emailGuardado }).subscribe({
       next: () => { this.paso = 'codigo'; },
-      error: (err) => { this.mensajeError = err.error?.message || 'Error al enviar el correo.'; },
+      error: () => { this.mensajeError = 'No se encontró una cuenta con ese correo.'; },
     });
   }
 
+  // Paso 2: verificar código
   verificarCodigo(): void {
     if (this.codigoForm.invalid) { this.codigoForm.markAllAsTouched(); return; }
 
-    this.mensajeError = '';
+    this.mensajeError  = '';
+    this.codigoGuardado = this.codigoForm.value.codigo;
 
     this.authService.verifyCode({
       email: this.emailGuardado,
-      token: this.codigoForm.value.codigo,
+      token: this.codigoGuardado,
     }).subscribe({
       next: () => { this.paso = 'nuevaContrasena'; },
-      error: (err) => { this.mensajeError = err.error?.message || 'Código inválido o expirado.'; },
+      error: () => { this.mensajeError = 'El código es inválido o ha expirado.'; },
     });
   }
 
+  // Paso 3: establecer nueva contraseña
   restablecerContrasena(): void {
     if (this.passwordForm.invalid) { this.passwordForm.markAllAsTouched(); return; }
 
@@ -84,10 +89,11 @@ export class ForgotPasswordComponent {
 
     this.authService.restorePassword({
       email:       this.emailGuardado,
+      code:        this.codigoGuardado,
       newPassword: this.passwordForm.value.nuevaContrasena,
     }).subscribe({
       next: () => { this.router.navigate(['/auth/login']); },
-      error: (err) => { this.mensajeError = err.error?.message || 'Error al restablecer la contraseña.'; },
+      error: () => { this.mensajeError = 'No se pudo restablecer la contraseña. Intente de nuevo.'; },
     });
   }
 }

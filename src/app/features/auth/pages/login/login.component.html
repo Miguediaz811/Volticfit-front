@@ -1,3 +1,5 @@
+<p *ngIf="sesionExpirada">Tu sesión se cerró por inactividad. Inicia sesión de nuevo.</p>
+
 <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
 
   <app-input
@@ -25,9 +27,10 @@
 
   <p *ngIf="errorMessage">{{ errorMessage }}</p>
 
-  <button type="submit">Iniciar sesión</button>
+  <button type="submit" [disabled]="isLoading">
+    {{ isLoading ? 'Iniciando sesión...' : 'Iniciar sesión' }}
+  </button>
 
   <p>¿No tienes cuenta? <a routerLink="/auth/register">Regístrate gratis</a></p>
 
 </form>
-

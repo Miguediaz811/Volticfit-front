@@ -6,14 +6,14 @@ import { Router } from '@angular/router';
 import {
   LoginRequest,
   LoginResponse,
-  MessageResponse,
   ForgotPasswordRequest,
   VerifyCodeRequest,
   RestorePasswordRequest,
   ChangePasswordRequest,
-} from '../../features/auth/interfaces/auth.interface';
-import { RegisterRequest }  from '../../features/auth/interfaces/register-request';
-import { RegisterResponse } from '../../features/auth/interfaces/register-response';
+} from '../../shared/interfaces/auth.interface';
+import { RegisterRequest }  from '../../shared/interfaces/register-request';
+import { RegisterResponse } from '../../shared/interfaces/register-response';
+import { MessageResponse } from '../../shared/interfaces/message-response';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -80,12 +80,32 @@ export class AuthService {
     }
   }
 
+  /**
+   * El JWT del backend guarda el rol en el claim 'role' (ej: "admin", "aprendiz", "funcionario")
+   */
   getRol(): string | null {
     const token = this.getToken();
     if (!token) return null;
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.rol ?? null;
+      return payload.role ?? null;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * El JWT del backend NO incluye el userId directamente.
+   * El sub del JWT es el email. El backend resuelve el userId desde el email en el filtro.
+   * Para operaciones que requieren el userId (como inactivar cuenta),
+   * lo obtenemos desde el endpoint de perfil del usuario autenticado.
+   */
+  getEmailFromToken(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.sub ?? null;
     } catch {
       return null;
     }

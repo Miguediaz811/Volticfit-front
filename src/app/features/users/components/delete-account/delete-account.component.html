@@ -1,0 +1,13 @@
+<button type="button" (click)="abrirModal()">Inactivar mi cuenta</button>
+
+<div *ngIf="mostrarModal">
+  <h2>¿Inactivar cuenta?</h2>
+  <p>Tu cuenta quedará inactiva y no podrás iniciar sesión. Contacta al administrador si deseas reactivarla.</p>
+
+  <p *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <button type="button" (click)="cancelar()" [disabled]="cargando">Cancelar</button>
+  <button type="button" (click)="confirmarInactivar()" [disabled]="cargando">
+    {{ cargando ? 'Inactivando...' : 'Sí, inactivar cuenta' }}
+  </button>
+</div>
