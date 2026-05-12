@@ -1,0 +1,8 @@
+<ng-container *ngIf="!cargando">
+  <p *ngIf="tieneBloqueo"><strong>Usuario bloqueado por sanción activa</strong></p>
+  <ng-container *ngIf="sancionActiva as sancion">
+    <p>Tipo: {{ sancion.type }}</p>
+    <p>{{ sancion.description }}</p>
+    <p>Vigente hasta: {{ sancion.endDate }}</p>
+  </ng-container>
+</ng-container>

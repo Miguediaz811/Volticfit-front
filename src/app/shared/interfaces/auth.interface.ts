@@ -1,15 +1,11 @@
 export interface LoginRequest {
-  email: string;
+  email:    string;
   password: string;
 }
 
 export interface LoginResponse {
   message: string;
-  jwt: string;
-}
-
-export interface MessageResponse {
-  message: string;
+  jwt:     string;
 }
 
 export interface RefreshTokenResponse {
@@ -20,17 +16,13 @@ export interface ForgotPasswordRequest {
   email: string;
 }
 
-export interface VerifyCodeRequest {
-  email: string;
-  token: string;
-}
-
 export interface RestorePasswordRequest {
-  email: string;
+  email:       string;
+  code:        string;
   newPassword: string;
 }
 
 export interface ChangePasswordRequest {
   currentPassword: string;
-  newPassword: string;
+  newPassword:     string;
 }

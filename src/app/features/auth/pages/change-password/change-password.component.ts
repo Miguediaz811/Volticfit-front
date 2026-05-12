@@ -4,7 +4,6 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { RegexPatterns } from '../../../../shared/validators/regex.constants';
 import { passwordMatchValidator } from '../../../../shared/validators/password-match.validator';
 
-
 @Component({
   selector: 'app-change-password',
   templateUrl: './change-password.component.html',
@@ -12,7 +11,7 @@ import { passwordMatchValidator } from '../../../../shared/validators/password-m
 })
 export class ChangePasswordComponent {
 
-  formulario: FormGroup;
+  formulario:   FormGroup;
   mensajeExito  = '';
   mensajeError  = '';
   mostrarActual = false;
@@ -47,8 +46,13 @@ export class ChangePasswordComponent {
         this.mensajeExito = 'Contraseña actualizada exitosamente.';
         this.formulario.reset();
       },
-      error: (err) => {
-        this.mensajeError = err.error?.message || 'Error al cambiar la contraseña.';
+      error: (err: any) => {
+        const msg: string = (err.error?.message ?? '').toLowerCase();
+        if (msg.includes('incorrecta') || msg.includes('incorrect') || msg.includes('wrong')) {
+          this.mensajeError = 'La contraseña actual es incorrecta.';
+        } else {
+          this.mensajeError = 'No se pudo cambiar la contraseña. Intente nuevamente.';
+        }
       },
     });
   }

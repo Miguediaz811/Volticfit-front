@@ -16,6 +16,8 @@
     <h2 class="login-card__title">¡Hola de nuevo!</h2>
     <p class="login-card__subtitle">Ingresa tus credenciales para continuar</p>
 
+    <p class="info-message" *ngIf="sesionExpirada">Tu sesión se cerró por inactividad. Inicia sesión de nuevo.</p>
+
     <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
 
       <div class="form-field">
@@ -43,14 +45,14 @@
           placeholder="Tu contraseña"
           [control]="contrasena"
         >
-        <button type="button" class="password-toggle" (click)="showPassword = !showPassword">
-          <img 
-            [src]="showPassword ? 'assets/images/esconder.png' : 'assets/images/ojo.png'"
-            alt="toggle password"
-            width="20"
-            height="20"
-          />
-        </button>
+          <button type="button" class="password-toggle" (click)="showPassword = !showPassword">
+            <img
+              [src]="showPassword ? 'assets/images/esconder.png' : 'assets/images/ojo.png'"
+              alt="toggle password"
+              width="20"
+              height="20"
+            />
+          </button>
         </app-input>
         <div class="field-errors" *ngIf="contrasena.invalid && contrasena.touched">
           <span *ngIf="contrasena.hasError('required')">La contraseña es obligatoria.</span>
