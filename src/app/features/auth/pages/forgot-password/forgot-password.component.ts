@@ -5,7 +5,11 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { RegexPatterns } from '../../../../shared/validators/regex.constants';
 import { passwordMatchValidator } from '../../../../shared/validators/password-match.validator';
 
-type Paso = 'email' | 'codigo' | 'nuevaContrasena';
+// El backend expone 2 endpoints públicos para recuperación:
+// 1. POST /auth/forgot-password     → genera y envía el código al correo
+// 2. POST /auth/recovery/reset      → verifica el código y cambia la contraseña
+// No existe /auth/recovery/verify como endpoint; la verificación es interna en el paso 2.
+type Paso = 'email' | 'codigoYContrasena';
 
 @Component({
   selector: 'app-forgot-password',
@@ -16,43 +20,38 @@ export class ForgotPasswordComponent {
 
   paso: Paso = 'email';
 
-  emailForm:    FormGroup;
-  codigoForm:   FormGroup;
-  passwordForm: FormGroup;
+  emailForm: FormGroup;
+  resetForm: FormGroup;
 
   mensajeError      = '';
   mostrarContrasena = false;
 
-  private emailGuardado  = '';
-  private codigoGuardado = '';
+  emailGuardado = '';
 
   constructor(
-    private fb: FormBuilder,
+    private fb:          FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router:      Router
   ) {
     this.emailForm = this.fb.group({
       correo: ['', [Validators.required, Validators.pattern(RegexPatterns.email)]],
     });
 
-    this.codigoForm = this.fb.group({
-      codigo: ['', [Validators.required]],
-    });
-
-    this.passwordForm = this.fb.group({
+    this.resetForm = this.fb.group({
+      codigo:              ['', [Validators.required]],
       nuevaContrasena:     ['', [Validators.required, Validators.minLength(8), Validators.pattern(RegexPatterns.passwordVoltic)]],
       confirmarContrasena: ['', [Validators.required]],
     }, { validators: passwordMatchValidator() });
   }
 
   get correo()              { return this.emailForm.get('correo')!; }
-  get codigo()              { return this.codigoForm.get('codigo')!; }
-  get nuevaContrasena()     { return this.passwordForm.get('nuevaContrasena')!; }
-  get confirmarContrasena() { return this.passwordForm.get('confirmarContrasena')!; }
+  get codigo()              { return this.resetForm.get('codigo')!; }
+  get nuevaContrasena()     { return this.resetForm.get('nuevaContrasena')!; }
+  get confirmarContrasena() { return this.resetForm.get('confirmarContrasena')!; }
 
   toggleContrasena() { this.mostrarContrasena = !this.mostrarContrasena; }
 
-  // Paso 1: enviar correo
+  // Paso 1: enviar código al correo
   enviarEmail(): void {
     if (this.emailForm.invalid) { this.emailForm.markAllAsTouched(); return; }
 
@@ -60,40 +59,31 @@ export class ForgotPasswordComponent {
     this.emailGuardado = this.emailForm.value.correo;
 
     this.authService.forgotPassword({ email: this.emailGuardado }).subscribe({
-      next: () => { this.paso = 'codigo'; },
+      next:  () => { this.paso = 'codigoYContrasena'; },
       error: () => { this.mensajeError = 'No se encontró una cuenta con ese correo.'; },
     });
   }
 
-  // Paso 2: verificar código
-  verificarCodigo(): void {
-    if (this.codigoForm.invalid) { this.codigoForm.markAllAsTouched(); return; }
-
-    this.mensajeError  = '';
-    this.codigoGuardado = this.codigoForm.value.codigo;
-
-    this.authService.verifyCode({
-      email: this.emailGuardado,
-      token: this.codigoGuardado,
-    }).subscribe({
-      next: () => { this.paso = 'nuevaContrasena'; },
-      error: () => { this.mensajeError = 'El código es inválido o ha expirado.'; },
-    });
-  }
-
-  // Paso 3: establecer nueva contraseña
+  // Paso 2: verificar código y restablecer contraseña
   restablecerContrasena(): void {
-    if (this.passwordForm.invalid) { this.passwordForm.markAllAsTouched(); return; }
+    if (this.resetForm.invalid) { this.resetForm.markAllAsTouched(); return; }
 
     this.mensajeError = '';
 
     this.authService.restorePassword({
       email:       this.emailGuardado,
-      code:        this.codigoGuardado,
-      newPassword: this.passwordForm.value.nuevaContrasena,
+      code:        this.resetForm.value.codigo,
+      newPassword: this.resetForm.value.nuevaContrasena,
     }).subscribe({
       next: () => { this.router.navigate(['/auth/login']); },
-      error: () => { this.mensajeError = 'No se pudo restablecer la contraseña. Intente de nuevo.'; },
+      error: (err) => {
+        const msg: string = (err.error?.message ?? '').toLowerCase();
+        if (msg.includes('código') || msg.includes('válido') || msg.includes('expirado')) {
+          this.mensajeError = 'El código es inválido o ha expirado.';
+        } else {
+          this.mensajeError = 'No se pudo restablecer la contraseña. Intente de nuevo.';
+        }
+      },
     });
   }
 }

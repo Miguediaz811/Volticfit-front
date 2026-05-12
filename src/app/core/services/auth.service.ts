@@ -7,18 +7,17 @@ import {
   LoginRequest,
   LoginResponse,
   ForgotPasswordRequest,
-  VerifyCodeRequest,
   RestorePasswordRequest,
   ChangePasswordRequest,
 } from '../../shared/interfaces/auth.interface';
 import { RegisterRequest }  from '../../shared/interfaces/register-request';
 import { RegisterResponse } from '../../shared/interfaces/register-response';
-import { MessageResponse } from '../../shared/interfaces/message-response';
+import { MessageResponse }  from '../../shared/interfaces/message-response';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  private apiUrl = 'http://localhost:9090';
+  private readonly apiUrl    = 'http://localhost:9090';
   private readonly TOKEN_KEY = 'volticfit_token';
 
   constructor(
@@ -41,14 +40,12 @@ export class AuthService {
     return this.http.post<RegisterResponse>(`${this.apiUrl}/auth/register`, data);
   }
 
+  /** Paso 1: envía código de recuperación al correo. POST /auth/forgot-password */
   forgotPassword(data: ForgotPasswordRequest): Observable<MessageResponse> {
     return this.http.post<MessageResponse>(`${this.apiUrl}/auth/forgot-password`, data);
   }
 
-  verifyCode(data: VerifyCodeRequest): Observable<MessageResponse> {
-    return this.http.post<MessageResponse>(`${this.apiUrl}/auth/recovery/verify`, data);
-  }
-
+  /** Paso 2: verifica el código y cambia la contraseña. POST /auth/recovery/reset */
   restorePassword(data: RestorePasswordRequest): Observable<MessageResponse> {
     return this.http.post<MessageResponse>(`${this.apiUrl}/auth/recovery/reset`, data);
   }
@@ -80,9 +77,7 @@ export class AuthService {
     }
   }
 
-  /**
-   * El JWT del backend guarda el rol en el claim 'role' (ej: "admin", "aprendiz", "funcionario")
-   */
+  /** El JWT guarda el rol en 'role': "admin", "aprendiz", "funcionario" */
   getRol(): string | null {
     const token = this.getToken();
     if (!token) return null;
@@ -94,12 +89,7 @@ export class AuthService {
     }
   }
 
-  /**
-   * El JWT del backend NO incluye el userId directamente.
-   * El sub del JWT es el email. El backend resuelve el userId desde el email en el filtro.
-   * Para operaciones que requieren el userId (como inactivar cuenta),
-   * lo obtenemos desde el endpoint de perfil del usuario autenticado.
-   */
+  /** El sub del JWT es el email del usuario */
   getEmailFromToken(): string | null {
     const token = this.getToken();
     if (!token) return null;
