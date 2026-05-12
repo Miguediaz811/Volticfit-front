@@ -14,17 +14,17 @@ import { RegexPatterns } from '../../../../shared/validators/regex.constants';
 export class LoginComponent implements OnInit {
 
   form: FormGroup;
-  isLoading = false;
-  errorMessage = '';
-  showPassword = false;
+  isLoading      = false;
+  errorMessage   = '';
+  showPassword   = false;
   sesionExpirada = false;
 
   constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
+    private fb:                FormBuilder,
+    private authService:       AuthService,
     private inactivityService: InactivityService,
-    private router: Router,
-    private route: ActivatedRoute
+    private router:            Router,
+    private route:             ActivatedRoute
   ) {
     this.form = this.fb.group({
       correo:     ['', [Validators.required, Validators.pattern(RegexPatterns.email)]],
@@ -33,7 +33,6 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Detectar si fue redirigido por inactividad
     this.route.queryParams.subscribe(params => {
       this.sesionExpirada = params['razon'] === 'inactividad';
     });
@@ -42,13 +41,11 @@ export class LoginComponent implements OnInit {
   get correo()     { return this.form.get('correo')!; }
   get contrasena() { return this.form.get('contrasena')!; }
 
-  togglePassword() { this.showPassword = !this.showPassword; }
-
   onSubmit(): void {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
 
-    this.isLoading = true;
-    this.errorMessage = '';
+    this.isLoading      = true;
+    this.errorMessage   = '';
     this.sesionExpirada = false;
 
     const loginData: LoginRequest = {
@@ -58,10 +55,7 @@ export class LoginComponent implements OnInit {
 
     this.authService.login(loginData).subscribe({
       next: () => {
-        // Activar vigilancia de inactividad
         this.inactivityService.iniciar();
-
-        // Redirigir según rol. El backend usa: 'admin', 'aprendiz', 'funcionario'
         const rol = this.authService.getRol();
         if (rol === 'admin') {
           this.router.navigate(['/admin/dashboard']);
@@ -73,13 +67,14 @@ export class LoginComponent implements OnInit {
         this.isLoading = false;
         const msg: string = (err.error?.message ?? '').toLowerCase();
 
-        // El backend lanza "This account is inactive" cuando state=false
-        if (msg.includes('inactive') || msg.includes('inactiv')) {
+        if (msg.includes('inactive')) {
           this.errorMessage = 'Tu cuenta está inactiva. Contacta al administrador.';
-        } else if (err.status === 401) {
-          this.errorMessage = err.error?.message || 'Credenciales incorrectas.';
+        } else if (msg.includes('contraseña incorrecta')) {
+          this.errorMessage = 'La contraseña es incorrecta.';
+        } else if (msg.includes('usuario no encontrado')) {
+          this.errorMessage = 'No existe una cuenta con ese correo.';
         } else {
-          this.errorMessage = err.error?.message || 'Ocurrió un error. Intente nuevamente.';
+          this.errorMessage = 'Ocurrió un error. Intente nuevamente.';
         }
       }
     });

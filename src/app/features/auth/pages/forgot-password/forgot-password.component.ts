@@ -25,8 +25,7 @@ export class ForgotPasswordComponent {
 
   mensajeError      = '';
   mostrarContrasena = false;
-
-  emailGuardado = '';
+  emailGuardado     = '';
 
   constructor(
     private fb:          FormBuilder,
@@ -76,7 +75,7 @@ export class ForgotPasswordComponent {
       newPassword: this.resetForm.value.nuevaContrasena,
     }).subscribe({
       next: () => { this.router.navigate(['/auth/login']); },
-      error: (err) => {
+      error: (err: any) => {
         const msg: string = (err.error?.message ?? '').toLowerCase();
         if (msg.includes('código') || msg.includes('válido') || msg.includes('expirado')) {
           this.mensajeError = 'El código es inválido o ha expirado.';

@@ -1,0 +1,21 @@
+<nav class="navbar">
+  <button
+    class="back-btn"
+    *ngIf="backRoute"
+    [routerLink]="backRoute"
+  >←</button>
+  <div *ngIf="!backRoute" class="navbar__spacer"></div>
+ 
+  <img src="assets/images/volticfit.png" alt="VolticFit" class="navbar__logo" />
+ 
+  <h3 class="navbar__link-text" *ngIf="linkText && linkLabel; else emptyRight">
+    {{ linkText }} <a [routerLink]="linkRoute">{{ linkLabel }}</a>
+  </h3>
+  <ng-template #emptyRight>
+    <div class="navbar__spacer"></div>
+  </ng-template>
+</nav>
+ 
+<div class="banner" *ngIf="bannerText">
+  {{ bannerText }}
+</div>
