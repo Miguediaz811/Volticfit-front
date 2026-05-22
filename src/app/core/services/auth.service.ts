@@ -54,6 +54,10 @@ export class AuthService {
     return this.http.post<MessageResponse>(`${this.apiUrl}/auth/change-password`, data);
   }
 
+  logout(): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${this.apiUrl}/auth/logout`, {});
+  }
+
   saveToken(token: string): void {
     if (this.isBrowser()) localStorage.setItem(this.TOKEN_KEY, token);
   }
@@ -83,7 +87,21 @@ export class AuthService {
     if (!token) return null;
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.role ?? null;
+      const role = payload.role ?? payload.rol ?? null;
+      if (typeof role !== 'string') return null;
+      return role.toLowerCase().replace(/^role_/, '');
+    } catch {
+      return null;
+    }
+  }
+
+  getUserId(): number | null {
+    const token = this.getToken();
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const rawId = payload.userId ?? payload.idUser ?? payload.id ?? null;
+      return rawId !== null ? Number(rawId) : null;
     } catch {
       return null;
     }

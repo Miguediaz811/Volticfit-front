@@ -1,0 +1,22 @@
+:host { display: block; }
+
+.scanner-box {
+  display: grid;
+  gap: 12px;
+}
+
+video {
+  width: 100%;
+  min-height: 280px;
+  max-height: 420px;
+  object-fit: cover;
+  border: 1px solid #343434;
+  border-radius: 8px;
+  background: #111;
+}
+
+.scanner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}

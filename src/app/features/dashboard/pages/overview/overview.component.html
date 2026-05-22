@@ -1,0 +1,90 @@
+<section class="member-dashboard" *ngIf="rol !== 'admin'; else adminDashboard">
+  <header class="member-hero">
+    <div>
+      <p>Buenos dias,</p>
+      <h1>{{ profile?.names || 'Usuario' }}</h1>
+      <span>Panel de acceso, turnos y asistencia</span>
+    </div>
+    <a class="qr-shortcut" routerLink="qr">
+      <span class="vf-nav-icon"></span>
+      <strong>Mi QR de acceso</strong>
+    </a>
+  </header>
+
+  <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
+
+  <section class="member-info">
+    <div>
+      <h2>Informacion general</h2>
+      <div class="mini-stats">
+        <article *ngFor="let stat of memberStats">
+          <span>{{ stat.label }}</span>
+          <strong [class.danger]="stat.danger">{{ stat.value }}</strong>
+        </article>
+      </div>
+    </div>
+    <span class="status-pill">Activo</span>
+  </section>
+
+  <div class="member-actions">
+    <a class="action-card" *ngFor="let action of memberActions" [routerLink]="action.route" [ngClass]="'tone-' + action.tone">
+      <span class="action-icon"></span>
+      <h3>{{ action.title }}</h3>
+      <p>{{ action.text }}</p>
+      <strong>Ver</strong>
+    </a>
+  </div>
+</section>
+
+<ng-template #adminDashboard>
+  <section class="admin-dashboard">
+    <header class="admin-header">
+      <div>
+        <h1>Dashboard</h1>
+        <p>Martes, 24 de marzo de 2026</p>
+      </div>
+      <button type="button">!</button>
+    </header>
+
+    <div class="admin-stats">
+      <article *ngFor="let stat of adminStats" [ngClass]="'tone-' + stat.tone">
+        <span>{{ stat.label }}</span>
+        <strong>{{ stat.value }}</strong>
+        <small>{{ stat.note }}</small>
+      </article>
+    </div>
+
+    <div class="admin-grid">
+      <section class="admin-panel attendance-panel">
+        <div class="panel-title">
+          <h2>Accesos de asistencia</h2>
+          <a routerLink="manual-attendance">Registrar manual</a>
+        </div>
+        <p>Escanea codigos QR o registra asistencias manuales desde el sistema.</p>
+      </section>
+
+      <section class="admin-panel donut-panel">
+        <h2>Turnos de hoy</h2>
+        <div class="donut"><strong>{{ adminStats[2].value }}</strong></div>
+        <p>Cupos disponibles para las reservas de hoy</p>
+      </section>
+
+      <section class="admin-panel">
+        <div class="panel-title"><h2>Usuarios</h2><a routerLink="users">Ver lista</a></div>
+        <p>Consulta, revisa detalle y edita usuarios desde el listado del sistema.</p>
+      </section>
+
+      <section class="admin-panel">
+        <div class="panel-title"><h2>Turnos disponibles</h2><a routerLink="reservations">Ver lista</a></div>
+        <p>Manana <span>4 cupos</span></p>
+        <p>Tarde <span class="warn">3 cupos</span></p>
+        <p>Noche <span>5 cupos</span></p>
+      </section>
+
+      <section class="admin-panel sanctions-panel">
+        <div class="panel-title"><h2>Sanciones recientes</h2><a routerLink="sanctions">Ver sanciones</a></div>
+        <p>Administra el historial de sanciones registradas.</p>
+      </section>
+    </div>
+  </section>
+</ng-template>

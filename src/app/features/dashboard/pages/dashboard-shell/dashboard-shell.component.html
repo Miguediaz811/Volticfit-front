@@ -1,0 +1,30 @@
+<div class="vf-shell" [class.vf-shell--admin]="rol === 'admin'">
+  <aside class="vf-sidebar">
+    <a class="vf-brand" routerLink="/">
+      <img src="assets/images/volticfit.png" alt="Voltic Fit" />
+      <span>Voltic Fit</span>
+    </a>
+    <span class="vf-role-badge">{{ roleLabel }}</span>
+
+    <nav class="vf-nav" aria-label="Navegacion principal">
+      <section class="vf-nav-section" *ngFor="let section of visibleSections()">
+        <p>{{ section }}</p>
+        <a
+          *ngFor="let item of itemsBySection(section)"
+          [routerLink]="item.route"
+          routerLinkActive="is-active"
+          [routerLinkActiveOptions]="{ exact: item.route === './' }"
+        >
+          <span class="vf-nav-icon"></span>
+          {{ item.label }}
+        </a>
+      </section>
+    </nav>
+
+    <button type="button" class="vf-ghost-btn" (click)="logout()">Cerrar sesion</button>
+  </aside>
+
+  <main class="vf-main">
+    <router-outlet></router-outlet>
+  </main>
+</div>

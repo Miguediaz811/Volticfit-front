@@ -1,0 +1,84 @@
+<section class="vf-page">
+  <div class="vf-header">
+    <h1>Usuarios</h1>
+    <p>Listado de usuarios activos e inactivos con edicion administrativa.</p>
+  </div>
+
+  <div class="vf-panel">
+    <p class="vf-muted" *ngIf="loading">Procesando...</p>
+    <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
+    <p class="vf-alert vf-alert--success" *ngIf="message">{{ message }}</p>
+
+    <div class="user-search">
+      <label class="vf-field">
+        <span>Buscar usuario</span>
+        <input
+          type="search"
+          [(ngModel)]="searchTerm"
+          [ngModelOptions]="{ standalone: true }"
+          placeholder="Nombre, correo, documento, telefono, rol o estado" />
+      </label>
+      <button class="vf-btn vf-btn--secondary" type="button" (click)="clearSearch()" [disabled]="!searchTerm">Limpiar</button>
+    </div>
+
+    <p class="vf-empty" *ngIf="!loading && users.length === 0">No hay usuarios para mostrar.</p>
+    <p class="vf-empty" *ngIf="!loading && users.length > 0 && filteredUsers().length === 0">No se encontraron usuarios con esa busqueda.</p>
+    <table class="vf-table" *ngIf="filteredUsers().length > 0">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Correo</th>
+          <th>Documento</th>
+          <th>Telefono</th>
+          <th>Rol</th>
+          <th>Estado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of filteredUsers()">
+          <td>{{ user.names }} {{ user.surnames }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.docType }} {{ user.docNumber || user.docNum }}</td>
+          <td>{{ user.phone || '-' }}</td>
+          <td>{{ roleName(user) }}</td>
+          <td><span class="vf-chip">{{ user.state === false ? 'Inactivo' : 'Activo' }}</span></td>
+          <td><button type="button" class="vf-small-btn" (click)="selectUser(user)">Detalle</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <form class="vf-panel" [formGroup]="form" (ngSubmit)="save()" *ngIf="selected">
+    <h2>Detalle de usuario</h2>
+    <div class="vf-grid">
+      <label class="vf-field"><span>Nombres</span><input formControlName="names" [readonly]="!editing" /></label>
+      <label class="vf-field"><span>Apellidos</span><input formControlName="surnames" [readonly]="!editing" /></label>
+      <label class="vf-field"><span>Tipo documento</span><input formControlName="docType" [readonly]="!editing" /></label>
+      <label class="vf-field"><span>Documento</span><input formControlName="docNumber" [readonly]="!editing" /></label>
+      <label class="vf-field"><span>Correo</span><input formControlName="email" [readonly]="!editing" /></label>
+      <label class="vf-field"><span>Telefono</span><input formControlName="phone" [readonly]="!editing" /></label>
+      <label class="vf-field">
+        <span>Rol</span>
+        <select formControlName="role">
+          <option value="admin">Administrador</option>
+          <option value="aprendiz">Aprendiz</option>
+          <option value="funcionario">Funcionario</option>
+        </select>
+      </label>
+      <label class="vf-field">
+        <span>Estado</span>
+        <select formControlName="state">
+          <option value="true">Activo</option>
+          <option value="false">Inactivo</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="vf-actions">
+      <button class="vf-btn vf-btn--secondary" type="button" *ngIf="!editing" (click)="startEditing()">Editar</button>
+      <button class="vf-btn" type="submit" *ngIf="editing" [disabled]="loading">Guardar cambios</button>
+      <button class="vf-btn vf-btn--secondary" type="button" *ngIf="editing" (click)="cancelEditing()">Cancelar</button>
+    </div>
+  </form>
+</section>

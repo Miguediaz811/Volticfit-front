@@ -15,8 +15,9 @@ export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
   const rolesRequeridos: string[] = route.data['roles'];
   if (rolesRequeridos && rolesRequeridos.length > 0) {
     const rol = auth.getRol();
-    if (!rol || !rolesRequeridos.includes(rol)) {
-      router.navigate(['/auth/login']);
+    const rolesNormalizados = rolesRequeridos.map(role => role.toLowerCase().replace(/^role_/, ''));
+    if (!rol || !rolesNormalizados.includes(rol)) {
+      router.navigate(['/dashboard']);
       return false;
     }
   }

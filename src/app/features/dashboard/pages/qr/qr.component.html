@@ -1,0 +1,73 @@
+<section class="qr-page">
+  <header class="qr-topbar">
+    <div class="qr-logo">
+      <span>*</span>
+      <div>
+        <strong>VOLTIC FIT</strong>
+        <small>Mi codigo QR</small>
+      </div>
+    </div>
+    <span>Martes 17 - 9:24 AM</span>
+  </header>
+
+  <div class="qr-notice">Presenta este codigo en recepcion para registrar tu entrada</div>
+
+  <main class="qr-content">
+    <section class="qr-profile">
+      <div class="avatar">{{ initials() }}</div>
+      <div>
+        <h1>{{ displayName() }}</h1>
+        <p>ID: {{ userCode() }}</p>
+        <span>Membresia activa - Pro</span>
+      </div>
+    </section>
+
+    <section class="qr-card">
+      <h2>Codigo de acceso</h2>
+      <p>Este codigo se renueva automaticamente cada 60 segundos por seguridad</p>
+
+      <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
+      <p class="vf-muted" *ngIf="loading">Generando QR...</p>
+
+      <img class="qr-image" [src]="qrImage" alt="Codigo QR" *ngIf="qrImage" />
+      <strong class="qr-code-text" *ngIf="qrValue">{{ qrValue }}</strong>
+
+      <div class="timer-ring">
+        <strong>{{ secondsLeft }}</strong>
+        <small>seg</small>
+      </div>
+      <p>El codigo expira en</p>
+    </section>
+
+    <section class="qr-stats">
+      <article>
+        <span>Estado</span>
+        <strong>Activo y valido</strong>
+      </article>
+      <article>
+        <span>Membresia vence</span>
+        <strong>30 abr 2026</strong>
+      </article>
+      <article>
+        <span>Ultimo acceso</span>
+        <strong>Hoy - 6:02 AM</strong>
+      </article>
+      <article>
+        <span>Asistencias este mes</span>
+        <strong>12 / 20</strong>
+      </article>
+    </section>
+
+    <div class="qr-actions">
+      <button type="button" class="primary" (click)="downloadQr()" [disabled]="!qrImage">Descargar</button>
+    </div>
+
+    <section class="qr-steps">
+      <article><b>1</b><span><strong>Acercate a recepcion</strong> y muestra este codigo QR en la pantalla de tu dispositivo</span></article>
+      <article><b>2</b><span>El lector escaneara tu codigo y <strong>registrara tu entrada automaticamente</strong></span></article>
+      <article><b>3</b><span>El codigo <strong>se renueva cada 60 segundos</strong>; si expira, el sistema generara uno nuevo</span></article>
+    </section>
+
+    <p class="qr-warning">No compartas este codigo con otras personas. Es unico e intransferible y esta vinculado a tu membresia activa.</p>
+  </main>
+</section>

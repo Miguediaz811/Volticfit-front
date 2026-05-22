@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { MessageResponse } from '../../shared/interfaces/auth.interface';
+import { MessageResponse } from '../../shared/interfaces/message-response';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {

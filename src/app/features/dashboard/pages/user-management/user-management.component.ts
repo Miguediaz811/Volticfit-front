@@ -1,0 +1,205 @@
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { forkJoin, of } from 'rxjs';
+import { DashboardApiService } from '../../../../core/services/dashboard-api.service';
+import { UserProfile } from '../../../../shared/interfaces/dashboard.interface';
+
+@Component({
+  selector: 'app-user-management',
+  templateUrl: './user-management.component.html',
+  styleUrl: './user-management.component.scss',
+})
+export class UserManagementComponent implements OnInit {
+  users: UserProfile[] = [];
+  selected: UserProfile | null = null;
+  editing = false;
+  loading = false;
+  message = '';
+  error = '';
+  searchTerm = '';
+
+  readonly form = this.fb.group({
+    names: ['', [Validators.required, Validators.minLength(2)]],
+    surnames: [''],
+    docType: [''],
+    docNumber: [''],
+    email: ['', [Validators.required, Validators.email]],
+    phone: [''],
+    role: [{ value: '', disabled: true }],
+    state: [{ value: 'true', disabled: true }],
+  });
+
+  constructor(private fb: FormBuilder, private api: DashboardApiService) {}
+
+  ngOnInit(): void {
+    this.loadUsers();
+  }
+
+  loadUsers(): void {
+    this.loading = true;
+    this.message = '';
+    this.error = '';
+
+    this.api.getUsers().subscribe({
+      next: users => {
+        this.users = users;
+        if (this.selected) {
+          const refreshed = users.find(user => user.idUser === this.selected?.idUser);
+          if (refreshed) this.selectUser(refreshed);
+        }
+        this.loading = false;
+      },
+      error: err => {
+        this.error = err.status === 403
+          ? 'Solo un administrador puede ver la lista de usuarios.'
+          : 'No se pudo cargar la lista de usuarios.';
+        this.loading = false;
+      },
+    });
+  }
+
+  selectUser(user: UserProfile): void {
+    this.selected = user;
+    this.editing = false;
+    this.message = '';
+    this.error = '';
+    this.lockAdminControls();
+    this.form.patchValue({
+      names: user.names || '',
+      surnames: user.surnames || '',
+      docType: user.docType || '',
+      docNumber: user.docNumber || user.docNum || '',
+      email: user.email || '',
+      phone: user.phone || '',
+      role: this.normalizedRole(user),
+      state: String(user.state !== false),
+    });
+  }
+
+  save(): void {
+    if (!this.selected || this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    this.loading = true;
+    this.message = '';
+    this.error = '';
+    const values = this.form.getRawValue();
+    const currentRole = this.normalizedRole(this.selected);
+    const requestedRole = values.role || currentRole;
+    const currentState = this.selected.state !== false;
+    const requestedState = values.state === 'true';
+
+    const updateProfile$ = this.api.updateUser(this.selected.idUser, {
+      names: values.names || '',
+      surnames: values.surnames || '',
+      docType: values.docType || '',
+      docNumber: values.docNumber || '',
+      email: values.email || '',
+      phone: values.phone || '',
+    });
+
+    const updateRole$ = requestedRole !== currentRole
+      ? this.api.updateUserRole(this.selected.idUser, requestedRole)
+      : of(null);
+
+    const updateState$ = requestedState !== currentState
+      ? this.api.updateUserState(this.selected.idUser, requestedState)
+      : of(null);
+
+    forkJoin([updateProfile$, updateRole$, updateState$]).subscribe({
+      next: ([profileResponse, roleResponse, stateResponse]) => {
+        this.message = stateResponse?.message || roleResponse?.message || profileResponse.message || 'Usuario actualizado.';
+        this.editing = false;
+        this.loading = false;
+        this.loadUsers();
+      },
+      error: err => {
+        this.error = this.friendlyMessage(err.error?.message, 'No se pudieron guardar los cambios.');
+        this.loading = false;
+      },
+    });
+  }
+
+  roleName(user: UserProfile | null): string {
+    const role = user?.role;
+    if (!role) {
+      return 'Sin rol';
+    }
+    return typeof role === 'string' ? role : role.name || 'Sin rol';
+  }
+
+  normalizedRole(user: UserProfile | null): string {
+    return this.roleName(user).toLowerCase();
+  }
+
+  filteredUsers(): UserProfile[] {
+    const term = this.normalize(this.searchTerm);
+    if (!term) return this.users;
+
+    return this.users.filter(user => {
+      const state = user.state === false ? 'inactivo' : 'activo';
+      const searchable = [
+        user.names,
+        user.surnames,
+        user.email,
+        user.docType,
+        user.docNumber,
+        user.docNum,
+        user.phone,
+        this.roleName(user),
+        state,
+      ].map(value => this.normalize(String(value || ''))).join(' ');
+
+      return searchable.includes(term);
+    });
+  }
+
+  clearSearch(): void {
+    this.searchTerm = '';
+  }
+
+  startEditing(): void {
+    this.editing = true;
+    this.form.controls.role.enable();
+    this.form.controls.state.enable();
+  }
+
+  cancelEditing(): void {
+    if (this.selected) {
+      this.selectUser(this.selected);
+    }
+  }
+
+  private lockAdminControls(): void {
+    this.form.controls.role.disable();
+    this.form.controls.state.disable();
+  }
+
+  private normalize(value: string): string {
+    return value
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
+  }
+
+  private friendlyMessage(message: string | undefined, fallback: string): string {
+    const text = (message || '').toLowerCase();
+    if (!text) return fallback;
+    if (text.includes('email') || text.includes('correo')) {
+      return 'Este correo ya esta registrado.';
+    }
+    if (text.includes('phone') || text.includes('telefono')) {
+      return 'El telefono solo debe contener numeros.';
+    }
+    if (text.includes('permission') || text.includes('permiso')) {
+      return 'No tienes permiso para realizar esta accion.';
+    }
+    if (text.includes('role') || text.includes('rol')) {
+      return 'No se pudo cambiar el rol seleccionado.';
+    }
+    return message || fallback;
+  }
+}

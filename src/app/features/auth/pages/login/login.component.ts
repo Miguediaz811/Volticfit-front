@@ -57,11 +57,8 @@ export class LoginComponent implements OnInit {
       next: () => {
         this.inactivityService.iniciar();
         const rol = this.authService.getRol();
-        if (rol === 'admin') {
-          this.router.navigate(['/admin/dashboard']);
-        } else {
-          this.router.navigate(['/dashboard']);
-        }
+        const target = rol === 'admin' ? '/admin' : '/dashboard';
+        this.router.navigate([target]);
       },
       error: (err: any) => {
         this.isLoading = false;
