@@ -1,0 +1,28 @@
+<section class="vf-page">
+  <div class="vf-header">
+    <h1>Validacion de acceso</h1>
+    <p>Escanea el codigo QR para registrar entrada o salida.</p>
+  </div>
+
+  <form class="vf-panel" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="scanner-box">
+      <video #videoPreview muted playsinline></video>
+      <div class="scanner-actions">
+        <button class="vf-btn vf-btn--secondary" type="button" (click)="startScanner()" [disabled]="scanning || loading">
+          {{ scanning ? 'Escaneando...' : 'Escanear con camara' }}
+        </button>
+        <button class="vf-btn vf-btn--secondary" type="button" (click)="stopScanner()" [disabled]="!scanning">
+          Detener camara
+        </button>
+      </div>
+    </div>
+
+    <label class="vf-field">
+      <span>Codigo QR</span>
+      <input formControlName="token" placeholder="Pega o escanea el codigo" />
+    </label>
+    <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
+    <p class="vf-alert vf-alert--success" *ngIf="result">{{ result.message || 'Asistencia registrada correctamente.' }}</p>
+    <button class="vf-btn" type="submit" [disabled]="loading">{{ loading ? 'Validando...' : 'Validar acceso' }}</button>
+  </form>
+</section>

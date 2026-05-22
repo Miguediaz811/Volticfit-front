@@ -1,0 +1,69 @@
+<section class="vf-page">
+  <div class="vf-header">
+    <h1>Sanciones</h1>
+    <p>Listado administrativo e historial visible para el usuario.</p>
+  </div>
+
+  <form class="vf-panel" [formGroup]="form" (ngSubmit)="create()" *ngIf="isAdmin">
+    <h2>Registrar sancion</h2>
+    <div class="vf-grid">
+      <label class="vf-field">
+        <span>Usuario</span>
+        <select formControlName="userId">
+          <option value="">Selecciona un usuario</option>
+          <option *ngFor="let user of users" [value]="user.idUser">{{ userLabel(user) }}</option>
+        </select>
+      </label>
+      <label class="vf-field">
+        <span>Tipo</span>
+        <select formControlName="type">
+          <option value="">Selecciona el tipo</option>
+          <option value="Leve">Leve</option>
+          <option value="Moderada">Moderada</option>
+          <option value="Grave">Grave</option>
+        </select>
+      </label>
+      <label class="vf-field"><span>Inicio</span><input type="date" formControlName="startDate" /></label>
+      <label class="vf-field"><span>Fin</span><input type="date" formControlName="endDate" /></label>
+    </div>
+    <label class="vf-field">
+      <span>Descripcion</span>
+      <textarea formControlName="description" placeholder="Describe el motivo de la sancion"></textarea>
+    </label>
+    <p class="vf-alert vf-alert--success" *ngIf="message">{{ message }}</p>
+    <button class="vf-btn" type="submit" [disabled]="saving">{{ saving ? 'Guardando...' : 'Registrar sancion' }}</button>
+  </form>
+
+  <div class="vf-panel">
+    <p class="vf-muted" *ngIf="loading">Cargando sanciones...</p>
+    <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
+    <p class="vf-empty" *ngIf="!loading && sanctions.length === 0">No hay sanciones registradas.</p>
+
+    <table class="vf-table" *ngIf="sanctions.length > 0">
+      <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>Inicio</th>
+          <th>Fin</th>
+          <th>Estado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let sanction of sanctions">
+          <td>{{ sanction.type }}</td>
+          <td>{{ sanction.startDate }}</td>
+          <td>{{ sanction.endDate }}</td>
+          <td><span class="vf-chip">{{ sanction.state ? 'Activa' : 'Inactiva' }}</span></td>
+          <td><button class="vf-small-btn" type="button" (click)="selected = sanction">Detalle</button></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <article class="vf-card" *ngIf="selected">
+      <h2>Detalle</h2>
+      <p>{{ selected.description }}</p>
+      <button class="vf-small-btn" type="button" (click)="selected = null">Cerrar</button>
+    </article>
+  </div>
+</section>

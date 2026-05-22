@@ -13,19 +13,19 @@ const routes: Routes = [
     loadChildren: () =>
       import('./features/auth/auth.module').then(m => m.AuthModule)
   },
-  // {
-  //   path: 'dashboard',
-  //   loadChildren: () =>
-  //     import('./features/dashboard/dashboard.module').then(m => m.DashboardModule),
-  //   canActivate: [authGuard]
-  // },
-  // {
-  //   path: 'admin',
-  //   loadChildren: () =>
-  //     import('./features/admin/admin.module').then(m => m.AdminModule),
-  //   canActivate: [authGuard],
-  //   data: { roles: ['admin'] }
-  // },
+  {
+    path: 'dashboard',
+    loadChildren: () =>
+      import('./features/dashboard/dashboard.module').then(m => m.DashboardModule),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'admin',
+    loadChildren: () =>
+      import('./features/dashboard/dashboard.module').then(m => m.DashboardModule),
+    canActivate: [authGuard],
+    data: { roles: ['admin'] }
+  },
   {
     path: '**',
     redirectTo: ''
