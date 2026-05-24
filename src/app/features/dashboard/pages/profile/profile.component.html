@@ -67,7 +67,7 @@
           <p class="vf-alert vf-alert--error" *ngIf="passwordForm.get('nuevaContrasena')?.hasError('pattern') && passwordForm.get('nuevaContrasena')?.touched">
             Debe incluir mayuscula, minuscula, numero y caracter especial.
           </p>
-          <p class="vf-alert vf-alert--error" *ngIf="passwordForm.hasError('passwordMismatch') && passwordForm.get('confirmarContrasena')?.touched">
+          <p class="vf-alert vf-alert--error" *ngIf="passwordForm.get('confirmarContrasena')?.hasError('passwordMismatch') && passwordForm.get('confirmarContrasena')?.touched">
             Las contrasenas no coinciden.
           </p>
           <p class="vf-alert vf-alert--error" *ngIf="passwordError">{{ passwordError }}</p>

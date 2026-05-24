@@ -173,7 +173,7 @@
             </app-input>
             <div class="field-errors" *ngIf="form.get('confirmPassword')?.touched">
               <span *ngIf="form.get('confirmPassword')?.hasError('required')">Debe confirmar la contraseña.</span>
-              <span *ngIf="form.hasError('passwordMismatch')">Las contraseñas no coinciden.</span>
+              <span *ngIf="form.get('confirmPassword')?.hasError('passwordMismatch')">Las contraseñas no coinciden.</span>
             </div>
           </div>
 
