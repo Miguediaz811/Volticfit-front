@@ -14,10 +14,12 @@ export class SanctionListComponent implements OnInit {
   sanctions: Sanction[] = [];
   users: UserProfile[] = [];
   selected: Sanction | null = null;
+  showCreateModal = false;
   loading = false;
   saving = false;
   message = '';
   error = '';
+  formError = '';
   readonly isAdmin = this.auth.getRol() === 'admin';
 
   readonly form = this.fb.group({
@@ -67,16 +69,31 @@ export class SanctionListComponent implements OnInit {
   create(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.formError = 'Completa todos los campos de la sancion antes de guardar.';
       return;
     }
 
     this.saving = true;
     this.message = '';
     this.error = '';
+    this.formError = '';
     const values = this.form.getRawValue();
+    const userId = Number(values.userId);
+
+    if (!Number.isFinite(userId) || userId <= 0) {
+      this.formError = 'Selecciona un usuario valido.';
+      this.saving = false;
+      return;
+    }
+
+    if ((values.endDate || '') < (values.startDate || '')) {
+      this.formError = 'La fecha final no puede ser anterior a la fecha inicial.';
+      this.saving = false;
+      return;
+    }
 
     this.api.createSanction({
-      userId: Number(values.userId),
+      userId,
       type: values.type || '',
       description: values.description || '',
       startDate: values.startDate || '',
@@ -92,13 +109,38 @@ export class SanctionListComponent implements OnInit {
           startDate: new Date().toISOString().slice(0, 10),
           endDate: new Date().toISOString().slice(0, 10),
         });
+        this.showCreateModal = false;
         this.load();
       },
       error: err => {
-        this.error = this.friendlyMessage(err.error?.message, 'No se pudo registrar la sancion.');
+        this.formError = this.friendlyMessage(err.error?.message, 'No se pudo registrar la sancion.');
         this.saving = false;
       },
     });
+  }
+
+  openCreateModal(): void {
+    this.message = '';
+    this.error = '';
+    this.formError = '';
+    this.showCreateModal = true;
+    if (this.users.length === 0) {
+      this.loadUsers();
+    }
+  }
+
+  closeCreateModal(): void {
+    if (this.saving) return;
+    this.showCreateModal = false;
+    this.formError = '';
+  }
+
+  openDetailModal(sanction: Sanction): void {
+    this.selected = sanction;
+  }
+
+  closeDetailModal(): void {
+    this.selected = null;
   }
 
   userLabel(user: UserProfile): string {

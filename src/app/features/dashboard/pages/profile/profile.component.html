@@ -18,12 +18,12 @@
         </div>
       </div>
 
-      <form class="profile-form" [formGroup]="form" (ngSubmit)="saveProfile()">
+        <form class="profile-form" [class.is-readonly]="!editing" [formGroup]="form" (ngSubmit)="saveProfile()">
         <div class="vf-grid">
-          <label class="vf-field"><span>Nombres</span><input formControlName="names" [readonly]="!editing" /></label>
-          <label class="vf-field"><span>Apellidos</span><input formControlName="surnames" [readonly]="!editing" /></label>
-          <label class="vf-field"><span>Correo</span><input formControlName="email" [readonly]="!editing" /></label>
-          <label class="vf-field"><span>Telefono</span><input formControlName="phone" [readonly]="!editing" /></label>
+          <label class="vf-field"><span>Nombres</span><input formControlName="names" /></label>
+          <label class="vf-field"><span>Apellidos</span><input formControlName="surnames" /></label>
+          <label class="vf-field"><span>Correo</span><input formControlName="email" /></label>
+          <label class="vf-field"><span>Telefono</span><input type="number" formControlName="phone" /></label>
         </div>
 
         <div class="profile-grid profile-grid--compact">

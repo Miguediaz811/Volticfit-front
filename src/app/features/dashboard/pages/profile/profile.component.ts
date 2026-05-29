@@ -27,10 +27,10 @@ export class ProfileComponent implements OnInit {
   passwordError = '';
 
   readonly form = this.fb.group({
-    names: ['', [Validators.required, Validators.minLength(2)]],
-    surnames: [''],
-    email: ['', [Validators.required, Validators.email]],
-    phone: [''],
+    names: [{ value: '', disabled: true }, [Validators.required, Validators.minLength(2)]],
+    surnames: [{ value: '', disabled: true }],
+    email: [{ value: '', disabled: true }, [Validators.required, Validators.email]],
+    phone: [{ value: '', disabled: true }],
   });
 
   readonly passwordForm = this.fb.group({
@@ -82,6 +82,7 @@ export class ProfileComponent implements OnInit {
 
   startEditing(): void {
     this.editing = true;
+    this.unlockProfileForm();
     this.message = '';
     this.error = '';
   }
@@ -91,6 +92,7 @@ export class ProfileComponent implements OnInit {
       this.patchForm(this.profile);
     }
     this.editing = false;
+    this.lockProfileForm();
   }
 
   saveProfile(): void {
@@ -108,13 +110,14 @@ export class ProfileComponent implements OnInit {
       names: values.names || '',
       surnames: values.surnames || '',
       email: values.email || '',
-      phone: values.phone || '',
+      phone: values.phone ? Number(values.phone) : undefined,
       docType: this.profile.docType || '',
       docNumber: this.profile.docNumber || this.profile.docNum || '',
     }).subscribe({
       next: response => {
         this.message = response.message || 'Perfil actualizado.';
         this.editing = false;
+        this.lockProfileForm();
         this.saving = false;
         this.loadProfile();
       },
@@ -183,8 +186,25 @@ export class ProfileComponent implements OnInit {
       names: profile.names || '',
       surnames: profile.surnames || '',
       email: profile.email || '',
-      phone: profile.phone || '',
+      phone: profile.phone ? String(profile.phone) : '',
     });
+    if (!this.editing) {
+      this.lockProfileForm();
+    }
+  }
+
+  private lockProfileForm(): void {
+    this.form.controls.names.disable();
+    this.form.controls.surnames.disable();
+    this.form.controls.email.disable();
+    this.form.controls.phone.disable();
+  }
+
+  private unlockProfileForm(): void {
+    this.form.controls.names.enable();
+    this.form.controls.surnames.enable();
+    this.form.controls.email.enable();
+    this.form.controls.phone.enable();
   }
 
   private friendlyMessage(message: string | undefined, fallback: string): string {

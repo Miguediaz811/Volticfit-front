@@ -3,7 +3,7 @@ export interface UserProfile {
   names: string;
   surnames?: string;
   email: string;
-  phone?: string;
+  phone?: string | number;
   docNum?: string;
   docNumber?: string;
   docType?: string;
@@ -60,4 +60,5 @@ export interface Reservation {
   startTime: string;
   endTime: string;
   state: boolean;
+  user?: UserProfile;
 }

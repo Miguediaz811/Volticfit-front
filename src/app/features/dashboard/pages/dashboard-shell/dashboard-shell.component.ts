@@ -29,7 +29,7 @@ export class DashboardShellComponent {
     { label: 'Dashboard', route: './', roles: ['admin'], section: 'Principal' },
     { label: 'Usuarios', route: './users', roles: ['admin'], section: 'Gestion' },
     { label: 'Sanciones', route: './sanctions', roles: ['admin'], section: 'Gestion' },
-    { label: 'Turnos disponibles', route: './reservations', roles: ['admin'], section: 'Gestion' },
+    { label: 'Administrar reservas', route: './reservations', roles: ['admin'], section: 'Gestion' },
     { label: 'Registro manual', route: './manual-attendance', roles: ['admin'], section: 'Asistencia' },
     { label: 'Escanear QR', route: './access', roles: ['admin', 'funcionario'], section: 'Asistencia' },
     { label: 'Perfil', route: './profile', roles: ['admin'], section: 'Cuenta' },

@@ -49,36 +49,43 @@
     </table>
   </div>
 
-  <form class="vf-panel" [formGroup]="form" (ngSubmit)="save()" *ngIf="selected">
-    <h2>Detalle de usuario</h2>
-    <div class="vf-grid">
-      <label class="vf-field"><span>Nombres</span><input formControlName="names" [readonly]="!editing" /></label>
-      <label class="vf-field"><span>Apellidos</span><input formControlName="surnames" [readonly]="!editing" /></label>
-      <label class="vf-field"><span>Tipo documento</span><input formControlName="docType" [readonly]="!editing" /></label>
-      <label class="vf-field"><span>Documento</span><input formControlName="docNumber" [readonly]="!editing" /></label>
-      <label class="vf-field"><span>Correo</span><input formControlName="email" [readonly]="!editing" /></label>
-      <label class="vf-field"><span>Telefono</span><input formControlName="phone" [readonly]="!editing" /></label>
-      <label class="vf-field">
-        <span>Rol</span>
-        <select formControlName="role">
-          <option value="admin">Administrador</option>
-          <option value="aprendiz">Aprendiz</option>
-          <option value="funcionario">Funcionario</option>
-        </select>
-      </label>
-      <label class="vf-field">
-        <span>Estado</span>
-        <select formControlName="state">
-          <option value="true">Activo</option>
-          <option value="false">Inactivo</option>
-        </select>
-      </label>
-    </div>
+  <div class="vf-modal-backdrop" *ngIf="selected" (click)="closeUserModal()">
+    <form class="vf-modal" [class.is-readonly]="!editing" [formGroup]="form" (ngSubmit)="save()" (click)="$event.stopPropagation()">
+      <div class="vf-modal-header">
+        <h2>Detalle de usuario</h2>
+        <button class="vf-icon-btn" type="button" aria-label="Cerrar" (click)="closeUserModal()">X</button>
+      </div>
 
-    <div class="vf-actions">
-      <button class="vf-btn vf-btn--secondary" type="button" *ngIf="!editing" (click)="startEditing()">Editar</button>
-      <button class="vf-btn" type="submit" *ngIf="editing" [disabled]="loading">Guardar cambios</button>
-      <button class="vf-btn vf-btn--secondary" type="button" *ngIf="editing" (click)="cancelEditing()">Cancelar</button>
-    </div>
-  </form>
+      <div class="vf-grid">
+        <label class="vf-field"><span>Nombres</span><input formControlName="names" /></label>
+        <label class="vf-field"><span>Apellidos</span><input formControlName="surnames" /></label>
+        <label class="vf-field"><span>Tipo documento</span><input formControlName="docType" /></label>
+        <label class="vf-field"><span>Documento</span><input formControlName="docNumber" /></label>
+        <label class="vf-field"><span>Correo</span><input formControlName="email" /></label>
+        <label class="vf-field"><span>Telefono</span><input type="number" formControlName="phone" /></label>
+        <label class="vf-field">
+          <span>Rol</span>
+          <select formControlName="role">
+            <option value="admin">Administrador</option>
+            <option value="aprendiz">Aprendiz</option>
+            <option value="funcionario">Funcionario</option>
+          </select>
+        </label>
+        <label class="vf-field">
+          <span>Estado</span>
+          <select formControlName="state">
+            <option value="true">Activo</option>
+            <option value="false">Inactivo</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="vf-actions">
+        <button class="vf-btn vf-btn--secondary" type="button" *ngIf="!editing" (click)="startEditing()">Editar</button>
+        <button class="vf-btn" type="submit" *ngIf="editing" [disabled]="loading">Guardar cambios</button>
+        <button class="vf-btn vf-btn--secondary" type="button" *ngIf="editing" (click)="cancelEditing()">Cancelar</button>
+        <button class="vf-btn vf-btn--secondary" type="button" *ngIf="!editing" (click)="closeUserModal()">Cerrar</button>
+      </div>
+    </form>
+  </div>
 </section>

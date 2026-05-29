@@ -192,6 +192,13 @@ textarea {
   gap: 18px;
 }
 
+.vf-panel-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
 .vf-card {
   padding: 16px;
   display: grid;
@@ -321,6 +328,17 @@ textarea {
   cursor: not-allowed;
 }
 
+.vf-icon-btn {
+  width: 34px;
+  height: 34px;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background: #303030;
+  color: #f8fafc;
+  cursor: pointer;
+  font-weight: 800;
+}
+
 .vf-alert {
   border-radius: 8px;
   padding: 12px 14px;
@@ -369,6 +387,45 @@ textarea {
   color: #f5a623;
   font-size: .78rem;
   text-transform: uppercase;
+}
+
+.vf-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(0, 0, 0, .68);
+}
+
+.vf-modal {
+  width: min(760px, 100%);
+  max-height: min(86vh, 760px);
+  overflow: auto;
+  display: grid;
+  gap: 18px;
+  padding: 22px;
+  border: 1px solid #3d3d3d;
+  border-radius: 8px;
+  background: #242424;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, .45);
+}
+
+.vf-modal--small {
+  width: min(520px, 100%);
+}
+
+.vf-modal-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.vf-modal-header h2 {
+  font-size: 1.2rem;
+  line-height: 1.2;
 }
 
 .vf-qr {
@@ -457,5 +514,19 @@ app-sanction-alert p {
 
   .vf-main {
     padding: 20px;
+  }
+
+  .vf-panel-heading {
+    display: grid;
+  }
+
+  .vf-modal-backdrop {
+    align-items: end;
+    padding: 12px;
+  }
+
+  .vf-modal {
+    max-height: 90vh;
+    padding: 18px;
   }
 }

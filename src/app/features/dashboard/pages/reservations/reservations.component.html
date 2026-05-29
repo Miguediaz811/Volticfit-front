@@ -1,12 +1,12 @@
 <section class="vf-page">
   <div class="vf-header">
-    <h1>Horarios, reservas y aforo</h1>
-    <p>Consulta disponibilidad, reserva turnos y visualiza cupos por franja.</p>
+    <h1>{{ isAdmin ? 'Administrar reservas' : 'Horarios, reservas y aforo' }}</h1>
+    <p>{{ isAdmin ? 'Consulta la disponibilidad de turnos y cupos por franja.' : 'Consulta disponibilidad, reserva turnos y visualiza cupos por franja.' }}</p>
   </div>
 
   <div class="vf-panel">
     <form class="vf-actions" [formGroup]="form" (ngSubmit)="loadShifts()">
-      <label class="vf-field vf-field--inline"><span>Fecha</span><input type="date" formControlName="date" /></label>
+      <label class="vf-field vf-field--inline"><span>Fecha</span><input type="date" formControlName="date" [min]="minDate" /></label>
       <button class="vf-btn" type="submit" [disabled]="loading">Consultar</button>
     </form>
 
@@ -19,10 +19,11 @@
         <span class="vf-chip">{{ shift.available === false ? 'Completo' : 'Disponible' }}</span>
         <h2>{{ shift.startTime || 'Inicio' }} - {{ shift.endTime || 'Fin' }}</h2>
         <p>Cupos: {{ shift.availableSpots ?? 'Por confirmar' }} / {{ shift.totalSpots ?? shift.capacity ?? '-' }}</p>
-        <button class="vf-small-btn" type="button" (click)="reserve(shift)" [disabled]="shift.available === false">Reservar</button>
+        <button class="vf-small-btn" type="button" (click)="reserve(shift)" [disabled]="shift.available === false" *ngIf="!isAdmin">Reservar</button>
       </article>
     </div>
 
+    <ng-container *ngIf="!isAdmin">
     <h2>Mis reservas activas</h2>
     <p class="vf-empty" *ngIf="reservations.length === 0">No tienes reservas activas.</p>
     <table class="vf-table" *ngIf="reservations.length > 0">
@@ -43,5 +44,33 @@
         </tr>
       </tbody>
     </table>
+    </ng-container>
+
+    <ng-container *ngIf="isAdmin">
+      <h2>Reservas de usuarios</h2>
+      <p class="vf-empty" *ngIf="adminReservations.length === 0">No hay reservas activas para mostrar.</p>
+      <table class="vf-table" *ngIf="adminReservations.length > 0">
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Documento</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Estado</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let reservation of adminReservations">
+            <td>{{ userName(reservation) }}</td>
+            <td>{{ userDocument(reservation) }}</td>
+            <td>{{ reservation.date }}</td>
+            <td>{{ reservation.startTime }} - {{ reservation.endTime }}</td>
+            <td><span class="vf-chip">{{ reservation.state ? 'Activa' : 'Cancelada' }}</span></td>
+            <td><button class="vf-small-btn vf-small-btn--danger" type="button" (click)="cancelReservation(reservation)" [disabled]="!reservation.state">Cancelar</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </ng-container>
   </div>
 </section>
