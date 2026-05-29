@@ -36,7 +36,7 @@ export class ManualAttendanceComponent {
         this.loading = false;
       },
       error: err => {
-        this.error = this.friendlyMessage(err.error?.message, 'No se encontro el usuario.');
+        this.error = this.friendlyMessage(this.errorMessage(err), 'No se encontro el usuario.');
         this.loading = false;
       },
     });
@@ -58,15 +58,22 @@ export class ManualAttendanceComponent {
         this.form.reset();
       },
       error: err => {
-        this.error = this.friendlyMessage(err.error?.message, 'No se pudo registrar la asistencia.');
+        this.error = this.friendlyMessage(this.errorMessage(err), 'No se pudo registrar la asistencia.');
         this.loading = false;
       },
     });
   }
 
+  private errorMessage(err: any): string | undefined {
+    return err?.error?.message || err?.error?.error;
+  }
+
   private friendlyMessage(message: string | undefined, fallback: string): string {
     const text = (message || '').toLowerCase();
     if (!text) return fallback;
+    if (text.includes('authorization') || text.includes('token') || text.includes('sesion') || text.includes('session')) {
+      return 'Tu sesion no esta activa. Vuelve a iniciar sesion.';
+    }
     if (text.includes('document') || text.includes('usuario')) {
       return 'No se encontro un usuario con ese documento.';
     }

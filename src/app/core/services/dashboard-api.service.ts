@@ -96,6 +96,10 @@ export class DashboardApiService {
     return this.http.get<Reservation[]>(`${this.apiUrl}/api/reservations/my-reservations`);
   }
 
+  getAllReservations(): Observable<Reservation[]> {
+    return this.http.get<Reservation[]>(`${this.apiUrl}/api/reservations/all`);
+  }
+
   cancelReservation(id: number): Observable<MessageResponse> {
     return this.http.delete<MessageResponse>(`${this.apiUrl}/api/reservations/${id}`);
   }

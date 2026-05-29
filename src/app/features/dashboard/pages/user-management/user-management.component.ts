@@ -19,12 +19,12 @@ export class UserManagementComponent implements OnInit {
   searchTerm = '';
 
   readonly form = this.fb.group({
-    names: ['', [Validators.required, Validators.minLength(2)]],
-    surnames: [''],
-    docType: [''],
-    docNumber: [''],
-    email: ['', [Validators.required, Validators.email]],
-    phone: [''],
+    names: [{ value: '', disabled: true }, [Validators.required, Validators.minLength(2)]],
+    surnames: [{ value: '', disabled: true }],
+    docType: [{ value: '', disabled: true }],
+    docNumber: [{ value: '', disabled: true }],
+    email: [{ value: '', disabled: true }, [Validators.required, Validators.email]],
+    phone: [{ value: '', disabled: true }],
     role: [{ value: '', disabled: true }],
     state: [{ value: 'true', disabled: true }],
   });
@@ -70,7 +70,7 @@ export class UserManagementComponent implements OnInit {
       docType: user.docType || '',
       docNumber: user.docNumber || user.docNum || '',
       email: user.email || '',
-      phone: user.phone || '',
+      phone: user.phone ? String(user.phone) : '',
       role: this.normalizedRole(user),
       state: String(user.state !== false),
     });
@@ -97,7 +97,7 @@ export class UserManagementComponent implements OnInit {
       docType: values.docType || '',
       docNumber: values.docNumber || '',
       email: values.email || '',
-      phone: values.phone || '',
+      phone: values.phone ? Number(values.phone) : undefined,
     });
 
     const updateRole$ = requestedRole !== currentRole
@@ -162,8 +162,7 @@ export class UserManagementComponent implements OnInit {
 
   startEditing(): void {
     this.editing = true;
-    this.form.controls.role.enable();
-    this.form.controls.state.enable();
+    this.unlockForm();
   }
 
   cancelEditing(): void {
@@ -172,9 +171,33 @@ export class UserManagementComponent implements OnInit {
     }
   }
 
+  closeUserModal(): void {
+    if (this.loading) return;
+    this.selected = null;
+    this.editing = false;
+    this.lockAdminControls();
+  }
+
   private lockAdminControls(): void {
+    this.form.controls.names.disable();
+    this.form.controls.surnames.disable();
+    this.form.controls.docType.disable();
+    this.form.controls.docNumber.disable();
+    this.form.controls.email.disable();
+    this.form.controls.phone.disable();
     this.form.controls.role.disable();
     this.form.controls.state.disable();
+  }
+
+  private unlockForm(): void {
+    this.form.controls.names.enable();
+    this.form.controls.surnames.enable();
+    this.form.controls.docType.enable();
+    this.form.controls.docNumber.enable();
+    this.form.controls.email.enable();
+    this.form.controls.phone.enable();
+    this.form.controls.role.enable();
+    this.form.controls.state.enable();
   }
 
   private normalize(value: string): string {

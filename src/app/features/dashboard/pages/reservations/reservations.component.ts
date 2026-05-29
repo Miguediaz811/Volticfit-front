@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { DashboardApiService } from '../../../../core/services/dashboard-api.service';
 import { Reservation, ShiftResponse } from '../../../../shared/interfaces/dashboard.interface';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-reservations',
@@ -12,24 +13,37 @@ export class ReservationsComponent implements OnInit {
   private allShifts: ShiftResponse[] = [];
   shifts: ShiftResponse[] = [];
   reservations: Reservation[] = [];
+  adminReservations: Reservation[] = [];
   loading = false;
   message = '';
   error = '';
+  readonly isAdmin = this.auth.getRol() === 'admin';
+  readonly minDate = new Date().toISOString().slice(0, 10);
 
   readonly form = this.fb.group({
     date: [new Date().toISOString().slice(0, 10), Validators.required],
   });
 
-  constructor(private fb: FormBuilder, private api: DashboardApiService) {}
+  constructor(private fb: FormBuilder, private api: DashboardApiService, private auth: AuthService) {}
 
   ngOnInit(): void {
     this.loadShifts();
-    this.loadReservations();
+    if (this.isAdmin) {
+      this.loadAdminReservations();
+    } else {
+      this.loadReservations();
+    }
   }
 
   loadShifts(): void {
     const date = this.form.value.date || '';
     if (!date) return;
+    if (date < this.minDate) {
+      this.error = 'Selecciona una fecha desde hoy en adelante.';
+      this.shifts = [];
+      return;
+    }
+
     this.loading = true;
     this.error = '';
     this.api.getAvailableShifts(date).subscribe({
@@ -47,9 +61,16 @@ export class ReservationsComponent implements OnInit {
   }
 
   reserve(shift: ShiftResponse): void {
+    if (this.isAdmin) return;
+
     const startTime = shift.startTime;
     const date = this.form.value.date || '';
     if (!startTime || !date || shift.available === false) return;
+    if (date < this.minDate) {
+      this.error = 'Selecciona una fecha desde hoy en adelante.';
+      return;
+    }
+
     this.loading = true;
     this.api.createReservation(date, startTime).subscribe({
       next: response => {
@@ -74,7 +95,11 @@ export class ReservationsComponent implements OnInit {
       next: response => {
         this.message = response.message || 'Reserva cancelada.';
         this.loading = false;
-        this.loadReservations();
+        if (this.isAdmin) {
+          this.loadAdminReservations();
+        } else {
+          this.loadReservations();
+        }
         this.loadShifts();
       },
       error: err => {
@@ -85,6 +110,8 @@ export class ReservationsComponent implements OnInit {
   }
 
   loadReservations(): void {
+    if (this.isAdmin) return;
+
     this.api.getMyReservations().subscribe({
       next: reservations => {
         this.reservations = reservations;
@@ -94,7 +121,38 @@ export class ReservationsComponent implements OnInit {
     });
   }
 
+  loadAdminReservations(): void {
+    if (!this.isAdmin) return;
+
+    this.api.getAllReservations().subscribe({
+      next: reservations => {
+        this.adminReservations = reservations;
+      },
+      error: err => {
+        this.adminReservations = [];
+        this.error = this.friendlyMessage(err.error?.message, 'No se pudieron cargar las reservas registradas.');
+      },
+    });
+  }
+
+  userName(reservation: Reservation): string {
+    const user = reservation.user;
+    if (!user) return 'Usuario';
+    return `${user.names || ''} ${user.surnames || ''}`.trim() || user.email || 'Usuario';
+  }
+
+  userDocument(reservation: Reservation): string {
+    const user = reservation.user;
+    if (!user) return '-';
+    return `${user.docType || ''} ${user.docNumber || user.docNum || ''}`.trim() || '-';
+  }
+
   private applyReservedShiftFilter(): void {
+    if (this.isAdmin) {
+      this.shifts = this.allShifts;
+      return;
+    }
+
     const selectedDate = this.form.value.date || '';
     this.shifts = this.allShifts.filter(shift => !this.hasActiveReservation(selectedDate, shift.startTime));
   }

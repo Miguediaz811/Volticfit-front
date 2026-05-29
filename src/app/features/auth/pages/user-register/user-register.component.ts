@@ -63,7 +63,7 @@ export class RegisterComponent implements OnInit {
         Validators.pattern(RegexPatterns.passwordVoltic)
       ]],
       confirmPassword: ['', [Validators.required]]
-    }, { validators: passwordMatchValidator() });
+    }, { validators: passwordMatchValidator('password', 'confirmPassword') });
   }
 
   onSubmit(): void {

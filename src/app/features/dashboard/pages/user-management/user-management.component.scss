@@ -13,3 +13,9 @@
     grid-template-columns: 1fr;
   }
 }
+
+.is-readonly input,
+.is-readonly select {
+  opacity: 0.72;
+  cursor: default;
+}
