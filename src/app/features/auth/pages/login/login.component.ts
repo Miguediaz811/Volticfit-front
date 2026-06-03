@@ -14,20 +14,20 @@ import { RegexPatterns } from '../../../../shared/validators/regex.constants';
 export class LoginComponent implements OnInit {
 
   form: FormGroup;
-  isLoading      = false;
-  errorMessage   = '';
-  showPassword   = false;
+  isLoading = false;
+  errorMessage = '';
+  showPassword = false;
   sesionExpirada = false;
 
   constructor(
-    private fb:                FormBuilder,
-    private authService:       AuthService,
+    private fb: FormBuilder,
+    private authService: AuthService,
     private inactivityService: InactivityService,
-    private router:            Router,
-    private route:             ActivatedRoute
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.form = this.fb.group({
-      correo:     ['', [Validators.required, Validators.pattern(RegexPatterns.email)]],
+      correo: ['', [Validators.required, Validators.pattern(RegexPatterns.email)]],
       contrasena: ['', [Validators.required, Validators.minLength(8)]]
     });
   }
@@ -38,18 +38,18 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  get correo()     { return this.form.get('correo')!; }
+  get correo() { return this.form.get('correo')!; }
   get contrasena() { return this.form.get('contrasena')!; }
 
   onSubmit(): void {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
 
-    this.isLoading      = true;
-    this.errorMessage   = '';
+    this.isLoading = true;
+    this.errorMessage = '';
     this.sesionExpirada = false;
 
     const loginData: LoginRequest = {
-      email:    this.form.value.correo,
+      email: this.form.value.correo,
       password: this.form.value.contrasena,
     };
 
@@ -62,18 +62,18 @@ export class LoginComponent implements OnInit {
       },
       error: (err: any) => {
         this.isLoading = false;
-        const msg: string = (err.error?.message ?? '').toLowerCase();
-
-        if (msg.includes('inactive')) {
-          this.errorMessage = 'Tu cuenta está inactiva. Contacta al administrador.';
-        } else if (msg.includes('contraseña incorrecta')) {
-          this.errorMessage = 'La contraseña es incorrecta.';
-        } else if (msg.includes('usuario no encontrado')) {
-          this.errorMessage = 'No existe una cuenta con ese correo.';
-        } else {
-          this.errorMessage = 'Ocurrió un error. Intente nuevamente.';
-        }
+        this.errorMessage = this.serverMessage(err, 'Ocurrió un error. Intente nuevamente.');
       }
     });
+  }
+
+  private serverMessage(err: any, fallback: string): string {
+    const message = err?.error?.message || err?.error?.error || err?.message;
+
+    if (err?.status === 0 || message === 'Failed to fetch') {
+      return 'No se pudo conectar con el servidor. Intente nuevamente.';
+    }
+
+    return message || fallback;
   }
 }

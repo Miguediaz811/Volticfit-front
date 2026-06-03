@@ -1,0 +1,175 @@
+<section class="diagnosis-page">
+  <header class="diagnosis-header">
+    <div>
+      <p class="eyebrow">Evaluación física</p>
+      <h1>Diagnóstico y restricciones</h1>
+      <p>Consulta diagnósticos físicos y gestiona restricciones médicas asociadas.</p>
+    </div>
+  </header>
+
+  <p class="vf-alert vf-alert--success" *ngIf="message">{{ message }}</p>
+  <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
+
+  <section class="panel" *ngIf="isAdmin">
+    <label>
+      <span>Usuario</span>
+      <select [(ngModel)]="selectedUserId" (change)="onUserChange()">
+        <option *ngFor="let user of users" [ngValue]="user.idUser">
+          {{ user.names }} {{ user.surnames || '' }} - {{ user.email }}
+        </option>
+      </select>
+    </label>
+  </section>
+
+  <section class="panel" *ngIf="isAdmin">
+    <h2>Nuevo diagnóstico</h2>
+    <form class="form-grid" [formGroup]="diagnosisForm" (ngSubmit)="saveDiagnosis()">
+      <label>
+        <span>Fecha</span>
+        <input type="date" formControlName="date" />
+      </label>
+      <label>
+        <span>Evaluador</span>
+        <input type="text" formControlName="evaluator" placeholder="Nombre del evaluador" />
+      </label>
+      <label>
+        <span>Sexo</span>
+        <select formControlName="gender">
+          <option value="">Selecciona...</option>
+          <option value="Femenino">Femenino</option>
+          <option value="Masculino">Masculino</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </label>
+      <label>
+        <span>Edad</span>
+        <input type="number" formControlName="age" min="1" />
+      </label>
+      <label>
+        <span>Altura en metros *</span>
+        <input type="number" formControlName="height" min="0.1" step="0.01" />
+      </label>
+      <label>
+        <span>Peso en kg *</span>
+        <input type="number" formControlName="weight" min="1" step="0.1" />
+      </label>
+      <label>
+        <span>Porcentaje de grasa</span>
+        <input type="number" formControlName="fatPercentage" min="0" step="0.1" />
+      </label>
+      <label>
+        <span>Masa muscular</span>
+        <input type="number" formControlName="muscleMass" min="0" step="0.1" />
+      </label>
+      <label class="span-2">
+        <span>Observaciones</span>
+        <textarea formControlName="observations" placeholder="Observaciones generales del diagnóstico"></textarea>
+      </label>
+      <button class="vf-btn span-2" type="submit" [disabled]="savingDiagnosis || diagnosisForm.invalid">
+        {{ savingDiagnosis ? 'Guardando...' : 'Guardar diagnóstico' }}
+      </button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <div class="section-title">
+      <h2>Diagnósticos</h2>
+      <button class="vf-btn vf-btn--secondary" type="button" (click)="loadDiagnoses()" [disabled]="loading">
+        Actualizar
+      </button>
+    </div>
+
+    <p class="vf-muted" *ngIf="loading">Cargando diagnósticos...</p>
+
+    <div class="diagnosis-list" *ngIf="!loading && diagnoses.length">
+      <article
+        class="diagnosis-card"
+        *ngFor="let diagnosis of diagnoses"
+        [class.is-active]="selectedDiagnosis?.idDiagnosis === diagnosis.idDiagnosis"
+      >
+        <button class="diagnosis-card__main" type="button" (click)="loadRestrictions(diagnosis)">
+          <strong>{{ diagnosis.date || 'Sin fecha' }}</strong>
+          <span>IMC: {{ diagnosis.imc || 'Pendiente' }}</span>
+          <span>Peso: {{ diagnosis.weight || '-' }} kg</span>
+        </button>
+        <button
+          class="vf-btn vf-btn--danger"
+          type="button"
+          *ngIf="isAdmin"
+          (click)="deleteDiagnosis(diagnosis)"
+        >
+          Eliminar
+        </button>
+      </article>
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && !diagnoses.length">
+      <h3>No hay diagnósticos registrados</h3>
+      <p>Cuando exista un diagnóstico, sus restricciones aparecerán aquí.</p>
+    </div>
+  </section>
+
+  <section class="panel" *ngIf="selectedDiagnosis">
+    <div class="section-title">
+      <h2>Restricciones médicas</h2>
+      <span class="selected-tag">Diagnóstico #{{ selectedDiagnosis.idDiagnosis }}</span>
+    </div>
+
+    <form class="restriction-form" [formGroup]="restrictionForm" (ngSubmit)="saveRestriction()" *ngIf="isAdmin">
+      <label>
+        <span>Tipo *</span>
+        <input type="text" formControlName="type" placeholder="Ej. Lesión, movilidad, cardiaco" />
+      </label>
+      <label>
+        <span>Descripción *</span>
+        <textarea formControlName="description" placeholder="Describe la restricción médica"></textarea>
+      </label>
+      <div class="date-row">
+        <label>
+          <span>Inicio</span>
+          <input type="date" formControlName="startDate" />
+        </label>
+        <label>
+          <span>Fin</span>
+          <input type="date" formControlName="endDate" />
+        </label>
+        <label>
+          <span>Estado</span>
+          <select formControlName="state">
+            <option [ngValue]="true">Activa</option>
+            <option [ngValue]="false">Inactiva</option>
+          </select>
+        </label>
+      </div>
+      <div class="actions">
+        <button class="vf-btn" type="submit" [disabled]="savingRestriction || restrictionForm.invalid">
+          {{ savingRestriction ? 'Guardando...' : (editingRestriction ? 'Actualizar restricción' : 'Crear restricción') }}
+        </button>
+        <button class="vf-btn vf-btn--secondary" type="button" *ngIf="editingRestriction" (click)="cancelRestrictionEdit()">
+          Cancelar edición
+        </button>
+      </div>
+    </form>
+
+    <div class="restriction-list" *ngIf="restrictions.length">
+      <article class="restriction-card" *ngFor="let restriction of restrictions">
+        <div>
+          <strong>{{ restriction.type }}</strong>
+          <p>{{ restriction.description }}</p>
+          <small>
+            {{ restriction.startDate || 'Sin inicio' }} - {{ restriction.endDate || 'Sin fin' }}
+          </small>
+        </div>
+        <div class="actions" *ngIf="isAdmin">
+          <button class="vf-btn vf-btn--secondary" type="button" (click)="editRestriction(restriction)">Editar</button>
+          <button class="vf-btn vf-btn--danger" type="button" (click)="deleteRestriction(restriction)">Eliminar</button>
+        </div>
+      </article>
+    </div>
+
+    <div class="empty-state" *ngIf="!restrictions.length">
+      <h3>No hay restricciones asociadas</h3>
+      <p>Este diagnóstico todavía no tiene restricciones médicas registradas.</p>
+    </div>
+  </section>
+</section>

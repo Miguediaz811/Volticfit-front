@@ -36,7 +36,7 @@ export class ManualAttendanceComponent {
         this.loading = false;
       },
       error: err => {
-        this.error = this.friendlyMessage(this.errorMessage(err), 'No se encontro el usuario.');
+        this.error = this.serverMessage(err, 'No se encontro el usuario.');
         this.loading = false;
       },
     });
@@ -58,34 +58,19 @@ export class ManualAttendanceComponent {
         this.form.reset();
       },
       error: err => {
-        this.error = this.friendlyMessage(this.errorMessage(err), 'No se pudo registrar la asistencia.');
+        this.error = this.serverMessage(err, 'No se pudo registrar la asistencia.');
         this.loading = false;
       },
     });
   }
 
-  private errorMessage(err: any): string | undefined {
-    return err?.error?.message || err?.error?.error;
-  }
+  private serverMessage(err: any, fallback: string): string {
+    const message = err?.error?.message || err?.error?.error || err?.message;
 
-  private friendlyMessage(message: string | undefined, fallback: string): string {
-    const text = (message || '').toLowerCase();
-    if (!text) return fallback;
-    if (text.includes('authorization') || text.includes('token') || text.includes('sesion') || text.includes('session')) {
-      return 'Tu sesion no esta activa. Vuelve a iniciar sesion.';
+    if (err?.status === 0 || message === 'Failed to fetch') {
+      return 'No se pudo conectar con el servidor. Intente nuevamente.';
     }
-    if (text.includes('document') || text.includes('usuario')) {
-      return 'No se encontro un usuario con ese documento.';
-    }
-    if (text.includes('blocked') || text.includes('sancion')) {
-      return 'Acceso bloqueado por sancion activa.';
-    }
-    if (text.includes('entry') || text.includes('entrada')) {
-      return 'Entrada registrada correctamente.';
-    }
-    if (text.includes('exit') || text.includes('salida')) {
-      return 'Salida registrada correctamente.';
-    }
+
     return message || fallback;
   }
 }

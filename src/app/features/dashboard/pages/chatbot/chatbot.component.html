@@ -1,0 +1,31 @@
+<aside class="chat-widget" [class.is-collapsed]="!isOpen" aria-label="Asistente Voltic">
+  <button class="chat-toggle" type="button" (click)="toggle()" [attr.aria-expanded]="isOpen">
+    <span class="status-dot"></span>
+    <span>
+      <strong>Asistente Voltic</strong>
+      <small>En línea · responde al instante</small>
+    </span>
+    <span class="toggle-icon">{{ isOpen ? '▼' : '▲' }}</span>
+  </button>
+
+  <section class="chat-body" *ngIf="isOpen">
+    <div class="message-list">
+      <article class="message" *ngFor="let message of messages" [class.message--user]="message.role === 'user'">
+        <p>{{ message.text }}</p>
+      </article>
+
+      <article class="message" *ngIf="loading">
+        <p>Escribiendo respuesta...</p>
+      </article>
+
+      <p class="chat-error" *ngIf="error">{{ error }}</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="send()" class="chat-form">
+      <input type="text" formControlName="message" placeholder="Escribe tu mensaje..." />
+      <button type="submit" [disabled]="loading || form.invalid" aria-label="Enviar mensaje">
+        ➤
+      </button>
+    </form>
+  </section>
+</aside>

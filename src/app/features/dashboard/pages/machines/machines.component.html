@@ -1,0 +1,68 @@
+<section class="machines-page">
+  <header class="machines-header">
+    <div>
+      <p class="eyebrow">Inventario</p>
+      <h1>Máquinas</h1>
+      <p>Registra y consulta las máquinas disponibles en el gimnasio.</p>
+    </div>
+  </header>
+
+  <p class="vf-alert vf-alert--success" *ngIf="message">{{ message }}</p>
+  <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
+
+  <section class="panel">
+    <h2>Nueva máquina</h2>
+    <form [formGroup]="form" (ngSubmit)="save()" class="machine-form">
+      <label>
+        <span>Nombre *</span>
+        <input type="text" formControlName="name" placeholder="Ej. Prensa de pierna" />
+      </label>
+
+      <label>
+        <span>Tipo *</span>
+        <input type="text" formControlName="type" placeholder="Ej. Fuerza, cardio, movilidad" />
+      </label>
+
+      <label>
+        <span>Estado *</span>
+        <select formControlName="state">
+          <option [ngValue]="true">Activa</option>
+          <option [ngValue]="false">Inactiva</option>
+        </select>
+      </label>
+
+      <button class="vf-btn" type="submit" [disabled]="saving || form.invalid">
+        {{ saving ? 'Guardando...' : 'Registrar máquina' }}
+      </button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <div class="section-title">
+      <h2>Máquinas registradas</h2>
+      <button class="vf-btn vf-btn--secondary" type="button" (click)="loadMachines()" [disabled]="loading">
+        Actualizar
+      </button>
+    </div>
+
+    <p class="vf-muted" *ngIf="loading">Cargando máquinas...</p>
+
+    <div class="machine-list" *ngIf="!loading && machines.length">
+      <article class="machine-card" *ngFor="let machine of machines">
+        <div>
+          <h3>{{ machine.name }}</h3>
+          <p>{{ machine.type }}</p>
+          <small>Registro: {{ machine.registrationDate || 'Sin fecha' }}</small>
+        </div>
+        <span [class.is-inactive]="machine.state === false">
+          {{ machine.state === false ? 'Inactiva' : 'Activa' }}
+        </span>
+      </article>
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && !machines.length">
+      <h3>No hay máquinas registradas</h3>
+      <p>Cuando agregues una máquina aparecerá en este listado.</p>
+    </div>
+  </section>
+</section>

@@ -51,8 +51,9 @@ export class OverviewComponent implements OnInit {
         const availableSpots = data.shifts.reduce((total, shift) => total + (shift.availableSpots ?? 0), 0);
 
         if (this.rol === 'admin' && 'users' in data) {
+          const registeredUsers = data.users.filter(user => !this.isAdminUser(user)).length;
           this.adminStats = [
-            { label: 'Usuarios registrados', value: String(data.users.length), note: 'segun listado actual', tone: 'green' },
+            { label: 'Usuarios registrados', value: String(registeredUsers), note: 'segun listado actual', tone: 'green' },
             { label: 'Sanciones activas', value: String(activeSanctions), note: 'requieren seguimiento', tone: 'orange' },
             { label: 'Turnos disponibles', value: String(availableSpots), note: 'cupos para hoy', tone: 'gold' },
           ];
@@ -79,5 +80,10 @@ export class OverviewComponent implements OnInit {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${date.getFullYear()}-${month}-${day}`;
+  }
+
+  private isAdminUser(user: UserProfile): boolean {
+    const role = typeof user.role === 'string' ? user.role : user.role?.name;
+    return (role || '').toLowerCase().replace(/^role_/, '') === 'admin';
   }
 }

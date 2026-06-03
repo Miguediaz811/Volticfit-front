@@ -1,18 +1,51 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
+interface LandingStats {
+  activeMembers: number;
+  availableEquipment: number;
+  experienceYears: number;
+}
  
 @Component({
   selector: 'app-landing',
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.scss']
 })
-export class LandingComponent {
+export class LandingComponent implements OnInit {
+  private readonly apiUrl = 'http://localhost:9090';
  
   stats = [
-    { value: '000+', label: 'Miembros activos' },
-    { value: '00+', label: 'Equipos disponibles' },
-    { value: '00', label: 'Años de experiencia' }
+    { value: '0', label: 'Miembros activos' },
+    { value: '0', label: 'Equipos disponibles' },
+    { value: '0', label: 'A\u00f1os de experiencia' }
   ];
  
+  constructor(private http: HttpClient) {}
+
+  ngOnInit(): void {
+    this.loadStats();
+  }
+
+  private loadStats(): void {
+    this.http.get<LandingStats>(`${this.apiUrl}/public/landing-stats`).subscribe({
+      next: stats => {
+        this.stats = [
+          { value: String(stats.activeMembers ?? 0), label: 'Miembros activos' },
+          { value: String(stats.availableEquipment ?? 0), label: 'Equipos disponibles' },
+          { value: String(stats.experienceYears ?? 0), label: 'A\u00f1os de experiencia' },
+        ];
+      },
+      error: () => {
+        this.stats = [
+          { value: '0', label: 'Miembros activos' },
+          { value: '0', label: 'Equipos disponibles' },
+          { value: '0', label: 'A\u00f1os de experiencia' },
+        ];
+      },
+    });
+  }
+
   features = [
     {
       icon: '🏋️',

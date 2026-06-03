@@ -6,7 +6,7 @@
     </a>
     <span class="vf-role-badge">{{ roleLabel }}</span>
 
-    <nav class="vf-nav" aria-label="Navegacion principal">
+    <nav class="vf-nav" aria-label="Navegación principal">
       <section class="vf-nav-section" *ngFor="let section of visibleSections()">
         <p>{{ section }}</p>
         <a
@@ -21,10 +21,12 @@
       </section>
     </nav>
 
-    <button type="button" class="vf-ghost-btn" (click)="logout()">Cerrar sesion</button>
+    <button type="button" class="vf-ghost-btn" (click)="logout()">Cerrar sesión</button>
   </aside>
 
   <main class="vf-main">
     <router-outlet></router-outlet>
   </main>
+
+  <app-chatbot></app-chatbot>
 </div>

@@ -1,7 +1,7 @@
 <section class="vf-page">
   <div class="vf-header">
     <h1>Perfil</h1>
-    <p>Informacion de tu cuenta registrada en el sistema.</p>
+    <p>Información de tu cuenta registrada en el sistema.</p>
   </div>
 
   <section class="vf-panel profile-card">
@@ -47,34 +47,34 @@
       <section class="security-zone">
         <div>
           <h3>Seguridad</h3>
-          <p>Cambia tu contrasena usando tu contrasena actual.</p>
+          <p>Cambia tu contraseña usando tu contraseña actual.</p>
         </div>
 
         <form class="security-form" [formGroup]="passwordForm" (ngSubmit)="changePassword()">
           <label class="vf-field">
-            <span>Contrasena actual</span>
-            <input type="password" formControlName="contrasenaActual" placeholder="Tu contrasena actual" />
+            <span>Contraseña actual</span>
+            <input type="password" formControlName="contrasenaActual" placeholder="Tu contraseña actual" />
           </label>
           <label class="vf-field">
-            <span>Nueva contrasena</span>
-            <input type="password" formControlName="nuevaContrasena" placeholder="Tu nueva contrasena" />
+            <span>Nueva contraseña</span>
+            <input type="password" formControlName="nuevaContrasena" placeholder="Tu nueva contraseña" />
           </label>
           <label class="vf-field">
-            <span>Confirmar contrasena</span>
-            <input type="password" formControlName="confirmarContrasena" placeholder="Repite tu nueva contrasena" />
+            <span>Confirmar contraseña</span>
+            <input type="password" formControlName="confirmarContrasena" placeholder="Repite tu nueva contraseña" />
           </label>
 
           <p class="vf-alert vf-alert--error" *ngIf="passwordForm.get('nuevaContrasena')?.hasError('pattern') && passwordForm.get('nuevaContrasena')?.touched">
-            Debe incluir mayuscula, minuscula, numero y caracter especial.
+            Debe incluir mayúscula, minúscula, número y carácter especial.
           </p>
           <p class="vf-alert vf-alert--error" *ngIf="passwordForm.get('confirmarContrasena')?.hasError('passwordMismatch') && passwordForm.get('confirmarContrasena')?.touched">
-            Las contrasenas no coinciden.
+            Las contraseñas no coinciden.
           </p>
           <p class="vf-alert vf-alert--error" *ngIf="passwordError">{{ passwordError }}</p>
           <p class="vf-alert vf-alert--success" *ngIf="passwordMessage">{{ passwordMessage }}</p>
 
           <button class="vf-btn" type="submit" [disabled]="changingPassword">
-            {{ changingPassword ? 'Guardando...' : 'Cambiar contrasena' }}
+            {{ changingPassword ? 'Guardando...' : 'Cambiar contraseña' }}
           </button>
         </form>
       </section>
@@ -82,7 +82,7 @@
       <div class="danger-zone">
         <div>
           <h3>Inactivar cuenta</h3>
-          <p>Tu cuenta quedara inactiva y se cerrara la sesion. Para reactivarla necesitas apoyo de un administrador.</p>
+          <p>Tu cuenta quedará inactiva y se cerrará la sesión. Para reactivarla necesitas apoyo de un administrador.</p>
         </div>
         <button class="vf-btn vf-btn--danger" type="button" (click)="confirmDeactivate = true" [disabled]="deactivating">
           Inactivar cuenta
@@ -94,7 +94,7 @@
   <div class="modal-backdrop" *ngIf="confirmDeactivate">
     <section class="confirm-modal">
       <h2>Confirmar inactivacion</h2>
-      <p>Esta accion cerrara tu sesion inmediatamente.</p>
+      <p>Esta acción cerrará tu sesión inmediatamente.</p>
       <div class="vf-actions">
         <button class="vf-btn vf-btn--secondary" type="button" (click)="confirmDeactivate = false" [disabled]="deactivating">
           Cancelar

@@ -55,7 +55,7 @@ export class QrComponent implements OnInit, OnDestroy {
         this.startTimer();
       },
       error: () => {
-        this.error = 'No se pudo generar el QR. Verifica tu sesion e intenta de nuevo.';
+        this.error = 'No se pudo generar el QR. Verifica tu sesión e intenta de nuevo.';
         this.loading = false;
       },
     });

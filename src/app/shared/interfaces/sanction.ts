@@ -5,4 +5,12 @@ export interface Sanction {
   startDate: string;
   endDate: string;
   state: boolean;
+  user?: {
+    idUser?: number;
+    names?: string;
+    surnames?: string;
+    email?: string;
+    docNumber?: string;
+    docNum?: string;
+  };
 }

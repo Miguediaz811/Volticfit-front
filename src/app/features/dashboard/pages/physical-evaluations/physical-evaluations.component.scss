@@ -1,0 +1,203 @@
+:host {
+  display: block;
+}
+
+.evaluations-page {
+  display: grid;
+  gap: 22px;
+}
+
+.evaluations-header,
+.panel,
+.slot-card,
+.evaluation-card,
+.empty-state {
+  background: #242424;
+  border: 1px solid #2e2e2e;
+  border-radius: 8px;
+}
+
+.evaluations-header,
+.panel {
+  padding: 24px;
+}
+
+.evaluations-header {
+  h1 {
+    margin: 4px 0 8px;
+    font-size: 2rem;
+  }
+
+  p {
+    margin: 0;
+    color: #c6cbd4;
+  }
+}
+
+.eyebrow {
+  color: #f5a623;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.section-title,
+.schedule-form,
+.evaluation-card,
+.actions {
+  display: flex;
+  gap: 14px;
+}
+
+.section-title,
+.evaluation-card {
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.section-title {
+  margin-bottom: 16px;
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.schedule-form {
+  align-items: end;
+  margin-bottom: 18px;
+}
+
+label {
+  display: grid;
+  flex: 1;
+  gap: 8px;
+
+  span {
+    color: #c6cbd4;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+}
+
+input {
+  width: 100%;
+  background: #2a2a2a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: #fff;
+  font: inherit;
+  padding: 12px 14px;
+}
+
+.slot-grid,
+.evaluation-list {
+  display: grid;
+  gap: 12px;
+}
+
+.slot-grid {
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+
+.slot-card {
+  color: #fff;
+  cursor: pointer;
+  display: grid;
+  gap: 6px;
+  font: inherit;
+  padding: 14px;
+  text-align: left;
+
+  span {
+    color: #c6cbd4;
+  }
+
+  small {
+    color: #86efac;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+}
+
+.slot-card.is-selected {
+  border-color: #f5a623;
+}
+
+.evaluation-card {
+  padding: 16px;
+
+  h3 {
+    margin: 0 0 6px;
+  }
+
+  p {
+    margin: 0 0 6px;
+    color: #c6cbd4;
+  }
+
+  small {
+    color: #9ca3af;
+  }
+
+  span {
+    align-self: center;
+    color: #86efac;
+    font-weight: 800;
+  }
+
+  .is-cancelled {
+    color: #fca5a5;
+  }
+}
+
+.empty-state {
+  padding: 22px;
+  text-align: center;
+
+  h3 {
+    margin: 0 0 8px;
+  }
+
+  p {
+    margin: 0;
+    color: #9ca3af;
+  }
+}
+
+.vf-alert {
+  border-radius: 8px;
+  margin: 0;
+  padding: 12px 14px;
+  font-weight: 700;
+}
+
+.vf-alert--success {
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  color: #86efac;
+}
+
+.vf-alert--error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+}
+
+.vf-muted {
+  color: #9ca3af;
+}
+
+@media (max-width: 820px) {
+  .section-title,
+  .schedule-form,
+  .evaluation-card,
+  .actions {
+    flex-direction: column;
+  }
+}

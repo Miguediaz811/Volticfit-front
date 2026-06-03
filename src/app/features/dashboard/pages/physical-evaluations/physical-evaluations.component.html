@@ -1,0 +1,93 @@
+<section class="evaluations-page">
+  <header class="evaluations-header">
+    <div>
+      <p class="eyebrow">Evaluación física</p>
+      <h1>Agenda de evaluación</h1>
+      <p>Consulta disponibilidad, agenda una valoración física y administra tus citas.</p>
+    </div>
+  </header>
+
+  <p class="vf-alert vf-alert--success" *ngIf="message">{{ message }}</p>
+  <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
+
+  <section class="panel">
+    <div class="section-title">
+      <h2>{{ rescheduling ? 'Reprogramar evaluación' : 'Agendar evaluación' }}</h2>
+      <button class="vf-btn vf-btn--secondary" type="button" *ngIf="rescheduling" (click)="cancelReschedule()">
+        Cancelar reprogramación
+      </button>
+    </div>
+
+    <form [formGroup]="form" class="schedule-form" (ngSubmit)="save()">
+      <label>
+        <span>Fecha *</span>
+        <input type="date" formControlName="date" (change)="loadAvailability()" />
+      </label>
+
+      <label>
+        <span>Notas</span>
+        <input type="text" formControlName="notes" placeholder="Objetivo, lesión o comentario para el instructor" />
+      </label>
+
+      <button class="vf-btn" type="submit" [disabled]="saving || !selectedSlot || form.invalid">
+        {{ saving ? 'Guardando...' : (rescheduling ? 'Reprogramar' : 'Agendar') }}
+      </button>
+    </form>
+
+    <p class="vf-muted" *ngIf="loadingAvailability">Cargando disponibilidad...</p>
+
+    <div class="slot-grid" *ngIf="!loadingAvailability && availability.length">
+      <button
+        class="slot-card"
+        type="button"
+        *ngFor="let slot of availability"
+        [disabled]="!slot.available"
+        [class.is-selected]="selectedSlot === slot"
+        (click)="selectSlot(slot)"
+      >
+        <strong>{{ slot.startTime }} - {{ slot.endTime }}</strong>
+        <small>{{ slot.available ? 'Disponible' : 'Ocupado' }}</small>
+      </button>
+    </div>
+
+    <div class="empty-state" *ngIf="!loadingAvailability && !availability.length">
+      <h3>No hay disponibilidad para esta fecha</h3>
+      <p>Prueba con otra fecha para encontrar horarios disponibles.</p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="section-title">
+      <h2>Mis evaluaciones</h2>
+      <button class="vf-btn vf-btn--secondary" type="button" (click)="loadEvaluations()" [disabled]="loadingEvaluations">
+        Actualizar
+      </button>
+    </div>
+
+    <p class="vf-muted" *ngIf="loadingEvaluations">Cargando evaluaciones...</p>
+
+    <div class="evaluation-list" *ngIf="!loadingEvaluations && evaluations.length">
+      <article class="evaluation-card" *ngFor="let evaluation of evaluations">
+        <div>
+          <h3>{{ evaluation.date }} · {{ evaluation.startTime }} - {{ evaluation.endTime }}</h3>
+          <p>Instructor: {{ evaluation.instructor?.names || 'Sin instructor' }} {{ evaluation.instructor?.surnames || '' }}</p>
+          <small>{{ evaluation.notes || 'Sin notas' }}</small>
+        </div>
+        <div class="actions">
+          <span [class.is-cancelled]="evaluation.status === 'cancelada'">{{ evaluation.status }}</span>
+          <button class="vf-btn vf-btn--secondary" type="button" (click)="startReschedule(evaluation)" [disabled]="evaluation.status === 'cancelada'">
+            Reprogramar
+          </button>
+          <button class="vf-btn vf-btn--danger" type="button" (click)="cancelEvaluation(evaluation)" [disabled]="evaluation.status === 'cancelada'">
+            Cancelar
+          </button>
+        </div>
+      </article>
+    </div>
+
+    <div class="empty-state" *ngIf="!loadingEvaluations && !evaluations.length">
+      <h3>No tienes evaluaciones agendadas</h3>
+      <p>Selecciona una fecha y un horario disponible para agendar tu primera evaluación.</p>
+    </div>
+  </section>
+</section>

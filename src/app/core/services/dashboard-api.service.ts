@@ -5,9 +5,18 @@ import { MessageResponse } from '../../shared/interfaces/message-response';
 import { Sanction } from '../../shared/interfaces/sanction';
 import {
   AttendanceResult,
+  ClinicalHistoryItem,
+  DiagnosisItem,
+  InstructorAvailability,
+  MachineItem,
+  MachineResponse,
+  MedicalRestrictionItem,
   PageResponse,
+  PhysicalEvaluationItem,
   QrPayload,
   Reservation,
+  RoutineHistoryItem,
+  RoutineResponse,
   ShiftResponse,
   UserProfile,
 } from '../../shared/interfaces/dashboard.interface';
@@ -82,6 +91,19 @@ export class DashboardApiService {
     return this.http.post<MessageResponse>(`${this.apiUrl}/api/sanctions`, data);
   }
 
+  updateSanction(id: number, data: {
+    description: string;
+    type: string;
+    startDate: string;
+    endDate: string;
+  }): Observable<MessageResponse> {
+    return this.http.put<MessageResponse>(`${this.apiUrl}/api/sanctions/${id}`, data);
+  }
+
+  deleteSanction(id: number): Observable<MessageResponse> {
+    return this.http.delete<MessageResponse>(`${this.apiUrl}/api/sanctions/${id}`);
+  }
+
   getAvailableShifts(date: string): Observable<ShiftResponse[]> {
     return this.http.get<ShiftResponse[]>(`${this.apiUrl}/api/reservations/shifts`, {
       params: new HttpParams().set('date', date),
@@ -102,5 +124,129 @@ export class DashboardApiService {
 
   cancelReservation(id: number): Observable<MessageResponse> {
     return this.http.delete<MessageResponse>(`${this.apiUrl}/api/reservations/${id}`);
+  }
+
+  generateRoutine(): Observable<RoutineResponse> {
+    return this.http.post<RoutineResponse>(`${this.apiUrl}/api/routines/generate`, {});
+  }
+
+  getActiveRoutine(): Observable<RoutineResponse> {
+    return this.http.get<RoutineResponse>(`${this.apiUrl}/api/routines/active`);
+  }
+
+  getRoutineHistory(): Observable<RoutineHistoryItem[]> {
+    return this.http.get<RoutineHistoryItem[]>(`${this.apiUrl}/api/routines/history`);
+  }
+
+  completeRoutine(routineId: number): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${this.apiUrl}/api/routines/${routineId}/complete-all`, {});
+  }
+
+  getClinicalHistory(userId?: number): Observable<ClinicalHistoryItem[]> {
+    let params = new HttpParams();
+    if (userId) params = params.set('userId', userId);
+    return this.http.get<ClinicalHistoryItem[]>(`${this.apiUrl}/api/clinical-history`, { params });
+  }
+
+  createClinicalHistory(data: { description: string; date: string }, userId?: number): Observable<MessageResponse> {
+    let params = new HttpParams();
+    if (userId) params = params.set('userId', userId);
+    return this.http.post<MessageResponse>(`${this.apiUrl}/api/clinical-history`, data, { params });
+  }
+
+  updateClinicalHistory(id: number, data: { description: string; date: string }): Observable<MessageResponse> {
+    return this.http.put<MessageResponse>(`${this.apiUrl}/api/clinical-history/${id}`, data);
+  }
+
+  deleteClinicalHistory(id: number): Observable<MessageResponse> {
+    return this.http.delete<MessageResponse>(`${this.apiUrl}/api/clinical-history/${id}`);
+  }
+
+  getDiagnosesByUser(userId: number): Observable<DiagnosisItem[]> {
+    return this.http.get<DiagnosisItem[]>(`${this.apiUrl}/api/diagnosis/user/${userId}`);
+  }
+
+  createDiagnosis(data: {
+    userId: number;
+    evaluator?: string;
+    observations?: string;
+    fatPercentage?: number;
+    muscleMass?: number;
+    height: number;
+    weight: number;
+    gender?: string;
+    age?: number;
+    date?: string;
+  }): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${this.apiUrl}/api/diagnosis`, data);
+  }
+
+  deleteDiagnosis(id: number): Observable<MessageResponse> {
+    return this.http.delete<MessageResponse>(`${this.apiUrl}/api/diagnosis/${id}`);
+  }
+
+  getRestrictionsByDiagnosis(diagnosisId: number): Observable<MedicalRestrictionItem[]> {
+    return this.http.get<MedicalRestrictionItem[]>(`${this.apiUrl}/api/diagnosis/${diagnosisId}/restrictions`);
+  }
+
+  createRestriction(data: {
+    diagnosisId: number;
+    description: string;
+    type: string;
+    startDate?: string;
+    endDate?: string;
+  }): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${this.apiUrl}/api/diagnosis/restrictions`, data);
+  }
+
+  updateRestriction(id: number, data: Partial<MedicalRestrictionItem>): Observable<MessageResponse> {
+    return this.http.put<MessageResponse>(`${this.apiUrl}/api/diagnosis/restrictions/${id}`, data);
+  }
+
+  deleteRestriction(id: number): Observable<MessageResponse> {
+    return this.http.delete<MessageResponse>(`${this.apiUrl}/api/diagnosis/restrictions/${id}`);
+  }
+
+  getMachines(): Observable<MachineItem[]> {
+    return this.http.get<MachineItem[]>(`${this.apiUrl}/api/maquinas`);
+  }
+
+  createMachine(data: { name: string; type: string; state: boolean }): Observable<MachineResponse> {
+    return this.http.post<MachineResponse>(`${this.apiUrl}/api/maquinas`, data);
+  }
+
+  getEvaluationAvailability(date: string): Observable<InstructorAvailability[]> {
+    return this.http.get<InstructorAvailability[]>(`${this.apiUrl}/api/evaluations/availability`, {
+      params: new HttpParams().set('date', date),
+    });
+  }
+
+  createEvaluation(data: {
+    date: string;
+    startTime: string;
+    instructorId: number;
+    notes?: string;
+  }): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${this.apiUrl}/api/evaluations`, data);
+  }
+
+  getMyEvaluations(): Observable<PhysicalEvaluationItem[]> {
+    return this.http.get<PhysicalEvaluationItem[]>(`${this.apiUrl}/api/evaluations/my-evaluations`);
+  }
+
+  rescheduleEvaluation(id: number, data: {
+    date: string;
+    startTime: string;
+    instructorId: number;
+  }): Observable<MessageResponse> {
+    return this.http.put<MessageResponse>(`${this.apiUrl}/api/evaluations/${id}/reschedule`, data);
+  }
+
+  cancelEvaluation(id: number): Observable<MessageResponse> {
+    return this.http.put<MessageResponse>(`${this.apiUrl}/api/evaluations/${id}/cancel`, {});
+  }
+
+  sendChatbotMessage(message: string): Observable<{ response?: string; message?: string }> {
+    return this.http.post<{ response?: string; message?: string }>(`${this.apiUrl}/api/chatbot/message`, { message });
   }
 }

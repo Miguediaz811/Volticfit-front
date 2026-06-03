@@ -1,0 +1,84 @@
+<section class="clinical-page">
+  <header class="clinical-header">
+    <div>
+      <p class="eyebrow">Salud</p>
+      <h1>Historia clínica</h1>
+      <p>Registra y consulta antecedentes relevantes para el entrenamiento.</p>
+    </div>
+  </header>
+
+  <p class="vf-alert vf-alert--success" *ngIf="message">{{ message }}</p>
+  <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
+
+  <section class="clinical-panel" *ngIf="isAdmin">
+    <label>
+      <span>Usuario</span>
+      <select [(ngModel)]="selectedUserId" (change)="onUserChange()">
+        <option *ngFor="let user of users" [ngValue]="user.idUser">
+          {{ user.names }} {{ user.surnames || '' }} - {{ user.email }}
+        </option>
+      </select>
+    </label>
+  </section>
+
+  <section class="clinical-panel">
+    <h2>{{ editingEntry ? 'Editar registro' : 'Nuevo registro' }}</h2>
+    <form [formGroup]="form" (ngSubmit)="save()" class="clinical-form">
+      <label>
+        <span>Fecha *</span>
+        <input type="date" formControlName="date" />
+      </label>
+
+      <label>
+        <span>Descripción *</span>
+        <textarea formControlName="description" placeholder="Describe la condición, antecedente o recomendación"></textarea>
+      </label>
+
+      <p class="field-error" *ngIf="form.get('description')?.invalid && form.get('description')?.touched">
+        La descripción es obligatoria y debe tener al menos 5 caracteres.
+      </p>
+
+      <div class="actions">
+        <button class="vf-btn" type="submit" [disabled]="saving || form.invalid">
+          {{ saving ? 'Guardando...' : (editingEntry ? 'Actualizar registro' : 'Guardar registro') }}
+        </button>
+        <button class="vf-btn vf-btn--secondary" type="button" *ngIf="editingEntry" (click)="cancelEdit()">
+          Cancelar edición
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <section class="clinical-panel">
+    <div class="section-title">
+      <h2>Registros</h2>
+      <button class="vf-btn vf-btn--secondary" type="button" (click)="loadHistory()" [disabled]="loading">
+        Actualizar
+      </button>
+    </div>
+
+    <p class="vf-muted" *ngIf="loading">Cargando historia clínica...</p>
+
+    <div class="history-list" *ngIf="!loading && history.length">
+      <article class="history-card" *ngFor="let entry of history">
+        <div>
+          <strong>{{ entry.date }}</strong>
+          <p>{{ entry.description }}</p>
+        </div>
+        <div class="actions">
+          <button class="vf-btn vf-btn--secondary" type="button" (click)="editEntry(entry)">
+            Editar
+          </button>
+          <button class="vf-btn vf-btn--danger" type="button" (click)="deleteEntry(entry)">
+            Eliminar
+          </button>
+        </div>
+      </article>
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && !history.length">
+      <h3>No hay registros clínicos</h3>
+      <p>Cuando se agregue información aparecerá en esta sección.</p>
+    </div>
+  </section>
+</section>

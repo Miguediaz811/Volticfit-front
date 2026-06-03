@@ -1,0 +1,105 @@
+<section class="routines-page">
+  <header class="routines-header">
+    <div>
+      <p class="eyebrow">Entrenamiento</p>
+      <h1>Mis rutinas</h1>
+      <p>Consulta tu rutina activa, genera una nueva cuando esté permitido y revisa tu historial.</p>
+    </div>
+
+    <button class="vf-btn" type="button" (click)="generateRoutine()" [disabled]="generating || loadingActive">
+      {{ generating ? 'Generando...' : 'Generar rutina' }}
+    </button>
+  </header>
+
+  <p class="vf-alert vf-alert--success" *ngIf="message">{{ message }}</p>
+  <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
+
+  <section class="routine-section">
+    <div class="section-title">
+      <h2>Rutina activa</h2>
+      <button class="vf-btn vf-btn--secondary" type="button" (click)="loadActiveRoutine()" [disabled]="loadingActive">
+        Actualizar
+      </button>
+    </div>
+
+    <p class="vf-muted" *ngIf="loadingActive">Cargando rutina activa...</p>
+
+    <article class="routine-card" *ngIf="!loadingActive && activeRoutine">
+      <div class="routine-card__header">
+        <div>
+          <span class="status-pill" [class.status-pill--warning]="!routinePersonalized()">
+            {{ routinePersonalized() ? 'Personalizada' : 'General' }}
+          </span>
+          <h3>{{ activeRoutine.objective || 'Rutina de entrenamiento' }}</h3>
+          <p>{{ activeRoutine.description }}</p>
+        </div>
+        <button class="vf-btn" type="button" (click)="completeRoutine()" [disabled]="completing">
+          {{ completing ? 'Guardando...' : 'Completar rutina' }}
+        </button>
+      </div>
+
+      <p class="vf-alert vf-alert--warning" *ngIf="activeRoutine.warningMessage">
+        {{ activeRoutine.warningMessage }}
+      </p>
+
+      <dl class="routine-meta">
+        <div>
+          <dt>Duración</dt>
+          <dd>{{ activeRoutine.duration || 'Sin definir' }}</dd>
+        </div>
+        <div>
+          <dt>Grupo muscular</dt>
+          <dd>{{ activeRoutine.muscleGroup || 'General' }}</dd>
+        </div>
+        <div>
+          <dt>Nivel</dt>
+          <dd>{{ activeRoutine.level || 'No especificado' }}</dd>
+        </div>
+      </dl>
+
+      <div class="exercise-list">
+        <article class="exercise-item" *ngFor="let exercise of activeRoutine.exercises">
+          <div>
+            <h4>{{ exercise.name }}</h4>
+            <p>{{ exercise.description || 'Sin descripción.' }}</p>
+          </div>
+          <span>{{ exercise.sets }} x {{ exercise.reps }}</span>
+        </article>
+      </div>
+    </article>
+
+    <div class="empty-state" *ngIf="!loadingActive && !activeRoutine">
+      <h3>No tienes una rutina activa</h3>
+      <p>Genera una rutina para iniciar tu plan de entrenamiento.</p>
+    </div>
+  </section>
+
+  <section class="routine-section">
+    <div class="section-title">
+      <h2>Historial</h2>
+      <button class="vf-btn vf-btn--secondary" type="button" (click)="loadHistory()" [disabled]="loadingHistory">
+        Recargar
+      </button>
+    </div>
+
+    <p class="vf-muted" *ngIf="loadingHistory">Cargando historial...</p>
+
+    <div class="history-list" *ngIf="!loadingHistory && history.length">
+      <article class="history-item" *ngFor="let item of history">
+        <div>
+          <h3>{{ item.routine?.objective || 'Rutina registrada' }}</h3>
+          <p>{{ item.routine?.description || 'Sin descripción.' }}</p>
+        </div>
+        <div class="history-item__meta">
+          <span>{{ item.assignmentDate || 'Sin fecha' }}</span>
+          <strong>{{ item.active ? 'Activa' : 'Finalizada' }}</strong>
+        </div>
+      </article>
+    </div>
+
+    <div class="empty-state" *ngIf="!loadingHistory && !history.length">
+      <h3>No hay rutinas en tu historial</h3>
+      <p>Cuando generes o completes rutinas aparecerán aquí.</p>
+    </div>
+  </section>
+</section>

@@ -11,6 +11,12 @@ import { AttendanceHistoryComponent } from './pages/attendance-history/attendanc
 import { SanctionListComponent } from './pages/sanction-list/sanction-list.component';
 import { UserManagementComponent } from './pages/user-management/user-management.component';
 import { ReservationsComponent } from './pages/reservations/reservations.component';
+import { RoutinesComponent } from './pages/routines/routines.component';
+import { ClinicalHistoryComponent } from './pages/clinical-history/clinical-history.component';
+import { DiagnosisRestrictionsComponent } from './pages/diagnosis-restrictions/diagnosis-restrictions.component';
+import { MachinesComponent } from './pages/machines/machines.component';
+import { PhysicalEvaluationsComponent } from './pages/physical-evaluations/physical-evaluations.component';
+import { ChatbotComponent } from './pages/chatbot/chatbot.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { UsersModule } from '../users/users.module';
 import { SanctionsModule } from '../sanctions/sanctions.module';
@@ -26,6 +32,12 @@ import { SanctionsModule } from '../sanctions/sanctions.module';
     SanctionListComponent,
     UserManagementComponent,
     ReservationsComponent,
+    RoutinesComponent,
+    ClinicalHistoryComponent,
+    DiagnosisRestrictionsComponent,
+    MachinesComponent,
+    PhysicalEvaluationsComponent,
+    ChatbotComponent,
     ProfileComponent,
   ],
   imports: [

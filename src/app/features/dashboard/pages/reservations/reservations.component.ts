@@ -54,7 +54,7 @@ export class ReservationsComponent implements OnInit {
       },
       error: err => {
         this.shifts = [];
-        this.error = this.friendlyMessage(err.error?.message, 'No se pudieron cargar los horarios disponibles.');
+        this.error = this.serverMessage(err, 'No se pudieron cargar los horarios disponibles.');
         this.loading = false;
       },
     });
@@ -74,13 +74,13 @@ export class ReservationsComponent implements OnInit {
     this.loading = true;
     this.api.createReservation(date, startTime).subscribe({
       next: response => {
-        this.message = response.message || 'Reserva creada.';
+        this.message = response.message || '';
         this.loading = false;
         this.loadReservations();
         this.loadShifts();
       },
       error: err => {
-        this.error = this.friendlyMessage(err.error?.message, 'No se pudo crear la reserva.');
+        this.error = this.serverMessage(err, 'No se pudo crear la reserva.');
         this.loading = false;
       },
     });
@@ -93,7 +93,7 @@ export class ReservationsComponent implements OnInit {
     this.message = '';
     this.api.cancelReservation(reservation.idReservation).subscribe({
       next: response => {
-        this.message = response.message || 'Reserva cancelada.';
+        this.message = response.message || '';
         this.loading = false;
         if (this.isAdmin) {
           this.loadAdminReservations();
@@ -103,7 +103,7 @@ export class ReservationsComponent implements OnInit {
         this.loadShifts();
       },
       error: err => {
-        this.error = this.friendlyMessage(err.error?.message, 'No se pudo cancelar la reserva.');
+        this.error = this.serverMessage(err, 'No se pudo cancelar la reserva.');
         this.loading = false;
       },
     });
@@ -130,7 +130,7 @@ export class ReservationsComponent implements OnInit {
       },
       error: err => {
         this.adminReservations = [];
-        this.error = this.friendlyMessage(err.error?.message, 'No se pudieron cargar las reservas registradas.');
+        this.error = this.serverMessage(err, 'No se pudieron cargar las reservas registradas.');
       },
     });
   }
@@ -170,21 +170,13 @@ export class ReservationsComponent implements OnInit {
     return (time || '').slice(0, 5);
   }
 
-  private friendlyMessage(message: string | undefined, fallback: string): string {
-    const text = (message || '').toLowerCase();
-    if (!text) return fallback;
-    if (text.includes('validation failed') || text.includes('fecha') || text.includes('hora')) {
-      return 'Selecciona una fecha y un horario valido.';
+  private serverMessage(err: any, fallback: string): string {
+    const message = err?.error?.message || err?.error?.error || err?.message;
+
+    if (err?.status === 0 || message === 'Failed to fetch') {
+      return 'No se pudo conectar con el servidor. Intente nuevamente.';
     }
-    if (text.includes('already') || text.includes('ya tienes')) {
-      return 'Ya tienes una reserva para ese horario.';
-    }
-    if (text.includes('spots') || text.includes('cupos')) {
-      return 'No hay cupos disponibles para ese horario.';
-    }
-    if (text.includes('permission') || text.includes('permiso')) {
-      return 'No tienes permiso para realizar esta accion.';
-    }
+
     return message || fallback;
   }
 }
