@@ -6,7 +6,7 @@
       <p>Consulta tu rutina activa, genera una nueva cuando esté permitido y revisa tu historial.</p>
     </div>
 
-    <button class="vf-btn" type="button" (click)="generateRoutine()" [disabled]="generating || loadingActive">
+    <button class="vf-btn" type="button" (click)="generateRoutine()" [disabled]="generating || loadingActive || generatingCooldown">
       {{ generating ? 'Generando...' : 'Generar rutina' }}
     </button>
   </header>

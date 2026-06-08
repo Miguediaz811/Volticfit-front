@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { DashboardApiService } from '../../../../core/services/dashboard-api.service';
+import { AuthService } from '../../../../core/services/auth.service';
 import {
   InstructorAvailability,
   PhysicalEvaluationItem,
@@ -21,13 +22,21 @@ export class PhysicalEvaluationsComponent implements OnInit {
   saving = false;
   message = '';
   error = '';
+  readonly minDate = new Date().toISOString().slice(0, 10);
+  readonly isAdmin: boolean;
 
   form = this.fb.group({
-    date: [new Date().toISOString().slice(0, 10), [Validators.required]],
+    date: [this.minDate, [Validators.required]],
     notes: [''],
   });
 
-  constructor(private fb: FormBuilder, private api: DashboardApiService) {}
+  constructor(
+    private fb: FormBuilder,
+    private api: DashboardApiService,
+    private auth: AuthService,
+  ) {
+    this.isAdmin = this.auth.getRol() === 'admin';
+  }
 
   ngOnInit(): void {
     this.loadAvailability();
@@ -37,6 +46,12 @@ export class PhysicalEvaluationsComponent implements OnInit {
   loadAvailability(): void {
     const date = this.form.value.date;
     if (!date) return;
+    if (date < this.minDate) {
+      this.form.patchValue({ date: this.minDate });
+      this.error = 'Selecciona una fecha desde hoy en adelante.';
+      this.availability = [];
+      return;
+    }
 
     this.loadingAvailability = true;
     this.error = '';
@@ -60,7 +75,11 @@ export class PhysicalEvaluationsComponent implements OnInit {
   loadEvaluations(): void {
     this.loadingEvaluations = true;
 
-    this.api.getMyEvaluations().subscribe({
+    const request$ = this.isAdmin
+      ? this.api.getAllEvaluations()
+      : this.api.getMyEvaluations();
+
+    request$.subscribe({
       next: evaluations => {
         this.evaluations = evaluations;
         this.loadingEvaluations = false;
@@ -69,7 +88,7 @@ export class PhysicalEvaluationsComponent implements OnInit {
         this.evaluations = [];
         this.loadingEvaluations = false;
         if (err?.status !== 404) {
-          this.error = this.serverMessage(err, 'No se pudieron cargar tus evaluaciones.');
+          this.error = this.serverMessage(err, 'No se pudieron cargar las evaluaciones.');
         }
       },
     });
@@ -156,6 +175,10 @@ export class PhysicalEvaluationsComponent implements OnInit {
 
     if (err?.status === 0 || message === 'Failed to fetch') {
       return 'No se pudo conectar con el servidor. Intente nuevamente.';
+    }
+
+    if (typeof message === 'string' && message.includes('Validation failed')) {
+      return 'Selecciona una fecha, un horario y un instructor disponible antes de agendar.';
     }
 
     return message || fallback;

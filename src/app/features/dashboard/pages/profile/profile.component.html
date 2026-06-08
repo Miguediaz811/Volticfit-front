@@ -11,14 +11,33 @@
 
     <ng-container *ngIf="profile && !loading">
       <div class="profile-head">
-        <div class="profile-avatar">{{ (profile.names || 'U').charAt(0) }}</div>
+        <div class="profile-avatar" (click)="toggleAvatarPicker()" title="Cambiar avatar">
+          <span *ngIf="selectedAvatar; else initials">{{ selectedAvatar }}</span>
+          <ng-template #initials>{{ (profile.names || 'U').charAt(0) }}</ng-template>
+          <span class="profile-avatar__hint">✎</span>
+        </div>
         <div>
           <h2>{{ profile.names }} {{ profile.surnames }}</h2>
           <span class="vf-chip">{{ profile.state === false ? 'Inactivo' : 'Activo' }}</span>
         </div>
       </div>
 
-        <form class="profile-form" [class.is-readonly]="!editing" [formGroup]="form" (ngSubmit)="saveProfile()">
+      <!-- Avatar picker -->
+      <div class="avatar-picker" *ngIf="showAvatarPicker">
+        <p class="avatar-picker__label">Elige tu avatar</p>
+        <div class="avatar-picker__grid">
+          <button
+            *ngFor="let avatar of avatars"
+            type="button"
+            class="avatar-option"
+            [class.avatar-option--selected]="selectedAvatar === avatar"
+            (click)="selectAvatar(avatar)">
+            {{ avatar }}
+          </button>
+        </div>
+      </div>
+
+      <form class="profile-form" [class.is-readonly]="!editing" [formGroup]="form" (ngSubmit)="saveProfile()">
         <div class="vf-grid">
           <label class="vf-field"><span>Nombres</span><input formControlName="names" /></label>
           <label class="vf-field"><span>Apellidos</span><input formControlName="surnames" /></label>
@@ -84,25 +103,8 @@
           <h3>Inactivar cuenta</h3>
           <p>Tu cuenta quedará inactiva y se cerrará la sesión. Para reactivarla necesitas apoyo de un administrador.</p>
         </div>
-        <button class="vf-btn vf-btn--danger" type="button" (click)="confirmDeactivate = true" [disabled]="deactivating">
-          Inactivar cuenta
-        </button>
+        <app-delete-account></app-delete-account>
       </div>
     </ng-container>
   </section>
-
-  <div class="modal-backdrop" *ngIf="confirmDeactivate">
-    <section class="confirm-modal">
-      <h2>Confirmar inactivacion</h2>
-      <p>Esta acción cerrará tu sesión inmediatamente.</p>
-      <div class="vf-actions">
-        <button class="vf-btn vf-btn--secondary" type="button" (click)="confirmDeactivate = false" [disabled]="deactivating">
-          Cancelar
-        </button>
-        <button class="vf-btn vf-btn--danger" type="button" (click)="deactivateAccount()" [disabled]="deactivating">
-          {{ deactivating ? 'Inactivando...' : 'Si, inactivar' }}
-        </button>
-      </div>
-    </section>
-  </div>
 </section>

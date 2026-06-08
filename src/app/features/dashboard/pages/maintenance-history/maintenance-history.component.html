@@ -1,0 +1,95 @@
+<section class="vf-page">
+  <div class="vf-header">
+    <h1>Mantenimiento</h1>
+    <p>Registra y consulta los mantenimientos de los equipos del gimnasio.</p>
+  </div>
+
+  <div class="vf-panel">
+    <div class="vf-panel-heading">
+      <div>
+        <h2>Registrar mantenimiento</h2>
+        <p class="vf-muted">Programa un mantenimiento para un equipo registrado.</p>
+      </div>
+    </div>
+
+    <form class="maintenance-form" [formGroup]="form" (ngSubmit)="save()">
+      <label class="vf-field">
+        <span>Equipo</span>
+        <select formControlName="machineId">
+          <option value="">Selecciona un equipo</option>
+          <option *ngFor="let machine of machines" [value]="machine.idMachine">{{ machine.name }} - {{ machine.type }}</option>
+        </select>
+      </label>
+
+      <label class="vf-field">
+        <span>Tipo</span>
+        <input type="text" formControlName="type" placeholder="Preventivo, correctivo..." />
+      </label>
+
+      <label class="vf-field">
+        <span>Fecha</span>
+        <input type="date" formControlName="date" [min]="minDate" />
+      </label>
+
+      <label class="vf-field">
+        <span>Responsable</span>
+        <input type="text" formControlName="responsible" placeholder="Nombre del responsable" />
+      </label>
+
+      <label class="vf-field maintenance-description">
+        <span>Descripcion</span>
+        <textarea formControlName="description" placeholder="Detalle del mantenimiento"></textarea>
+      </label>
+
+      <button class="vf-btn" type="submit" [disabled]="saving">{{ saving ? 'Guardando...' : 'Registrar mantenimiento' }}</button>
+    </form>
+
+    <p class="vf-alert vf-alert--success" *ngIf="message">{{ message }}</p>
+  </div>
+
+  <div class="vf-panel">
+    <div class="vf-panel-heading">
+      <div>
+        <h2>Mantenimientos registrados</h2>
+        <p class="vf-muted">Filtra por equipo, tipo, responsable o fecha.</p>
+      </div>
+      <button class="vf-small-btn" type="button" (click)="loadHistory()">Actualizar</button>
+    </div>
+
+    <label class="vf-field maintenance-search">
+      <span>Buscar</span>
+      <input
+        type="search"
+        [(ngModel)]="searchTerm"
+        (input)="applyFilter()"
+        placeholder="Buscar por equipo, responsable o fecha" />
+    </label>
+
+    <p class="vf-muted" *ngIf="loading">Cargando mantenimientos...</p>
+    <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
+    <p class="vf-empty" *ngIf="!loading && filteredItems.length === 0">No hay mantenimientos para mostrar.</p>
+
+    <table class="vf-table" *ngIf="filteredItems.length > 0">
+      <thead>
+        <tr>
+          <th>Equipo</th>
+          <th>Tipo</th>
+          <th>Descripcion</th>
+          <th>Fecha</th>
+          <th>Responsable</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of filteredItems">
+          <td>{{ item.machine?.name || 'Equipo' }}</td>
+          <td>{{ item.type || 'Preventivo' }}</td>
+          <td>{{ item.description || '-' }}</td>
+          <td>{{ item.date }}</td>
+          <td>{{ item.responsible || '-' }}</td>
+          <td><span class="vf-chip">{{ item.state ? 'Activo' : 'Cerrado' }}</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

@@ -12,10 +12,18 @@
 
   <section class="panel" *ngIf="isAdmin">
     <label>
-      <span>Usuario</span>
+      <span>Buscar usuario</span>
+      <input
+        type="search"
+        [value]="userSearchTerm"
+        (input)="userSearchTerm = $any($event.target).value"
+        placeholder="Nombre, correo o documento" />
+    </label>
+    <label>
+      <span>Usuario seleccionado</span>
       <select [(ngModel)]="selectedUserId" (change)="onUserChange()">
-        <option *ngFor="let user of users" [ngValue]="user.idUser">
-          {{ user.names }} {{ user.surnames || '' }} - {{ user.email }}
+        <option *ngFor="let user of filteredUsers()" [ngValue]="user.idUser">
+          {{ userLabel(user) }}
         </option>
       </select>
     </label>
@@ -26,7 +34,7 @@
     <form class="form-grid" [formGroup]="diagnosisForm" (ngSubmit)="saveDiagnosis()">
       <label>
         <span>Fecha</span>
-        <input type="date" formControlName="date" />
+        <input type="date" formControlName="date" [min]="minDate" />
       </label>
       <label>
         <span>Evaluador</span>
@@ -71,44 +79,6 @@
     </form>
   </section>
 
-  <section class="panel">
-    <div class="section-title">
-      <h2>Diagnósticos</h2>
-      <button class="vf-btn vf-btn--secondary" type="button" (click)="loadDiagnoses()" [disabled]="loading">
-        Actualizar
-      </button>
-    </div>
-
-    <p class="vf-muted" *ngIf="loading">Cargando diagnósticos...</p>
-
-    <div class="diagnosis-list" *ngIf="!loading && diagnoses.length">
-      <article
-        class="diagnosis-card"
-        *ngFor="let diagnosis of diagnoses"
-        [class.is-active]="selectedDiagnosis?.idDiagnosis === diagnosis.idDiagnosis"
-      >
-        <button class="diagnosis-card__main" type="button" (click)="loadRestrictions(diagnosis)">
-          <strong>{{ diagnosis.date || 'Sin fecha' }}</strong>
-          <span>IMC: {{ diagnosis.imc || 'Pendiente' }}</span>
-          <span>Peso: {{ diagnosis.weight || '-' }} kg</span>
-        </button>
-        <button
-          class="vf-btn vf-btn--danger"
-          type="button"
-          *ngIf="isAdmin"
-          (click)="deleteDiagnosis(diagnosis)"
-        >
-          Eliminar
-        </button>
-      </article>
-    </div>
-
-    <div class="empty-state" *ngIf="!loading && !diagnoses.length">
-      <h3>No hay diagnósticos registrados</h3>
-      <p>Cuando exista un diagnóstico, sus restricciones aparecerán aquí.</p>
-    </div>
-  </section>
-
   <section class="panel" *ngIf="selectedDiagnosis">
     <div class="section-title">
       <h2>Restricciones médicas</h2>
@@ -127,11 +97,11 @@
       <div class="date-row">
         <label>
           <span>Inicio</span>
-          <input type="date" formControlName="startDate" />
+          <input type="date" formControlName="startDate" [min]="minDate" />
         </label>
         <label>
           <span>Fin</span>
-          <input type="date" formControlName="endDate" />
+          <input type="date" formControlName="endDate" [min]="minDate" />
         </label>
         <label>
           <span>Estado</span>
@@ -172,4 +142,41 @@
       <p>Este diagnóstico todavía no tiene restricciones médicas registradas.</p>
     </div>
   </section>
+
+  <section class="panel">
+    <div class="section-title">
+      <h2>Diagnósticos</h2>
+      <button class="vf-btn vf-btn--secondary" type="button" (click)="loadDiagnoses()" [disabled]="loading">
+        Actualizar
+      </button>
+    </div>
+
+    <p class="vf-muted" *ngIf="loading">Cargando diagnósticos...</p>
+
+    <div class="diagnosis-list" *ngIf="!loading && diagnoses.length">
+      <article
+        class="diagnosis-card"
+        *ngFor="let diagnosis of diagnoses"
+        [class.is-active]="selectedDiagnosis?.idDiagnosis === diagnosis.idDiagnosis"
+      >
+        <button class="diagnosis-card__main" type="button" (click)="loadRestrictions(diagnosis)">
+          <strong>{{ diagnosis.date || 'Sin fecha' }}</strong>
+          <span>IMC: {{ diagnosis.imc || 'Pendiente' }}</span>
+          <span>Peso: {{ diagnosis.weight || '-' }} kg</span>
+        </button>
+        <button
+          class="vf-btn vf-btn--danger"
+          type="button"
+          *ngIf="isAdmin"
+          (click)="deleteDiagnosis(diagnosis)"
+        >
+          Eliminar
+        </button>
+      </article>
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && !diagnoses.length">
+      <h3>No hay diagnósticos registrados</h3>
+      <p>Cuando exista un diagnóstico, sus restricciones aparecerán aquí.</p>
+    </div>
 </section>

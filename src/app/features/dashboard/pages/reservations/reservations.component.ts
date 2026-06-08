@@ -28,6 +28,13 @@ export class ReservationsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadShifts();
+    this.form.controls.date.valueChanges.subscribe(date => {
+      if (date && date < this.minDate) {
+        this.form.controls.date.setValue(this.minDate, { emitEvent: false });
+        this.error = 'Selecciona una fecha desde hoy en adelante.';
+        this.shifts = [];
+      }
+    });
     if (this.isAdmin) {
       this.loadAdminReservations();
     } else {
@@ -39,6 +46,7 @@ export class ReservationsComponent implements OnInit {
     const date = this.form.value.date || '';
     if (!date) return;
     if (date < this.minDate) {
+      this.form.controls.date.setValue(this.minDate, { emitEvent: false });
       this.error = 'Selecciona una fecha desde hoy en adelante.';
       this.shifts = [];
       return;
@@ -67,6 +75,7 @@ export class ReservationsComponent implements OnInit {
     const date = this.form.value.date || '';
     if (!startTime || !date || shift.available === false) return;
     if (date < this.minDate) {
+      this.form.controls.date.setValue(this.minDate, { emitEvent: false });
       this.error = 'Selecciona una fecha desde hoy en adelante.';
       return;
     }

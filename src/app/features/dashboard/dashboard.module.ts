@@ -18,6 +18,14 @@ import { MachinesComponent } from './pages/machines/machines.component';
 import { PhysicalEvaluationsComponent } from './pages/physical-evaluations/physical-evaluations.component';
 import { ChatbotComponent } from './pages/chatbot/chatbot.component';
 import { ProfileComponent } from './pages/profile/profile.component';
+import { DashboardPlaceholderComponent } from './pages/dashboard-placeholder/dashboard-placeholder.component';
+import { ReportsComponent } from './pages/reports/reports.component';
+import { SupportInboxComponent } from './pages/support-inbox/support-inbox.component';
+import { FailuresComponent } from './pages/failures/failures.component';
+import { MaintenanceHistoryComponent } from './pages/maintenance-history/maintenance-history.component';
+import { SupportPageComponent } from './pages/support-page/support-page.component';
+import { NotificationsComponent } from './pages/notifications/notifications.component';
+import { ProgressComponent } from './pages/progress/progress.component';
 import { UsersModule } from '../users/users.module';
 import { SanctionsModule } from '../sanctions/sanctions.module';
 
@@ -39,6 +47,14 @@ import { SanctionsModule } from '../sanctions/sanctions.module';
     PhysicalEvaluationsComponent,
     ChatbotComponent,
     ProfileComponent,
+    DashboardPlaceholderComponent,
+    ReportsComponent,
+    SupportInboxComponent,
+    FailuresComponent,
+    MaintenanceHistoryComponent,
+    SupportPageComponent,
+    NotificationsComponent,
+    ProgressComponent,
   ],
   imports: [
     CommonModule,

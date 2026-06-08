@@ -1,6 +1,27 @@
 <div class="vf-shell" [class.vf-shell--admin]="rol === 'admin'">
-  <aside class="vf-sidebar">
-    <a class="vf-brand" routerLink="/">
+
+  <!-- Topbar mobile -->
+  <header class="vf-topbar">
+    <button class="vf-hamburger" type="button" (click)="toggleSidebar()" [attr.aria-label]="sidebarOpen ? 'Cerrar menú' : 'Abrir menú'">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <a class="vf-brand vf-brand--topbar" routerLink="/">
+      <img src="assets/images/volticfit.png" alt="Voltic Fit" />
+      <span>Voltic Fit</span>
+    </a>
+    <a class="vf-avatar-btn vf-avatar-btn--topbar" routerLink="./profile" title="Perfil">
+      <span *ngIf="avatar">{{ avatar }}</span>
+      <span *ngIf="!avatar">{{ initials }}</span>
+    </a>
+  </header>
+
+  <!-- Overlay -->
+  <div class="vf-overlay" [class.vf-overlay--visible]="sidebarOpen" (click)="closeSidebar()"></div>
+
+  <aside class="vf-sidebar" [class.vf-sidebar--open]="sidebarOpen">
+    <a class="vf-brand" routerLink="/" (click)="closeSidebar()">
       <img src="assets/images/volticfit.png" alt="Voltic Fit" />
       <span>Voltic Fit</span>
     </a>
@@ -13,15 +34,26 @@
           *ngFor="let item of itemsBySection(section)"
           [routerLink]="item.route"
           routerLinkActive="is-active"
-          [routerLinkActiveOptions]="{ exact: item.route === './' }"
+          [routerLinkActiveOptions]="{ exact: true }"
+          (click)="closeSidebar()"
         >
-          <span class="vf-nav-icon"></span>
+          <span class="vf-nav-icon" [innerHTML]="buildSvg(item.icon)"></span>
           {{ item.label }}
         </a>
       </section>
     </nav>
 
-    <button type="button" class="vf-ghost-btn" (click)="logout()">Cerrar sesión</button>
+    <!-- Footer del sidebar: avatar perfil + logout -->
+    <div class="vf-sidebar-footer">
+      <a class="vf-avatar-btn" routerLink="./profile" routerLinkActive="is-active" (click)="closeSidebar()" title="Perfil">
+        <span *ngIf="avatar">{{ avatar }}</span>
+        <span *ngIf="!avatar">{{ initials }}</span>
+      </a>
+      <button type="button" class="vf-logout-btn" (click)="logout()" title="Cerrar sesión">
+        <span class="vf-nav-icon" [innerHTML]="buildSvg('logout')"></span>
+      </button>
+    </div>
+
   </aside>
 
   <main class="vf-main">

@@ -139,6 +139,53 @@ export interface MachineItem {
   state: boolean;
 }
 
+export interface FailureReportItem {
+  code: string;
+  machineId: number;
+  machineName: string;
+  userId?: number;
+  user?: string;
+  description: string;
+  priority: 'Alta' | 'Media' | 'Baja' | string;
+  status: 'Reportada' | 'En revision' | 'Resuelta' | string;
+  createdAt: string;
+}
+
+export interface MaintenanceItem {
+  idMaintenance?: number;
+  type?: string;
+  description?: string;
+  date: string;
+  time?: string;
+  responsible?: string;
+  state?: boolean;
+  machine?: MachineItem;
+}
+
+export interface ProgressMetricItem {
+  date: string;
+  value: number;
+}
+
+export interface ProgressResponse {
+  userId: number;
+  weightHistory: ProgressMetricItem[];
+  bmiHistory: ProgressMetricItem[];
+  fatPercentageHistory: ProgressMetricItem[];
+  muscleMassHistory: ProgressMetricItem[];
+}
+
+export interface NotificationItem {
+  id: number;
+  titulo: string;
+  mensaje: string;
+  tipo?: string;
+  usuarioDestinoId?: number;
+  leida?: boolean;
+  fechaEnvio?: string;
+  fechaExpiracion?: string;
+}
+
 export interface MachineResponse {
   status: 'SUCCESS' | 'ERROR' | string;
   message: string;

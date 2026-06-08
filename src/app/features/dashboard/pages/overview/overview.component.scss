@@ -1,3 +1,9 @@
+$primary:       #F5A623;
+$primaryDark:   #C47D0E;
+$textPrimary:   #f7f7f7;
+$colorError:    #EF4444;
+$colorSuccess:  #22C55E;
+
 :host {
   display: block;
 }
@@ -5,6 +11,9 @@
 .member-dashboard,
 .admin-dashboard {
   color: #f7f7f7;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .member-dashboard {
@@ -68,6 +77,19 @@
   padding: 20px;
 }
 
+.admin-panel p {
+  padding: 9px;
+
+  span {
+    color: $colorSuccess;
+    font-weight: 600;
+
+    &.warn {
+      color: $colorError;
+    }
+  }
+}
+
 .member-info h2,
 .admin-panel h2 {
   font-size: 1.05rem;
@@ -105,8 +127,7 @@
   color: #ef5350;
 }
 
-.status-pill,
-.admin-panel span {
+.status-pill {
   height: fit-content;
   border-radius: 999px;
   padding: 5px 10px;
@@ -147,6 +168,7 @@
 .tone-green .action-icon { background: #193d34; color: #32c48d; }
 .tone-gold .action-icon { background: #463613; color: #f5a623; }
 .tone-purple .action-icon { background: #302b4d; color: #9184ff; }
+.tone-red .action-icon { background: #4a2020; color: #ef5350; }
 
 .action-card strong,
 .panel-title a {
@@ -158,8 +180,25 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 18px;
+
+  h2 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 0;
+    color: $textPrimary;
+  }
+
+  a {
+    font-size: 0.78rem;
+    color: $primary;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s;
+
+    &:hover {
+      color: $primaryDark;
+    }
+  }
 }
 
 .track {
@@ -194,13 +233,17 @@
   font-size: 1.6rem;
 }
 
-.admin-header button {
+.admin-header button,
+.admin-bell {
   width: 32px;
   height: 32px;
   border: 1px solid #333;
   border-radius: 8px;
   background: #222;
   color: #999;
+  display: grid;
+  place-items: center;
+  text-decoration: none;
 }
 
 .admin-stats {
@@ -321,14 +364,27 @@
   font-size: .86rem;
 }
 
-.admin-panel .warn {
-  background: rgba(245, 166, 35, .16);
-  color: #f5a623;
-}
-
 .admin-panel .bad {
   background: rgba(239, 68, 68, .16);
   color: #ef5350;
+}
+
+.panel-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.panel-links a {
+  padding: 7px 9px;
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  background: #1b1b1b;
+  color: #f5a623;
+  font-size: .78rem;
+  font-weight: 700;
+  text-decoration: none;
 }
 
 @media (max-width: 1180px) {
@@ -354,4 +410,76 @@
   .sanctions-panel {
     grid-column: auto;
   }
+}
+
+/* ── Nuevos estilos para datos reales ── */
+
+.line-chart em {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: .7rem;
+  font-style: normal;
+  color: #f5a623;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.chart-empty {
+  height: 110px;
+  display: grid;
+  place-items: center;
+  color: #666;
+  font-size: .86rem;
+  border-top: 1px solid #303030;
+  border-bottom: 1px solid #303030;
+}
+
+.chart-total {
+  margin: 8px 0 0;
+  font-size: .8rem;
+  color: #888;
+  text-align: right;
+
+  strong {
+    color: #f5a623;
+  }
+}
+
+/* Donut legend */
+.donut-legend {
+  display: grid;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .8rem;
+  color: #ccc;
+
+  strong {
+    margin-left: auto;
+    color: #f7f7f7;
+    font-size: .9rem;
+  }
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-0 .legend-dot { background: #f5a623; }
+.legend-1 .legend-dot { background: #ef7f00; }
+.legend-2 .legend-dot { background: #555; }
+
+.status-pill--inactive {
+  background: rgba(239, 68, 68, .16);
+  color: #ef5350;
 }

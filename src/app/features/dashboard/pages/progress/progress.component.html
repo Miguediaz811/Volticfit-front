@@ -1,0 +1,64 @@
+<section class="vf-page">
+  <div class="vf-header">
+    <h1>Progreso</h1>
+    <p>Consulta la evolucion registrada en tus diagnosticos fisicos.</p>
+  </div>
+
+  <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
+
+  <div class="vf-panel">
+    <div class="vf-panel-heading">
+      <div>
+        <h2>Indicadores actuales</h2>
+        <p class="vf-muted">Valores mas recientes segun tus evaluaciones.</p>
+      </div>
+      <button class="vf-small-btn" type="button" (click)="load()">Actualizar</button>
+    </div>
+
+    <p class="vf-muted" *ngIf="loading">Cargando progreso...</p>
+    <p class="vf-empty" *ngIf="!loading && !hasData()">Aun no hay diagnosticos para calcular tu progreso.</p>
+
+    <div class="metric-grid" *ngIf="progress && hasData()">
+      <article>
+        <span>Peso</span>
+        <strong>{{ latest(progress.weightHistory) }}</strong>
+      </article>
+      <article>
+        <span>IMC</span>
+        <strong>{{ latest(progress.bmiHistory) }}</strong>
+      </article>
+      <article>
+        <span>Grasa</span>
+        <strong>{{ latest(progress.fatPercentageHistory) }}</strong>
+      </article>
+      <article>
+        <span>Masa muscular</span>
+        <strong>{{ latest(progress.muscleMassHistory) }}</strong>
+      </article>
+    </div>
+  </div>
+
+  <div class="vf-panel" *ngIf="progress && hasData()">
+    <h2>Historial</h2>
+    <table class="vf-table">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Peso</th>
+          <th>IMC</th>
+          <th>Grasa</th>
+          <th>Masa muscular</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of progress.weightHistory; let i = index">
+          <td>{{ item.date }}</td>
+          <td>{{ item.value }}</td>
+          <td>{{ valueAt(progress.bmiHistory, i) }}</td>
+          <td>{{ valueAt(progress.fatPercentageHistory, i) }}</td>
+          <td>{{ valueAt(progress.muscleMassHistory, i) }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

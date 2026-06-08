@@ -13,6 +13,21 @@
   <section class="clinical-panel" *ngIf="isAdmin">
     <label>
       <span>Usuario</span>
+      <input type="text" placeholder="Buscar usuario..." [(ngModel)]="userSearchTerm" />
+    </label>
+
+    <div class="user-search-suggestions" *ngIf="userSearchTerm.trim() && filteredUsers().length">
+      <ul>
+        <li *ngFor="let user of filteredUsers()">
+          <button type="button" class="vf-link-button" (click)="selectUserForHistory(user)">
+            {{ userLabel(user) }}
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <label *ngIf="selectedUserId">
+      <span>Usuario seleccionado</span>
       <select [(ngModel)]="selectedUserId" (change)="onUserChange()">
         <option *ngFor="let user of users" [ngValue]="user.idUser">
           {{ user.names }} {{ user.surnames || '' }} - {{ user.email }}

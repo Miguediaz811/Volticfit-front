@@ -21,14 +21,17 @@ export class SanctionListComponent implements OnInit {
   message = '';
   error = '';
   formError = '';
+  userSearchTerm = '';
   readonly isAdmin = this.auth.getRol() === 'admin';
+  readonly minDate = new Date().toISOString().slice(0, 10);
 
   readonly form = this.fb.group({
     userId: [''],
-    type: ['', [Validators.required]],
+    type: [''],
+    clasificacion: ['', [Validators.required]],
     description: ['', [Validators.required, Validators.minLength(5)]],
-    startDate: [new Date().toISOString().slice(0, 10), [Validators.required]],
-    endDate: [new Date().toISOString().slice(0, 10), [Validators.required]],
+    startDate: [this.minDate, [Validators.required]],
+    endDate: [this.minDate, [Validators.required]],
   });
 
   constructor(
@@ -79,18 +82,27 @@ export class SanctionListComponent implements OnInit {
     this.error = '';
     this.formError = '';
     const values = this.form.getRawValue();
+    const startDate = values.startDate || '';
+    const endDate = values.endDate || '';
 
-    if ((values.endDate || '') < (values.startDate || '')) {
+    if (startDate < this.minDate || endDate < this.minDate) {
+      this.formError = 'La sanción debe iniciar y finalizar desde hoy en adelante.';
+      this.saving = false;
+      return;
+    }
+
+    if (endDate < startDate) {
       this.formError = 'La fecha final no puede ser anterior a la fecha inicial.';
       this.saving = false;
       return;
     }
 
     const payload = {
-      type: values.type || '',
+      type: values.clasificacion || '',
+      clasificacion: values.clasificacion || '',
       description: values.description || '',
-      startDate: values.startDate || '',
-      endDate: values.endDate || '',
+      startDate,
+      endDate,
     };
     const userId = Number(values.userId);
 
@@ -123,12 +135,13 @@ export class SanctionListComponent implements OnInit {
     this.error = '';
     this.formError = '';
     this.editingSanction = null;
+    this.userSearchTerm = '';
     this.form.reset({
       userId: '',
       type: '',
-      description: '',
-      startDate: new Date().toISOString().slice(0, 10),
-      endDate: new Date().toISOString().slice(0, 10),
+      clasificacion: '',      description: '',
+      startDate: this.minDate,
+      endDate: this.minDate,
     });
     this.showFormModal = true;
     if (this.users.length === 0) {
@@ -143,12 +156,25 @@ export class SanctionListComponent implements OnInit {
     this.editingSanction = sanction;
     this.form.reset({
       userId: sanction.user?.idUser ? String(sanction.user.idUser) : '',
-      type: sanction.type || '',
+      type: sanction.clasificacion || '',
+      clasificacion: sanction.clasificacion || '',
       description: sanction.description || '',
-      startDate: sanction.startDate || new Date().toISOString().slice(0, 10),
-      endDate: sanction.endDate || new Date().toISOString().slice(0, 10),
+      startDate: this.futureDateOrToday(sanction.startDate),
+      endDate: this.futureDateOrToday(sanction.endDate),
     });
     this.showFormModal = true;
+  }
+
+  enforceDateLimits(): void {
+    const startDate = this.form.value.startDate || this.minDate;
+    const endDate = this.form.value.endDate || this.minDate;
+    const safeStartDate = startDate < this.minDate ? this.minDate : startDate;
+    const safeEndDate = endDate < safeStartDate ? safeStartDate : endDate;
+
+    if (safeStartDate !== startDate || safeEndDate !== endDate) {
+      this.form.patchValue({ startDate: safeStartDate, endDate: safeEndDate });
+      this.formError = 'Selecciona fechas desde hoy en adelante.';
+    }
   }
 
   closeFormModal(): void {
@@ -187,15 +213,42 @@ export class SanctionListComponent implements OnInit {
     return `${user.names} ${user.surnames || ''} - ${document}`.trim();
   }
 
+  filteredUsers(): UserProfile[] {
+    const term = this.normalize(this.userSearchTerm);
+    if (!term) return this.users;
+
+    return this.users.filter(user => this.normalize([
+      user.names,
+      user.surnames,
+      user.email,
+      user.docNumber,
+      user.docNum,
+      user.phone,
+    ].join(' ')).includes(term));
+  }
+
+  selectUserForSanction(user: UserProfile): void {
+    this.form.patchValue({ userId: String(user.idUser) });
+    this.userSearchTerm = '';
+  }
+
   private isAdminUser(user: UserProfile): boolean {
     const role = typeof user.role === 'string' ? user.role : user.role?.name;
     return (role || '').toLowerCase().replace(/^role_/, '') === 'admin';
   }
 
   sanctionUserLabel(sanction: Sanction): string {
-    if (!sanction.user) return 'Sin usuario';
-    const document = sanction.user.docNumber || sanction.user.docNum || 'sin documento';
-    return `${sanction.user.names || ''} ${sanction.user.surnames || ''} - ${document}`.trim();
+    // Campos planos del nuevo SanctionWithUserDTO
+    if (sanction.userNames) {
+      const doc = sanction.userDoc || 'sin documento';
+      return `${sanction.userNames} ${sanction.userSurnames || ''} - ${doc}`.trim();
+    }
+    // Compatibilidad con estructura anidada anterior
+    if (sanction.user) {
+      const doc = sanction.user.docNum || 'sin documento';
+      return `${sanction.user.names || ''} ${sanction.user.surnames || ''} - ${doc}`.trim();
+    }
+    return 'Sin usuario';
   }
 
   private serverMessage(err: any, fallback: string): string {
@@ -206,5 +259,17 @@ export class SanctionListComponent implements OnInit {
     }
 
     return message || fallback;
+  }
+
+  private normalize(value: string): string {
+    return value
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
+  }
+
+  private futureDateOrToday(date?: string): string {
+    return date && date >= this.minDate ? date : this.minDate;
   }
 }

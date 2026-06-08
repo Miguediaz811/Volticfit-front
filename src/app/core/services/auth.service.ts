@@ -13,11 +13,12 @@ import {
 import { RegisterRequest }  from '../../shared/interfaces/register-request';
 import { RegisterResponse } from '../../shared/interfaces/register-response';
 import { MessageResponse }  from '../../shared/interfaces/message-response';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  private readonly apiUrl    = 'http://localhost:9090';
+  private readonly apiUrl = environment.apiUrl;
   private readonly TOKEN_KEY = 'volticfit_token';
 
   constructor(

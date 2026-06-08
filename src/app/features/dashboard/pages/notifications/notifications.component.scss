@@ -1,0 +1,86 @@
+.notification-form {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.notification-message,
+.notification-form .vf-btn {
+  grid-column: 1 / -1;
+}
+
+textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.notification-list {
+  display: grid;
+  gap: 12px;
+}
+
+.notification-card {
+  align-items: center;
+  background: #1b1b1b;
+  border: 1px solid #333;
+  border-radius: 8px;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  padding: 16px;
+}
+
+.notification-card.is-read {
+  opacity: .66;
+}
+
+.notification-card span {
+  color: #f5a600;
+  font-size: .78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.notification-card h3,
+.notification-card p {
+  margin: 4px 0;
+}
+
+@media (max-width: 760px) {
+  .notification-form {
+    grid-template-columns: 1fr;
+  }
+
+  .notification-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+.notif-target-toggle {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.notif-tab-btn {
+  min-width: 150px;
+  text-align: center;
+}
+
+.broadcast-card {
+  border-color: #f5a600;
+  border-left-width: 3px;
+}
+
+.broadcast-badge span {
+  background: rgba(245, 166, 0, 0.15);
+  border: 1px solid #f5a600;
+  border-radius: 6px;
+  color: #f5a600;
+  font-size: .75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  white-space: nowrap;
+}

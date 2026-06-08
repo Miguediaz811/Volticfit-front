@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RegexPatterns } from '../../../../shared/validators/regex.constants';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -23,7 +24,8 @@ export class RegisterComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -85,10 +87,11 @@ export class RegisterComponent implements OnInit {
     this.authService.register(registerData).subscribe({
       next: (response: RegisterResponse) => {
         this.loading = false;
-        this.successMessage = response.message || '';
+        this.successMessage = response.message || 'Registro exitoso. Redirigiendo al inicio de sesión...';
         this.form.reset();
         this.form.markAsPristine();
         this.form.markAsUntouched();
+        setTimeout(() => this.router.navigate(['/auth/login']), 2000);
       },
       error: (err: any) => {
         this.loading = false;

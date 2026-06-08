@@ -16,6 +16,7 @@ import {
 export class DiagnosisRestrictionsComponent implements OnInit {
   readonly role = this.auth.getRol();
   readonly isAdmin = this.role === 'admin';
+  readonly minDate = new Date().toISOString().slice(0, 10);
 
   users: UserProfile[] = [];
   selectedUserId: number | null = null;
@@ -28,6 +29,7 @@ export class DiagnosisRestrictionsComponent implements OnInit {
   savingRestriction = false;
   message = '';
   error = '';
+  userSearchTerm = '';
 
   diagnosisForm = this.fb.group({
     date: [new Date().toISOString().slice(0, 10)],
@@ -62,10 +64,24 @@ export class DiagnosisRestrictionsComponent implements OnInit {
     }
 
     this.selectedUserId = this.auth.getUserId();
+
     if (this.selectedUserId) {
       this.loadDiagnoses();
     } else {
-      this.error = 'No se pudo identificar el usuario autenticado.';
+      // El token no incluye el ID: lo obtenemos desde el servidor con getMe()
+      this.api.getMe().subscribe({
+        next: user => {
+          this.selectedUserId = user.idUser ?? null;
+          if (this.selectedUserId) {
+            this.loadDiagnoses();
+          } else {
+            this.error = 'No se pudo identificar el usuario autenticado. Por favor, cierra sesión e inicia de nuevo.';
+          }
+        },
+        error: () => {
+          this.error = 'No se pudo identificar el usuario autenticado. Por favor, cierra sesión e inicia de nuevo.';
+        },
+      });
     }
   }
 
@@ -245,6 +261,25 @@ export class DiagnosisRestrictionsComponent implements OnInit {
     this.loadDiagnoses();
   }
 
+  filteredUsers(): UserProfile[] {
+    const term = this.normalize(this.userSearchTerm);
+    if (!term) return this.users;
+
+    return this.users.filter(user => this.normalize([
+      user.names,
+      user.surnames,
+      user.email,
+      user.docNumber,
+      user.docNum,
+      user.phone,
+    ].join(' ')).includes(term));
+  }
+
+  userLabel(user: UserProfile): string {
+    const document = user.docNumber || user.docNum || user.email || 'sin documento';
+    return `${user.names || ''} ${user.surnames || ''} - ${document}`.trim();
+  }
+
   private serverMessage(err: any, fallback: string): string {
     const message = err?.error?.message || err?.error?.error || err?.message;
 
@@ -253,5 +288,13 @@ export class DiagnosisRestrictionsComponent implements OnInit {
     }
 
     return message || fallback;
+  }
+
+  private normalize(value: string): string {
+    return value
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
   }
 }

@@ -21,7 +21,7 @@ export class ClinicalHistoryComponent implements OnInit {
   saving = false;
   message = '';
   error = '';
-
+  userSearchTerm = '';
   form = this.fb.group({
     date: [new Date().toISOString().slice(0, 10), [Validators.required]],
     description: ['', [Validators.required, Validators.minLength(5)]],
@@ -141,6 +141,30 @@ export class ClinicalHistoryComponent implements OnInit {
   onUserChange(): void {
     this.cancelEdit();
     this.loadHistory();
+  }
+
+  selectUserForHistory(user: UserProfile): void {
+    this.selectedUserId = user.idUser;
+    this.userSearchTerm = '';
+    this.onUserChange();
+  }
+
+  filteredUsers(): UserProfile[] {
+    if (!this.userSearchTerm.trim()) return [];
+    const term = this.normalize(this.userSearchTerm);
+    return this.users.filter(u =>
+      this.normalize(u.names).includes(term) ||
+      this.normalize(u.surnames || '').includes(term) ||
+      this.normalize(u.email).includes(term)
+    );
+  }
+
+  userLabel(user: UserProfile): string {
+    return `${user.names} ${user.surnames || ''} - ${user.email}`;
+  }
+
+  private normalize(text: string): string {
+    return text.toLowerCase().trim();
   }
 
   private targetUserId(): number | undefined {

@@ -33,7 +33,7 @@ export class MachinesComponent implements OnInit {
 
     this.api.getMachines().subscribe({
       next: machines => {
-        this.machines = machines;
+        this.machines = machines.filter(m => m.name !== 'Sin máquina');
         this.loading = false;
       },
       error: err => {

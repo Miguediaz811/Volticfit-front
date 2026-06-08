@@ -29,12 +29,18 @@
       <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
       <p class="vf-muted" *ngIf="loading">Generando QR...</p>
 
-      <img class="qr-image" [src]="qrImage" alt="Codigo QR" *ngIf="qrImage" />
+      <div class="qr-wrapper" *ngIf="qrImage">
+        <img class="qr-image" [src]="qrImage" alt="Codigo QR" />
+        <span class="qr-corner-bl"></span>
+        <span class="qr-corner-br"></span>
+      </div>
       <strong class="qr-code-text" *ngIf="qrValue">{{ qrValue }}</strong>
 
-      <div class="timer-ring">
-        <strong>{{ secondsLeft }}</strong>
-        <small>seg</small>
+      <div class="timer-ring" [style.background]="timerStyle">
+        <div class="timer-inner">
+          <strong [style.color]="timerColor">{{ secondsLeft }}</strong>
+          <small>seg</small>
+        </div>
       </div>
       <p>El código expira en</p>
     </section>

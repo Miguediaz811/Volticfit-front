@@ -1,0 +1,36 @@
+.metric-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.metric-grid article {
+  background: #181818;
+  border: 1px solid #303030;
+  border-radius: 8px;
+  padding: 18px;
+}
+
+.metric-grid span {
+  color: #9ca3af;
+  display: block;
+  font-size: .82rem;
+}
+
+.metric-grid strong {
+  display: block;
+  font-size: 1.8rem;
+  margin-top: 8px;
+}
+
+@media (max-width: 860px) {
+  .metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .metric-grid {
+    grid-template-columns: 1fr;
+  }
+}

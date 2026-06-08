@@ -3,12 +3,13 @@
 .scanner-box {
   display: grid;
   gap: 12px;
+  justify-items: center;
 }
 
 video {
   width: 100%;
-  min-height: 280px;
-  max-height: 420px;
+  max-width: 50%;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
   border: 1px solid #343434;
   border-radius: 8px;

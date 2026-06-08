@@ -1,0 +1,78 @@
+<section class="support-page">
+  <header class="support-header">
+    <span>Soporte operativo</span>
+    <h1>Consultas de usuarios</h1>
+    <p>Revisa mensajes escalados desde el chatbot y responde como instructor o administrador.</p>
+  </header>
+
+  <div class="support-layout">
+    <aside class="ticket-list">
+      <p class="vf-muted" *ngIf="loading">Cargando consultas...</p>
+      <p class="vf-empty" *ngIf="!loading && tickets.length === 0">No hay consultas de usuarios.</p>
+      <button
+        type="button"
+        *ngFor="let ticket of tickets"
+        [class.is-active]="selected?.code === ticket.code"
+        (click)="selectTicket(ticket)">
+        <strong>{{ ticket.subject }}</strong>
+        <span>{{ ticket.user }}</span>
+        <small>{{ ticket.code }} · {{ ticket.status }}</small>
+      </button>
+    </aside>
+
+    <article class="ticket-detail" *ngIf="selected; else emptyDetail">
+      <div class="ticket-title">
+        <div>
+          <span>{{ selected.code }}</span>
+          <h2>{{ selected.subject }}</h2>
+          <p>{{ selected.user }} · {{ selected.createdAt }}</p>
+        </div>
+        <strong [class.is-done]="selected.status === 'Resuelta'">{{ selected.status }}</strong>
+      </div>
+
+      <div class="chat-window" #chatWindow>
+        <ng-container *ngFor="let turn of parseConversation(selected)">
+          <div class="chat-row"
+            [class.chat-row--right]="turn.author === 'admin'"
+            [class.chat-row--center]="turn.author === 'system'">
+            <div class="chat-bubble"
+              [class.chat-bubble--admin]="turn.author === 'admin'"
+              [class.chat-bubble--user]="turn.author === 'user'"
+              [class.chat-bubble--system]="turn.author === 'system'">
+              <span class="chat-label">{{ turn.label }}</span>
+              <p>{{ turn.text }}</p>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="chat-input-area">
+        <textarea
+          [(ngModel)]="reply"
+          placeholder="Escribe una respuesta..."
+          (keydown.control.enter)="sendReply()"
+          rows="2">
+        </textarea>
+        <div class="chat-input-actions">
+          <div class="chat-status-btns">
+            <button class="vf-btn vf-btn--secondary" type="button" (click)="markInReview()">Marcar en revisión</button>
+            <button class="vf-btn vf-btn--secondary" type="button" (click)="resolveTicket()">Resolver</button>
+          </div>
+          <button class="vf-btn send-btn" type="button" (click)="sendReply()" [disabled]="!reply.trim()">
+            Enviar
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+        <p class="vf-alert vf-alert--success" *ngIf="message">{{ message }}</p>
+        <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
+      </div>
+    </article>
+
+    <ng-template #emptyDetail>
+      <article class="ticket-detail ticket-detail--empty">
+        <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
+        <p class="vf-empty">Selecciona una consulta para revisar el detalle.</p>
+      </article>
+    </ng-template>
+  </div>
+</section>

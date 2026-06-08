@@ -1,0 +1,26 @@
+<section class="placeholder-page">
+  <header class="placeholder-hero">
+    <span>{{ eyebrow }}</span>
+    <h1>{{ title }}</h1>
+    <p>{{ description }}</p>
+  </header>
+
+  <div class="placeholder-grid" *ngIf="items.length">
+    <article *ngFor="let item of items">
+      <span></span>
+      <p>{{ item }}</p>
+    </article>
+  </div>
+
+  <div class="placeholder-panel">
+    <h2>Estado del modulo</h2>
+    <p>
+      La ruta y la vista ya existen en el frontend. Cuando el backend entregue el
+      endpoint final, esta pantalla se puede reemplazar por datos reales sin
+      cambiar la navegacion principal.
+    </p>
+    <div class="placeholder-actions" *ngIf="actions.length">
+      <a *ngFor="let action of actions" class="vf-btn" [routerLink]="action.route || './'">{{ action.label }}</a>
+    </div>
+  </div>
+</section>

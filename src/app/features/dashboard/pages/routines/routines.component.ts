@@ -13,6 +13,7 @@ export class RoutinesComponent implements OnInit {
   loadingActive = false;
   loadingHistory = false;
   generating = false;
+  generatingCooldown = false;
   completing = false;
   message = '';
   error = '';
@@ -71,11 +72,14 @@ export class RoutinesComponent implements OnInit {
         this.activeRoutine = routine;
         this.message = 'Rutina generada correctamente.';
         this.generating = false;
+        this.generatingCooldown = false;
         this.loadHistory();
       },
       error: err => {
         this.error = this.serverMessage(err, 'No se pudo generar la rutina.');
         this.generating = false;
+        this.generatingCooldown = true;
+        setTimeout(() => this.generatingCooldown = false, 10000);
       },
     });
   }

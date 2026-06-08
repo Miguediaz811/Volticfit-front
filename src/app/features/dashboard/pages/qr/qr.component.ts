@@ -75,6 +75,17 @@ export class QrComponent implements OnInit, OnDestroy {
     return `VF-2024-${id}`;
   }
 
+  get timerStyle(): string {
+    const pct = (this.secondsLeft / 60) * 100;
+    return `conic-gradient(#f5a623 ${pct}%, #333 ${pct}%)`;
+  }
+
+  get timerColor(): string {
+    if (this.secondsLeft > 30) return '#35c498';
+    if (this.secondsLeft > 10) return '#f5a623';
+    return '#ef5350';
+  }
+
   downloadQr(): void {
     if (!this.qrImage) return;
     const link = document.createElement('a');

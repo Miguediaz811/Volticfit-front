@@ -19,9 +19,11 @@ export class ProfileComponent implements OnInit {
   saving = false;
   changingPassword = false;
   editing = false;
-  deactivating = false;
-  confirmDeactivate = false;
   message = '';
+
+  readonly avatars = ['🦁', '🐯', '🐺', '🦊', '🐻', '🦅', '🐉', '🤖'];
+  selectedAvatar = '';
+  showAvatarPicker = false;
   error = '';
   passwordMessage = '';
   passwordError = '';
@@ -49,6 +51,7 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProfile();
+    this.selectedAvatar = localStorage.getItem('vf_avatar') || '';
   }
 
   loadProfile(): void {
@@ -85,6 +88,16 @@ export class ProfileComponent implements OnInit {
     this.unlockProfileForm();
     this.message = '';
     this.error = '';
+  }
+
+  toggleAvatarPicker(): void {
+    this.showAvatarPicker = !this.showAvatarPicker;
+  }
+
+  selectAvatar(avatar: string): void {
+    this.selectedAvatar = avatar;
+    localStorage.setItem('vf_avatar', avatar);
+    this.showAvatarPicker = false;
   }
 
   cancelEditing(): void {
@@ -150,30 +163,6 @@ export class ProfileComponent implements OnInit {
       error: err => {
         this.passwordError = this.serverMessage(err, 'No se pudo cambiar la contraseña.');
         this.changingPassword = false;
-      },
-    });
-  }
-
-  deactivateAccount(): void {
-    if (!this.profile?.idUser) {
-      this.error = 'No se pudo identificar el usuario.';
-      return;
-    }
-
-    this.deactivating = true;
-    this.message = '';
-    this.error = '';
-
-    this.api.deactivateUser(this.profile.idUser).subscribe({
-      next: response => {
-        this.message = response.message || '';
-        this.inactivity.detener();
-        this.auth.removeToken();
-        this.router.navigate(['/auth/login']);
-      },
-      error: err => {
-        this.error = this.serverMessage(err, 'No se pudo inactivar la cuenta.');
-        this.deactivating = false;
       },
     });
   }

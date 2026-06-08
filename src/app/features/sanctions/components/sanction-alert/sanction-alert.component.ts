@@ -1,3 +1,4 @@
+import { environment } from '../../../../../environments/environment';
 import { Component, Input, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Sanction } from '../../../../shared/interfaces/sanction';
@@ -25,7 +26,7 @@ export class SanctionAlertComponent implements OnInit {
   ngOnInit(): void {
     // GET /api/sanctions — el backend ya filtra por rol:
     // ADMIN ve todas, el usuario autenticado ve solo las propias.
-    this.http.get<Sanction[]>('http://localhost:9090/api/sanctions').subscribe({
+    this.http.get<Sanction[]>(`${environment.apiUrl}/api/sanctions`).subscribe({
       next: (sanciones) => {
         const hoy = new Date();
         // Una sanción bloquea si está activa (state=true) y la fecha fin no ha pasado

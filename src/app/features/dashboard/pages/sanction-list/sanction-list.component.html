@@ -22,7 +22,7 @@
       <thead>
         <tr>
           <th *ngIf="isAdmin">Usuario</th>
-          <th>Tipo</th>
+          <th>Clasificación</th>
           <th>Inicio</th>
           <th>Fin</th>
           <th>Estado</th>
@@ -32,7 +32,11 @@
       <tbody>
         <tr *ngFor="let sanction of sanctions">
           <td *ngIf="isAdmin">{{ sanctionUserLabel(sanction) }}</td>
-          <td>{{ sanction.type }}</td>
+          <td>
+            <span class="vf-chip vf-chip--{{ sanction.clasificacion?.toLowerCase() }}">
+              {{ sanction.clasificacion || '—' }}
+            </span>
+          </td>
           <td>{{ sanction.startDate }}</td>
           <td>{{ sanction.endDate }}</td>
           <td><span class="vf-chip">{{ sanction.state ? 'Activa' : 'Inactiva' }}</span></td>
@@ -48,6 +52,7 @@
     </table>
   </div>
 
+  <!-- Modal crear / editar -->
   <div class="vf-modal-backdrop" *ngIf="showFormModal" (click)="closeFormModal()">
     <form class="vf-modal" [formGroup]="form" (ngSubmit)="saveSanction()" (click)="$event.stopPropagation()">
       <div class="vf-modal-header">
@@ -59,25 +64,43 @@
       <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
 
       <div class="vf-grid">
-        <label class="vf-field" *ngIf="!editingSanction">
+        <div class="vf-field" *ngIf="!editingSanction">
           <span>Usuario</span>
+          <input
+            type="search"
+            [value]="userSearchTerm"
+            (input)="userSearchTerm = $any($event.target).value"
+            placeholder="Buscar por nombre, correo o documento" />
+          <div class="user-search-suggestions" *ngIf="userSearchTerm.trim()">
+            <p class="vf-muted" *ngIf="filteredUsers().length === 0">No se encontraron usuarios.</p>
+            <ul *ngIf="filteredUsers().length > 0">
+              <li *ngFor="let user of filteredUsers()">
+                <button type="button" class="vf-link-button" (click)="selectUserForSanction(user)">
+                  {{ userLabel(user) }}
+                </button>
+              </li>
+            </ul>
+          </div>
           <select formControlName="userId">
             <option value="">Selecciona un usuario</option>
-            <option *ngFor="let user of users" [value]="user.idUser">{{ userLabel(user) }}</option>
+            <option *ngFor="let user of filteredUsers()" [value]="user.idUser">{{ userLabel(user) }}</option>
           </select>
-        </label>
+        </div>
+
         <label class="vf-field">
-          <span>Tipo</span>
-          <select formControlName="type">
-            <option value="">Selecciona el tipo</option>
-            <option value="Leve">Leve</option>
-            <option value="Moderada">Moderada</option>
-            <option value="Grave">Grave</option>
+          <span>Clasificación</span>
+          <select formControlName="clasificacion">
+            <option value="">Selecciona la clasificación</option>
+            <option value="leve">Leve</option>
+            <option value="moderada">Moderada</option>
+            <option value="grave">Grave</option>
           </select>
         </label>
-        <label class="vf-field"><span>Inicio</span><input type="date" formControlName="startDate" /></label>
-        <label class="vf-field"><span>Fin</span><input type="date" formControlName="endDate" /></label>
+
+        <label class="vf-field"><span>Inicio</span><input type="date" formControlName="startDate" [min]="minDate" (change)="enforceDateLimits()" /></label>
+        <label class="vf-field"><span>Fin</span><input type="date" formControlName="endDate" [min]="form.value.startDate || minDate" (change)="enforceDateLimits()" /></label>
       </div>
+
       <label class="vf-field">
         <span>Descripción</span>
         <textarea formControlName="description" placeholder="Describe el motivo de la sanción"></textarea>
@@ -92,6 +115,7 @@
     </form>
   </div>
 
+  <!-- Modal detalle -->
   <div class="vf-modal-backdrop" *ngIf="selected" (click)="closeDetailModal()">
     <article class="vf-modal vf-modal--small" (click)="$event.stopPropagation()">
       <div class="vf-modal-header">
@@ -101,7 +125,12 @@
       <p>{{ selected.description }}</p>
       <div class="vf-grid">
         <p *ngIf="isAdmin"><strong>Usuario:</strong> {{ sanctionUserLabel(selected) }}</p>
-        <p><strong>Tipo:</strong> {{ selected.type }}</p>
+        <p>
+          <strong>Clasificación:</strong>
+          <span class="vf-chip vf-chip--{{ selected.clasificacion?.toLowerCase() }}">
+            {{ selected.clasificacion || '—' }}
+          </span>
+        </p>
         <p><strong>Inicio:</strong> {{ selected.startDate }}</p>
         <p><strong>Fin:</strong> {{ selected.endDate }}</p>
         <p><strong>Estado:</strong> {{ selected.state ? 'Activa' : 'Inactiva' }}</p>

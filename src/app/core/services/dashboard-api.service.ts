@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MessageResponse } from '../../shared/interfaces/message-response';
@@ -7,12 +8,16 @@ import {
   AttendanceResult,
   ClinicalHistoryItem,
   DiagnosisItem,
+  FailureReportItem,
   InstructorAvailability,
   MachineItem,
   MachineResponse,
+  MaintenanceItem,
   MedicalRestrictionItem,
+  NotificationItem,
   PageResponse,
   PhysicalEvaluationItem,
+  ProgressResponse,
   QrPayload,
   Reservation,
   RoutineHistoryItem,
@@ -21,9 +26,21 @@ import {
   UserProfile,
 } from '../../shared/interfaces/dashboard.interface';
 
+export interface SupportTicket {
+  code: string;
+  userId?: number;
+  user: string;
+  subject: string;
+  lastMessage: string;
+  status: 'Escalada' | 'En revision' | 'Resuelta';
+  createdAt: string;
+  attachment?: string | null;
+  response?: string | null;
+}
+
 @Injectable({ providedIn: 'root' })
 export class DashboardApiService {
-  private readonly apiUrl = 'http://localhost:9090';
+  private readonly apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
@@ -77,6 +94,13 @@ export class DashboardApiService {
     });
   }
 
+  getAllAttendance(startDate?: string, endDate?: string): Observable<AttendanceResult[]> {
+    let params = new HttpParams();
+    if (startDate) params = params.set('startDate', startDate);
+    if (endDate)   params = params.set('endDate', endDate);
+    return this.http.get<AttendanceResult[]>(`${this.apiUrl}/attendance/all`, { params });
+  }
+
   getSanctions(): Observable<Sanction[]> {
     return this.http.get<Sanction[]>(`${this.apiUrl}/api/sanctions`);
   }
@@ -85,6 +109,7 @@ export class DashboardApiService {
     userId: number;
     description: string;
     type: string;
+    clasificacion: string;
     startDate: string;
     endDate: string;
   }): Observable<MessageResponse> {
@@ -92,10 +117,11 @@ export class DashboardApiService {
   }
 
   updateSanction(id: number, data: {
-    description: string;
-    type: string;
-    startDate: string;
-    endDate: string;
+    description?: string;
+    type?: string;
+    clasificacion?: string;
+    startDate?: string;
+    endDate?: string;
   }): Observable<MessageResponse> {
     return this.http.put<MessageResponse>(`${this.apiUrl}/api/sanctions/${id}`, data);
   }
@@ -215,6 +241,107 @@ export class DashboardApiService {
     return this.http.post<MachineResponse>(`${this.apiUrl}/api/maquinas`, data);
   }
 
+  updateMachine(id: number, data: { name: string; type: string; state: boolean }): Observable<MachineResponse> {
+    return this.http.put<MachineResponse>(`${this.apiUrl}/api/maquinas/${id}`, data);
+  }
+
+  exportReport(format: 'pdf' | 'excel', report: 'users' | 'attendance' | 'machines' | 'sanctions'): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/api/export/${format}/${report}`, {
+      responseType: 'blob',
+    });
+  }
+
+  generateReport(data: { type: string; format: string; startDate?: string; endDate?: string }): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/api/reports/generate`, data);
+  }
+
+  getMyReports(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/api/reports/my`);
+  }
+
+  getAllReports(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/api/reports`);
+  }
+
+  createFailureReport(data: { machineId: number; description: string; priority: string }): Observable<FailureReportItem> {
+    return this.http.post<FailureReportItem>(`${this.apiUrl}/api/failures`, data);
+  }
+
+  getFailureReports(): Observable<FailureReportItem[]> {
+    return this.http.get<FailureReportItem[]>(`${this.apiUrl}/api/failures`);
+  }
+
+  updateFailureStatus(code: string, status: FailureReportItem['status']): Observable<MessageResponse> {
+    return this.http.put<MessageResponse>(`${this.apiUrl}/api/failures/${code}/status`, { status });
+  }
+
+  getMaintenanceReport(startDate?: string, endDate?: string): Observable<MaintenanceItem[]> {
+    let params = new HttpParams();
+    if (startDate) params = params.set('startDate', startDate);
+    if (endDate)   params = params.set('endDate', endDate);
+    return this.http.get<MaintenanceItem[]>(`${this.apiUrl}/api/maintenance/report`, { params });
+  }
+
+  getSanctionsReport(startDate?: string, endDate?: string): Observable<any[]> {
+    let params = new HttpParams();
+    if (startDate) params = params.set('startDate', startDate);
+    if (endDate)   params = params.set('endDate', endDate);
+    return this.http.get<any[]>(`${this.apiUrl}/api/sanctions/report`, { params });
+  }
+
+  getMaintenanceHistory(): Observable<MaintenanceItem[]> {
+    return this.http.get<MaintenanceItem[]>(`${this.apiUrl}/api/maintenance`);
+  }
+
+  scheduleMaintenance(data: {
+    machineId: number;
+    type: string;
+    description: string;
+    date: string;
+    responsible: string;
+  }): Observable<MachineResponse> {
+    return this.http.post<MachineResponse>(`${this.apiUrl}/api/maintenance`, data);
+  }
+
+  getProgress(): Observable<ProgressResponse> {
+    return this.http.get<ProgressResponse>(`${this.apiUrl}/api/progress/graphs`);
+  }
+
+  getNotifications(): Observable<NotificationItem[]> {
+    return this.http.get<NotificationItem[]>(`${this.apiUrl}/api/notifications`);
+  }
+
+  createNotification(data: {
+    titulo: string;
+    mensaje: string;
+    tipo: string;
+    usuarioDestinoId: number;
+    fechaExpiracion?: string;
+  }): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${this.apiUrl}/api/notifications`, data);
+  }
+
+  createNotificationForAll(data: {
+    titulo: string;
+    mensaje: string;
+    tipo: string;
+    fechaExpiracion?: string;
+  }): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${this.apiUrl}/api/notifications/all`, data);
+  }
+
+  markNotificationAsRead(id: number): Observable<MessageResponse> {
+    return this.http.patch<MessageResponse>(`${this.apiUrl}/api/notifications/${id}/read`, {});
+  }
+
+  deleteNotification(id: number): Observable<MessageResponse> {
+    return this.http.delete<MessageResponse>(`${this.apiUrl}/api/notifications/${id}`);
+  }
+
+  getBroadcastHistory(): Observable<NotificationItem[]> {
+    return this.http.get<NotificationItem[]>(`${this.apiUrl}/api/notifications/broadcast-history`);
+  }
+
   getEvaluationAvailability(date: string): Observable<InstructorAvailability[]> {
     return this.http.get<InstructorAvailability[]>(`${this.apiUrl}/api/evaluations/availability`, {
       params: new HttpParams().set('date', date),
@@ -234,6 +361,10 @@ export class DashboardApiService {
     return this.http.get<PhysicalEvaluationItem[]>(`${this.apiUrl}/api/evaluations/my-evaluations`);
   }
 
+  getAllEvaluations(): Observable<PhysicalEvaluationItem[]> {
+    return this.http.get<PhysicalEvaluationItem[]>(`${this.apiUrl}/api/evaluations/all`);
+  }
+
   rescheduleEvaluation(id: number, data: {
     date: string;
     startTime: string;
@@ -248,5 +379,25 @@ export class DashboardApiService {
 
   sendChatbotMessage(message: string): Observable<{ response?: string; message?: string }> {
     return this.http.post<{ response?: string; message?: string }>(`${this.apiUrl}/api/chatbot/message`, { message });
+  }
+
+  createSupportTicket(data: { subject: string; description: string; attachment?: string }): Observable<SupportTicket> {
+    return this.http.post<SupportTicket>(`${this.apiUrl}/api/support/instructor`, data);
+  }
+
+  getSupportTickets(): Observable<SupportTicket[]> {
+    return this.http.get<SupportTicket[]>(`${this.apiUrl}/api/support/instructor`);
+  }
+
+  getMySupportTickets(): Observable<SupportTicket[]> {
+    return this.http.get<SupportTicket[]>(`${this.apiUrl}/api/support/instructor/my`);
+  }
+
+  updateSupportTicketStatus(code: string, status: SupportTicket['status']): Observable<MessageResponse> {
+    return this.http.put<MessageResponse>(`${this.apiUrl}/api/support/instructor/${code}/status`, { status });
+  }
+
+  replySupportTicket(code: string, message: string): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${this.apiUrl}/api/support/instructor/${code}/reply`, { message });
   }
 }
