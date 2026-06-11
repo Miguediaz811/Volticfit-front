@@ -21,7 +21,7 @@ export class ProfileComponent implements OnInit {
   editing = false;
   message = '';
 
-  readonly avatars = ['🦁', '🐯', '🐺', '🦊', '🐻', '🦅', '🐉', '🤖'];
+  readonly avatars = ['🦁', '🐯', '🐺', '🦊', '🐻', '🦅', '🐉', '🤖', '⚡'];
   selectedAvatar = '';
   showAvatarPicker = false;
   error = '';

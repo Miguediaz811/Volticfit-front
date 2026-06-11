@@ -73,7 +73,7 @@ export class OverviewComponent implements OnInit {
         shifts:     this.api.getAvailableShifts(today).pipe(catchError(() => of([]))),
         users:      this.api.getUsers().pipe(catchError(() => of([]))),
         machines:   this.api.getMachines().pipe(catchError(() => of([]))),
-        attendance: this.api.getAttendanceHistory(0, 200).pipe(catchError(() => of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 0 }))),
+        attendance: this.api.getAllAttendance().pipe(catchError(() => of([]))),
       }).subscribe({
         next: data => {
           this.profile = data.profile;
@@ -90,8 +90,8 @@ export class OverviewComponent implements OnInit {
             { label: 'Equipos operativos',   value: String(operativeMachines), note: 'segun inventario',        tone: 'green'  },
           ];
 
-          this.buildWeekChart(data.attendance.content);
-          this.buildShiftDonut(data.attendance.content);
+          this.buildWeekChart(data.attendance);
+          this.buildShiftDonut(data.attendance);
 
           this.loading = false;
         },
