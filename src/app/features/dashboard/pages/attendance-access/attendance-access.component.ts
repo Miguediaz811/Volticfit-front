@@ -75,36 +75,25 @@ export class AttendanceAccessComponent implements OnDestroy {
 
     this.api.scanQr(this.form.value.token || '').subscribe({
       next: result => {
-        this.result = { ...result, message: this.friendlyMessage(result.message, 'Asistencia registrada correctamente.') };
+        this.result = result;
         this.loading = false;
         this.stopScanner();
         this.form.reset();
       },
       error: err => {
-        this.error = this.friendlyMessage(err.error?.message, 'No se pudo validar el codigo QR.');
+        this.error = this.serverMessage(err, 'No se pudo validar el código QR.');
         this.loading = false;
       },
     });
   }
 
-  private friendlyMessage(message: string | undefined, fallback: string): string {
-    const text = (message || '').toLowerCase();
-    if (!text) return fallback;
-    if (text.includes('invalid') || text.includes('no es valido')) {
-      return 'El codigo QR no es valido.';
+  private serverMessage(err: any, fallback: string): string {
+    const message = err?.error?.message || err?.error?.error || err?.message;
+
+    if (err?.status === 0 || message === 'Failed to fetch') {
+      return 'No se pudo conectar con el servidor. Intente nuevamente.';
     }
-    if (text.includes('already') || text.includes('utilizado')) {
-      return 'Este codigo QR ya fue utilizado.';
-    }
-    if (text.includes('blocked') || text.includes('sancion')) {
-      return 'Acceso bloqueado por sancion activa.';
-    }
-    if (text.includes('entry') || text.includes('entrada')) {
-      return 'Entrada registrada correctamente.';
-    }
-    if (text.includes('exit') || text.includes('salida')) {
-      return 'Salida registrada correctamente.';
-    }
+
     return message || fallback;
   }
 }

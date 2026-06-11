@@ -13,11 +13,12 @@ import {
 import { RegisterRequest }  from '../../shared/interfaces/register-request';
 import { RegisterResponse } from '../../shared/interfaces/register-response';
 import { MessageResponse }  from '../../shared/interfaces/message-response';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  private readonly apiUrl    = 'http://localhost:9090';
+  private readonly apiUrl = environment.apiUrl;
   private readonly TOKEN_KEY = 'volticfit_token';
 
   constructor(
@@ -117,5 +118,15 @@ export class AuthService {
     } catch {
       return null;
     }
+  }
+
+  getAvatarStorageKey(): string {
+    const userId = this.getUserId();
+    if (userId) return `vf_avatar_${userId}`;
+
+    const email = this.getEmailFromToken();
+    if (email) return `vf_avatar_${email.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+
+    return 'vf_avatar_guest';
   }
 }

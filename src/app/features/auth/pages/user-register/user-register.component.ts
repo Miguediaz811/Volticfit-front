@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RegexPatterns } from '../../../../shared/validators/regex.constants';
 import { AuthService } from '../../../../core/services/auth.service';
-import { RegisterRequest }  from '../../../../shared/interfaces/register-request';
+import { RegisterRequest } from '../../../../shared/interfaces/register-request';
 import { RegisterResponse } from '../../../../shared/interfaces/register-response';
 import { passwordMatchValidator } from '../../../../shared/validators/password-match.validator';
 
@@ -14,19 +15,17 @@ import { passwordMatchValidator } from '../../../../shared/validators/password-m
 export class RegisterComponent implements OnInit {
 
   form!: FormGroup;
-
   documentTypes: string[] = ['CC', 'CE', 'TI', 'PAS', 'NIT'];
-
-  showPassword:        boolean = false;
-  showConfirmPassword: boolean = false;
-
-  loading:        boolean = false;
-  successMessage: string  = '';
-  errorMessage:   string  = '';
+  showPassword = false;
+  showConfirmPassword = false;
+  loading = false;
+  successMessage = '';
+  errorMessage = '';
 
   constructor(
-    private fb:          FormBuilder,
-    private authService: AuthService
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -43,7 +42,7 @@ export class RegisterComponent implements OnInit {
         Validators.maxLength(60),
         Validators.pattern(RegexPatterns.onlyLetters)
       ]],
-      documentType:   ['', Validators.required],
+      documentType: ['', Validators.required],
       documentNumber: ['', [
         Validators.required,
         Validators.pattern(RegexPatterns.documentNumber)
@@ -69,17 +68,17 @@ export class RegisterComponent implements OnInit {
   onSubmit(): void {
     if (this.form.invalid) { this.markAllAsTouched(); return; }
 
-    this.loading        = true;
+    this.loading = true;
     this.successMessage = '';
-    this.errorMessage   = '';
+    this.errorMessage = '';
 
     const { firstName, lastName, documentType, documentNumber, email, phone, password } = this.form.value;
 
     const registerData: RegisterRequest = {
-      names:    firstName,
+      names: firstName,
       surnames: lastName,
-      docType:  documentType,
-      docNum:   documentNumber,
+      docType: documentType,
+      docNum: documentNumber,
       email,
       phone,
       password,
@@ -87,20 +86,16 @@ export class RegisterComponent implements OnInit {
 
     this.authService.register(registerData).subscribe({
       next: (response: RegisterResponse) => {
-        this.loading        = false;
-        this.successMessage = response.message;
+        this.loading = false;
+        this.successMessage = response.message || 'Registro exitoso. Redirigiendo al inicio de sesión...';
         this.form.reset();
         this.form.markAsPristine();
         this.form.markAsUntouched();
+        setTimeout(() => this.router.navigate(['/auth/login']), 2000);
       },
       error: (err: any) => {
         this.loading = false;
-        const msg: string = (err.error?.message ?? '').toLowerCase();
-        if (msg.includes('ya está en uso') || msg.includes('already')) {
-          this.errorMessage = 'Este correo ya está registrado.';
-        } else {
-          this.errorMessage = 'Ocurrió un error al registrarse. Intente nuevamente.';
-        }
+        this.errorMessage = this.serverMessage(err, 'Ocurrió un error al registrarse. Intente nuevamente.');
       }
     });
   }
@@ -109,8 +104,18 @@ export class RegisterComponent implements OnInit {
     Object.keys(this.form.controls).forEach(key => this.form.get(key)?.markAsTouched());
   }
 
-  hasUppercase():   boolean { return /[A-Z]/.test(this.form.get('password')?.value || ''); }
-  hasNumber():      boolean { return /\d/.test(this.form.get('password')?.value || ''); }
+  hasUppercase(): boolean { return /[A-Z]/.test(this.form.get('password')?.value || ''); }
+  hasNumber(): boolean { return /\d/.test(this.form.get('password')?.value || ''); }
   hasSpecialChar(): boolean { return /[@$!%*?&.#_-]/.test(this.form.get('password')?.value || ''); }
-  hasMinLength():   boolean { return (this.form.get('password')?.value || '').length >= 8; }
+  hasMinLength(): boolean { return (this.form.get('password')?.value || '').length >= 8; }
+
+  private serverMessage(err: any, fallback: string): string {
+    const message = err?.error?.message || err?.error?.error || err?.message;
+
+    if (err?.status === 0 || message === 'Failed to fetch') {
+      return 'No se pudo conectar con el servidor. Intente nuevamente.';
+    }
+
+    return message || fallback;
+  }
 }

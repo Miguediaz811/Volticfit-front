@@ -10,7 +10,7 @@
         <h2>Historial de sanciones</h2>
         <p class="vf-muted">Consulta las sanciones registradas y revisa su detalle.</p>
       </div>
-      <button class="vf-btn" type="button" *ngIf="isAdmin" (click)="openCreateModal()">Registrar sancion</button>
+      <button class="vf-btn" type="button" *ngIf="isAdmin" (click)="openCreateModal()">Registrar sanción</button>
     </div>
 
     <p class="vf-alert vf-alert--success" *ngIf="message">{{ message }}</p>
@@ -21,7 +21,8 @@
     <table class="vf-table" *ngIf="sanctions.length > 0">
       <thead>
         <tr>
-          <th>Tipo</th>
+          <th *ngIf="isAdmin">Usuario</th>
+          <th>Clasificación</th>
           <th>Inicio</th>
           <th>Fin</th>
           <th>Estado</th>
@@ -30,72 +31,125 @@
       </thead>
       <tbody>
         <tr *ngFor="let sanction of sanctions">
-          <td>{{ sanction.type }}</td>
+          <td *ngIf="isAdmin">{{ sanctionUserLabel(sanction) }}</td>
+          <td>
+            <span class="vf-chip vf-chip--{{ sanction.clasificacion?.toLowerCase() }}">
+              {{ sanction.clasificacion || '—' }}
+            </span>
+          </td>
           <td>{{ sanction.startDate }}</td>
           <td>{{ sanction.endDate }}</td>
           <td><span class="vf-chip">{{ sanction.state ? 'Activa' : 'Inactiva' }}</span></td>
-          <td><button class="vf-small-btn" type="button" (click)="openDetailModal(sanction)">Detalle</button></td>
+          <td>
+            <div class="vf-actions vf-actions--compact">
+              <button class="vf-small-btn" type="button" (click)="openDetailModal(sanction)">Detalle</button>
+              <button class="vf-small-btn" type="button" *ngIf="isAdmin" (click)="openEditModal(sanction)">Editar</button>
+              <button
+                class="vf-small-btn vf-small-btn--danger"
+                type="button"
+                *ngIf="isAdmin && sanction.state"
+                (click)="deleteSanction(sanction)"
+                title="Desactivar sanción">
+                Desactivar
+              </button>
+              <span
+                class="vf-small-btn vf-small-btn--danger vf-small-btn--inactive"
+                *ngIf="isAdmin && !sanction.state"
+                title="Sanción ya inactiva">
+                Desactivar
+              </span>
+            </div>
+          </td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <div class="vf-modal-backdrop" *ngIf="showCreateModal" (click)="closeCreateModal()">
-    <form class="vf-modal" [formGroup]="form" (ngSubmit)="create()" (click)="$event.stopPropagation()">
+  <!-- Modal crear / editar -->
+  <div class="vf-modal-backdrop" *ngIf="showFormModal" (click)="closeFormModal()">
+    <form class="vf-modal" [formGroup]="form" (ngSubmit)="saveSanction()" (click)="$event.stopPropagation()">
       <div class="vf-modal-header">
-        <h2>Registrar sancion</h2>
-        <button class="vf-icon-btn" type="button" aria-label="Cerrar" (click)="closeCreateModal()">X</button>
+        <h2>{{ editingSanction ? 'Editar sanción' : 'Registrar sanción' }}</h2>
+        <button class="vf-icon-btn" type="button" aria-label="Cerrar" (click)="closeFormModal()">X</button>
       </div>
 
       <p class="vf-alert vf-alert--error" *ngIf="formError">{{ formError }}</p>
       <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
 
       <div class="vf-grid">
-        <label class="vf-field">
+        <div class="vf-field" *ngIf="!editingSanction">
           <span>Usuario</span>
+          <input
+            type="search"
+            [value]="userSearchTerm"
+            (input)="userSearchTerm = $any($event.target).value"
+            placeholder="Buscar por nombre, correo o documento" />
+          <div class="user-search-suggestions" *ngIf="userSearchTerm.trim()">
+            <p class="vf-muted" *ngIf="filteredUsers().length === 0">No se encontraron usuarios.</p>
+            <ul *ngIf="filteredUsers().length > 0">
+              <li *ngFor="let user of filteredUsers()">
+                <button type="button" class="vf-link-button" (click)="selectUserForSanction(user)">
+                  {{ userLabel(user) }}
+                </button>
+              </li>
+            </ul>
+          </div>
           <select formControlName="userId">
             <option value="">Selecciona un usuario</option>
-            <option *ngFor="let user of users" [value]="user.idUser">{{ userLabel(user) }}</option>
+            <option *ngFor="let user of filteredUsers()" [value]="user.idUser">{{ userLabel(user) }}</option>
           </select>
-        </label>
+        </div>
+
         <label class="vf-field">
-          <span>Tipo</span>
-          <select formControlName="type">
-            <option value="">Selecciona el tipo</option>
-            <option value="Leve">Leve</option>
-            <option value="Moderada">Moderada</option>
-            <option value="Grave">Grave</option>
+          <span>Clasificación</span>
+          <select formControlName="clasificacion">
+            <option value="">Selecciona la clasificación</option>
+            <option value="leve">Leve</option>
+            <option value="moderada">Moderada</option>
+            <option value="grave">Grave</option>
           </select>
         </label>
-        <label class="vf-field"><span>Inicio</span><input type="date" formControlName="startDate" /></label>
-        <label class="vf-field"><span>Fin</span><input type="date" formControlName="endDate" /></label>
+
+        <label class="vf-field"><span>Inicio</span><input type="date" formControlName="startDate" [min]="minDate" (change)="enforceDateLimits()" /></label>
+        <label class="vf-field"><span>Fin</span><input type="date" formControlName="endDate" [min]="form.value.startDate || minDate" (change)="enforceDateLimits()" /></label>
       </div>
+
       <label class="vf-field">
-        <span>Descripcion</span>
-        <textarea formControlName="description" placeholder="Describe el motivo de la sancion"></textarea>
+        <span>Descripción</span>
+        <textarea formControlName="description" placeholder="Describe el motivo de la sanción"></textarea>
       </label>
 
       <div class="vf-actions">
-        <button class="vf-btn" type="submit" [disabled]="saving">{{ saving ? 'Guardando...' : 'Registrar sancion' }}</button>
-        <button class="vf-btn vf-btn--secondary" type="button" (click)="closeCreateModal()">Cancelar</button>
+        <button class="vf-btn" type="submit" [disabled]="saving">
+          {{ saving ? 'Guardando...' : (editingSanction ? 'Actualizar sanción' : 'Registrar sanción') }}
+        </button>
+        <button class="vf-btn vf-btn--secondary" type="button" (click)="closeFormModal()">Cancelar</button>
       </div>
     </form>
   </div>
 
+  <!-- Modal detalle -->
   <div class="vf-modal-backdrop" *ngIf="selected" (click)="closeDetailModal()">
     <article class="vf-modal vf-modal--small" (click)="$event.stopPropagation()">
       <div class="vf-modal-header">
-        <h2>Detalle de sancion</h2>
+        <h2>Detalle de sanción</h2>
         <button class="vf-icon-btn" type="button" aria-label="Cerrar" (click)="closeDetailModal()">X</button>
       </div>
       <p>{{ selected.description }}</p>
       <div class="vf-grid">
-        <p><strong>Tipo:</strong> {{ selected.type }}</p>
+        <p *ngIf="isAdmin"><strong>Usuario:</strong> {{ sanctionUserLabel(selected) }}</p>
+        <p>
+          <strong>Clasificación:</strong>
+          <span class="vf-chip vf-chip--{{ selected.clasificacion?.toLowerCase() }}">
+            {{ selected.clasificacion || '—' }}
+          </span>
+        </p>
         <p><strong>Inicio:</strong> {{ selected.startDate }}</p>
         <p><strong>Fin:</strong> {{ selected.endDate }}</p>
         <p><strong>Estado:</strong> {{ selected.state ? 'Activa' : 'Inactiva' }}</p>
       </div>
       <div class="vf-actions">
+        <button class="vf-btn vf-btn--secondary" type="button" *ngIf="isAdmin" (click)="openEditModal(selected); closeDetailModal()">Editar</button>
         <button class="vf-btn vf-btn--secondary" type="button" (click)="closeDetailModal()">Cerrar</button>
       </div>
     </article>

@@ -1,0 +1,26 @@
+.maintenance-search {
+  max-width: 460px;
+  margin-bottom: 16px;
+}
+
+.maintenance-form {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.maintenance-description,
+.maintenance-form .vf-btn {
+  grid-column: 1 / -1;
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+@media (max-width: 720px) {
+  .maintenance-form {
+    grid-template-columns: 1fr;
+  }
+}

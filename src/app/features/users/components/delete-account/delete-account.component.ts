@@ -1,3 +1,4 @@
+import { environment } from '../../../../../environments/environment';
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -22,6 +23,12 @@ export class DeleteAccountComponent implements OnInit {
   cargando      = false;
   errorMessage  = '';
   usuarioId: number | null = null;
+  usuarioPerfil: UsuarioPerfil | null = null;
+
+  emailIngresado        = '';
+  confirmacionIngresada = '';
+  emailTouched          = false;
+  confirmTouched        = false;
 
   constructor(
     private http:              HttpClient,
@@ -31,15 +38,37 @@ export class DeleteAccountComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.http.get<UsuarioPerfil>('http://localhost:9090/auth/usuarios/me').subscribe({
-      next:  perfil => { this.usuarioId = perfil.idUser; },
-      error: ()     => { this.errorMessage = 'No se pudo cargar el perfil del usuario.'; }
+    this.http.get<UsuarioPerfil>(`${environment.apiUrl}/auth/usuarios/me`).subscribe({
+      next:  perfil => {
+        this.usuarioId    = perfil.idUser;
+        this.usuarioPerfil = perfil;
+      },
+      error: () => { this.errorMessage = 'No se pudo cargar el perfil del usuario.'; }
     });
   }
 
+  get emailValido(): boolean {
+    return this.emailIngresado.trim().toLowerCase() === (this.usuarioPerfil?.email || '').toLowerCase();
+  }
+
+  get confirmValido(): boolean {
+    return this.confirmacionIngresada.trim() === 'INACTIVAR';
+  }
+
+  puedeConfirmar(): boolean {
+    return this.emailValido && this.confirmValido;
+  }
+
+  onEmailChange(): void   { this.emailTouched   = true; }
+  onConfirmChange(): void { this.confirmTouched  = true; }
+
   abrirModal(): void {
-    this.errorMessage = '';
-    this.mostrarModal = true;
+    this.errorMessage         = '';
+    this.emailIngresado       = '';
+    this.confirmacionIngresada = '';
+    this.emailTouched         = false;
+    this.confirmTouched       = false;
+    this.mostrarModal         = true;
   }
 
   cancelar(): void {
@@ -47,6 +76,11 @@ export class DeleteAccountComponent implements OnInit {
   }
 
   confirmarInactivar(): void {
+    this.emailTouched   = true;
+    this.confirmTouched = true;
+
+    if (!this.puedeConfirmar()) return;
+
     if (!this.usuarioId) {
       this.errorMessage = 'No se pudo identificar el usuario.';
       return;
@@ -55,7 +89,7 @@ export class DeleteAccountComponent implements OnInit {
     this.cargando     = true;
     this.errorMessage = '';
 
-    this.http.put<MessageResponse>(`http://localhost:9090/auth/usuarios/${this.usuarioId}/inactivar`, {})
+    this.http.put<MessageResponse>(`http://" + environment.apiUrl + "/auth/usuarios/${this.usuarioId}/inactivar`, {})
       .subscribe({
         next: () => {
           this.cargando     = false;

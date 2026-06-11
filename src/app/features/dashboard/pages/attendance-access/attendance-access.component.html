@@ -1,7 +1,7 @@
 <section class="vf-page">
   <div class="vf-header">
     <h1>Validacion de acceso</h1>
-    <p>Escanea el codigo QR para registrar entrada o salida.</p>
+    <p>Escanea el código QR para registrar entrada o salida.</p>
   </div>
 
   <form class="vf-panel" [formGroup]="form" (ngSubmit)="submit()">
@@ -19,10 +19,18 @@
 
     <label class="vf-field">
       <span>Codigo QR</span>
-      <input formControlName="token" placeholder="Pega o escanea el codigo" />
+      <input formControlName="token" placeholder="Pega o escanea el código" />
     </label>
+
     <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
+
+    <!-- Alerta de sanción — se muestra tras escanear si hay resultado -->
+    <div class="sanction-wrapper" *ngIf="result">
+      <app-sanction-alert></app-sanction-alert>
+    </div>
+
     <p class="vf-alert vf-alert--success" *ngIf="result">{{ result.message || 'Asistencia registrada correctamente.' }}</p>
+
     <button class="vf-btn" type="submit" [disabled]="loading">{{ loading ? 'Validando...' : 'Validar acceso' }}</button>
   </form>
 </section>

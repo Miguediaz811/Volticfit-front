@@ -2,13 +2,34 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: #2e2e2e #161616;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #161616;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #2e2e2e;
+  border: 2px solid #161616;
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #2e2e2e;
 }
 
 body {
   margin: 0;
   padding: 0;
-  background-color: #1A1A1A;
-  color: #f8fafc;
+  background-color: #1E1E1E;
+  color: #FFFFFF;
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -18,15 +39,23 @@ a {
 
 button,
 input,
+select,
 textarea {
   font: inherit;
+}
+
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
 }
 
 .vf-shell {
   display: grid;
   grid-template-columns: 188px minmax(0, 1fr);
   min-height: 100vh;
-  background: #171717;
+  background: #1E1E1E;
 }
 
 .vf-shell--admin {
@@ -39,8 +68,8 @@ textarea {
   top: 0;
   height: 100vh;
   padding: 14px 10px 12px;
-  border-right: 1px solid #2f2f2f;
-  background: #121212;
+  border-right: 1px solid #3A3A3A;
+  background: #161616;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -48,7 +77,7 @@ textarea {
 
 .vf-shell--admin .vf-sidebar {
   padding: 10px;
-  background: #131313;
+  background: #161616;
 }
 
 .vf-brand {
@@ -74,9 +103,9 @@ textarea {
   margin-left: 42px;
   margin-top: -6px;
   padding: 4px 8px;
-  border: 1px solid rgba(245, 166, 35, .6);
+  border: 1px solid rgba(245, 168, 0, .6);
   border-radius: 4px;
-  color: #f5a623;
+  color: #F5A800;
   font-size: .64rem;
   font-weight: 800;
 }
@@ -95,7 +124,7 @@ textarea {
 }
 
 .vf-nav-section p {
-  color: #575757;
+  color: #555555;
   font-size: .64rem;
   font-weight: 800;
   letter-spacing: .07em;
@@ -110,7 +139,7 @@ textarea {
   min-height: 25px;
   padding: 5px 6px;
   border-radius: 4px;
-  color: #8b8b8b;
+  color: #888888;
   font-size: .7rem;
   line-height: 1.15;
   text-decoration: none;
@@ -119,27 +148,41 @@ textarea {
 
 .vf-nav a:hover,
 .vf-nav a.is-active {
-  background: rgba(245, 166, 35, .18);
+  background: rgba(245, 168, 0, .18);
   color: #fff;
-  box-shadow: inset 3px 0 0 #f5a623;
+  box-shadow: inset 3px 0 0 #F5A800;
 }
 
 .vf-nav-icon {
-  width: 7px;
-  height: 7px;
+  width: 14px;
+  height: 14px;
   flex: 0 0 auto;
-  border: 1px solid #f5a623;
-  border-radius: 1px;
-  opacity: .95;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: .7;
+  transition: opacity .2s;
+  pointer-events: none;
+
+  svg {
+    width: 14px;
+    height: 14px;
+    stroke: currentColor;
+    fill: none;
+    pointer-events: none;
+  }
 }
 
-.vf-nav a.is-active .vf-nav-icon {
-  background: #f5a623;
+.vf-nav a.is-active .vf-nav-icon,
+.vf-nav a:hover .vf-nav-icon {
+  opacity: 1;
 }
 
 .vf-main {
   min-width: 0;
   padding: 32px;
+  display: flex;
+  flex-direction: column;
 }
 
 .vf-shell--admin .vf-main {
@@ -150,7 +193,9 @@ textarea {
 .vf-page {
   display: grid;
   gap: 22px;
-  max-width: 1180px;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .vf-header {
@@ -168,11 +213,11 @@ textarea {
 .vf-empty,
 .vf-card p,
 .vf-panel p {
-  color: #a8b0bd;
+  color: #AAAAAA;
 }
 
 .vf-eyebrow {
-  color: #f5a623;
+  color: #F5A800;
   font-size: .75rem;
   font-weight: 800;
   letter-spacing: .08em;
@@ -181,8 +226,8 @@ textarea {
 
 .vf-panel,
 .vf-card {
-  background: #242424;
-  border: 1px solid #343434;
+  background: #272727;
+  border: 1px solid #3A3A3A;
   border-radius: 8px;
 }
 
@@ -222,14 +267,14 @@ textarea {
 
 .vf-link-card strong,
 .vf-stat {
-  color: #f5a623;
+  color: #F5A800;
   font-size: 1.6rem;
 }
 
 .vf-field {
   display: grid;
   gap: 7px;
-  color: #d1d5db;
+  color: #E0E0E0;
   font-size: .9rem;
   font-weight: 700;
 }
@@ -246,7 +291,7 @@ textarea {
   padding: 10px 12px;
   border: 1px solid #3a3a3a;
   border-radius: 8px;
-  background: #1a1a1a;
+  background: #1E1E1E;
   color: #fff;
 }
 
@@ -267,7 +312,7 @@ textarea {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #d1d5db;
+  color: #E0E0E0;
 }
 
 .vf-actions {
@@ -289,14 +334,14 @@ textarea {
 .vf-btn {
   min-height: 42px;
   padding: 10px 16px;
-  background: #f5a623;
+  background: #F5A800;
   color: #111;
 }
 
 .vf-btn--secondary,
 .vf-ghost-btn {
-  background: #303030;
-  color: #f8fafc;
+  background: #3A3A3A;
+  color: #FFFFFF;
   border: 1px solid #444;
 }
 
@@ -309,11 +354,14 @@ textarea {
   margin-top: auto;
   padding: 9px 10px;
   font-size: .72rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .vf-small-btn {
   padding: 8px 10px;
-  background: #f5a623;
+  background: #F5A800;
   color: #111;
 }
 
@@ -333,8 +381,8 @@ textarea {
   height: 34px;
   border: 1px solid #444;
   border-radius: 8px;
-  background: #303030;
-  color: #f8fafc;
+  background: #3A3A3A;
+  color: #FFFFFF;
   cursor: pointer;
   font-weight: 800;
 }
@@ -364,7 +412,7 @@ textarea {
   border-radius: 999px;
   padding: 6px 10px;
   background: #333;
-  color: #f5a623;
+  color: #F5A800;
   font-size: .78rem;
   font-weight: 800;
 }
@@ -373,18 +421,22 @@ textarea {
   width: 100%;
   border-collapse: collapse;
   overflow: hidden;
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 
 .vf-table th,
 .vf-table td {
   padding: 12px;
-  border-bottom: 1px solid #343434;
+  border-bottom: 1px solid #3A3A3A;
   text-align: left;
   vertical-align: top;
 }
 
 .vf-table th {
-  color: #f5a623;
+  color: #F5A800;
   font-size: .78rem;
   text-transform: uppercase;
 }
@@ -408,7 +460,7 @@ textarea {
   padding: 22px;
   border: 1px solid #3d3d3d;
   border-radius: 8px;
-  background: #242424;
+  background: #272727;
   box-shadow: 0 24px 80px rgba(0, 0, 0, .45);
 }
 
@@ -454,8 +506,8 @@ textarea {
   overflow: auto;
   padding: 12px;
   border-radius: 8px;
-  background: #181818;
-  color: #d1d5db;
+  background: #1E1E1E;
+  color: #E0E0E0;
 }
 
 .vf-chart {
@@ -477,18 +529,10 @@ textarea {
 .vf-bar span {
   align-self: end;
   border-radius: 8px 8px 0 0;
-  background: linear-gradient(180deg, #f5a623, #22c55e);
+  background: linear-gradient(180deg, #F5A800, #E07000);
 }
 
-app-delete-account button {
-  padding: 10px 12px;
-  border: 0;
-  border-radius: 8px;
-  background: #ef4444;
-  color: #fff;
-  cursor: pointer;
-  font-weight: 800;
-}
+/* delete-account styles are component-scoped */
 
 app-sanction-alert p {
   margin: 0 0 10px;
@@ -510,10 +554,40 @@ app-sanction-alert p {
 
   .vf-nav {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-height: none;
   }
 
   .vf-main {
     padding: 20px;
+  }
+
+  .vf-page {
+    max-width: 100%;
+    gap: 18px;
+  }
+
+  .vf-header h1 {
+    font-size: 1.6rem;
+  }
+
+  .vf-grid,
+  .vf-grid--cards {
+    grid-template-columns: 1fr;
+  }
+
+  .vf-field--inline {
+    min-width: 0;
+  }
+
+  .vf-actions {
+    align-items: stretch;
+  }
+
+  .vf-actions > *,
+  .vf-btn,
+  .vf-ghost-btn,
+  .vf-small-btn {
+    max-width: 100%;
   }
 
   .vf-panel-heading {
@@ -528,5 +602,108 @@ app-sanction-alert p {
   .vf-modal {
     max-height: 90vh;
     padding: 18px;
+  }
+
+  .vf-chart {
+    grid-template-columns: repeat(2, minmax(70px, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  .vf-sidebar,
+  .vf-shell--admin .vf-sidebar {
+    padding: 12px;
+  }
+
+  .vf-brand {
+    font-size: .78rem;
+  }
+
+  .vf-brand img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .vf-role-badge {
+    margin-left: 40px;
+    font-size: .58rem;
+  }
+
+  .vf-nav {
+    grid-template-columns: 1fr;
+  }
+
+  .vf-main,
+  .vf-shell--admin .vf-main {
+    padding: 16px 12px 96px;
+  }
+
+  .vf-panel,
+  .vf-card {
+    padding: 16px;
+  }
+
+  .vf-panel-heading,
+  .vf-modal-header {
+    gap: 10px;
+  }
+
+  .vf-actions,
+  .vf-panel-heading,
+  .vf-modal-header {
+    align-items: stretch;
+  }
+
+  .vf-btn,
+  .vf-ghost-btn,
+  .vf-small-btn {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .vf-icon-btn {
+    flex: 0 0 auto;
+  }
+
+  .vf-alert {
+    overflow-wrap: anywhere;
+  }
+
+  .vf-table th,
+  .vf-table td {
+    padding: 10px;
+  }
+
+  .vf-modal-backdrop {
+    padding: 8px;
+  }
+
+  .vf-modal {
+    width: 100%;
+    max-height: 92vh;
+    padding: 16px;
+  }
+
+  .vf-qr {
+    grid-template-columns: repeat(11, minmax(10px, 1fr));
+    gap: 2px;
+    width: min(100%, 260px);
+    padding: 10px;
+  }
+
+  .vf-qr span {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    height: auto;
+  }
+
+  .vf-chart {
+    height: 220px;
+    grid-template-columns: 1fr;
   }
 }

@@ -50,9 +50,7 @@ export class UserManagementComponent implements OnInit {
         this.loading = false;
       },
       error: err => {
-        this.error = err.status === 403
-          ? 'Solo un administrador puede ver la lista de usuarios.'
-          : 'No se pudo cargar la lista de usuarios.';
+        this.error = this.serverMessage(err, 'No se pudo cargar la lista de usuarios.');
         this.loading = false;
       },
     });
@@ -110,13 +108,13 @@ export class UserManagementComponent implements OnInit {
 
     forkJoin([updateProfile$, updateRole$, updateState$]).subscribe({
       next: ([profileResponse, roleResponse, stateResponse]) => {
-        this.message = stateResponse?.message || roleResponse?.message || profileResponse.message || 'Usuario actualizado.';
+        this.message = stateResponse?.message || roleResponse?.message || profileResponse.message || '';
         this.editing = false;
         this.loading = false;
         this.loadUsers();
       },
       error: err => {
-        this.error = this.friendlyMessage(err.error?.message, 'No se pudieron guardar los cambios.');
+        this.error = this.serverMessage(err, 'No se pudieron guardar los cambios.');
         this.loading = false;
       },
     });
@@ -208,21 +206,13 @@ export class UserManagementComponent implements OnInit {
       .trim();
   }
 
-  private friendlyMessage(message: string | undefined, fallback: string): string {
-    const text = (message || '').toLowerCase();
-    if (!text) return fallback;
-    if (text.includes('email') || text.includes('correo')) {
-      return 'Este correo ya esta registrado.';
+  private serverMessage(err: any, fallback: string): string {
+    const message = err?.error?.message || err?.error?.error || err?.message;
+
+    if (err?.status === 0 || message === 'Failed to fetch') {
+      return 'No se pudo conectar con el servidor. Intente nuevamente.';
     }
-    if (text.includes('phone') || text.includes('telefono')) {
-      return 'El telefono solo debe contener numeros.';
-    }
-    if (text.includes('permission') || text.includes('permiso')) {
-      return 'No tienes permiso para realizar esta accion.';
-    }
-    if (text.includes('role') || text.includes('rol')) {
-      return 'No se pudo cambiar el rol seleccionado.';
-    }
+
     return message || fallback;
   }
 }

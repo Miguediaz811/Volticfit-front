@@ -1,1 +1,15 @@
-:host { display: block; }
+:host {
+  display: block;
+}
+
+@media (max-width: 720px) {
+  :host ::ng-deep .vf-table {
+    font-size: .82rem;
+  }
+
+  :host ::ng-deep .vf-field,
+  :host ::ng-deep .vf-actions,
+  :host ::ng-deep .vf-btn {
+    width: 100%;
+  }
+}

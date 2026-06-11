@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MessageResponse } from '../../shared/interfaces/message-response';
@@ -6,7 +7,7 @@ import { MessageResponse } from '../../shared/interfaces/message-response';
 @Injectable({ providedIn: 'root' })
 export class UserService {
 
-  private readonly apiUrl = 'http://localhost:9090';
+  private readonly apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 

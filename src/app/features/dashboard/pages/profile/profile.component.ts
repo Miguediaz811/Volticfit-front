@@ -19,9 +19,11 @@ export class ProfileComponent implements OnInit {
   saving = false;
   changingPassword = false;
   editing = false;
-  deactivating = false;
-  confirmDeactivate = false;
   message = '';
+
+  readonly avatars = ['🦁', '🐯', '🐺', '🦊', '🐻', '🦅', '🐉', '🤖', '⚡'];
+  selectedAvatar = '';
+  showAvatarPicker = false;
   error = '';
   passwordMessage = '';
   passwordError = '';
@@ -49,6 +51,7 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProfile();
+    this.selectedAvatar = localStorage.getItem(this.avatarKey()) || '';
   }
 
   loadProfile(): void {
@@ -87,6 +90,21 @@ export class ProfileComponent implements OnInit {
     this.error = '';
   }
 
+  toggleAvatarPicker(): void {
+    this.showAvatarPicker = !this.showAvatarPicker;
+  }
+
+  selectAvatar(avatar: string): void {
+    this.selectedAvatar = avatar;
+    localStorage.setItem(this.avatarKey(), avatar);
+    window.dispatchEvent(new StorageEvent('storage', { key: this.avatarKey(), newValue: avatar }));
+    this.showAvatarPicker = false;
+  }
+
+  private avatarKey(): string {
+    return this.auth.getAvatarStorageKey();
+  }
+
   cancelEditing(): void {
     if (this.profile) {
       this.patchForm(this.profile);
@@ -115,14 +133,14 @@ export class ProfileComponent implements OnInit {
       docNumber: this.profile.docNumber || this.profile.docNum || '',
     }).subscribe({
       next: response => {
-        this.message = response.message || 'Perfil actualizado.';
+        this.message = response.message || '';
         this.editing = false;
         this.lockProfileForm();
         this.saving = false;
         this.loadProfile();
       },
       error: err => {
-        this.error = this.friendlyMessage(err.error?.message, 'No se pudieron guardar los cambios.');
+        this.error = this.serverMessage(err, 'No se pudieron guardar los cambios.');
         this.saving = false;
       },
     });
@@ -143,40 +161,13 @@ export class ProfileComponent implements OnInit {
       newPassword: this.passwordForm.value.nuevaContrasena || '',
     }).subscribe({
       next: response => {
-        this.passwordMessage = response.message || 'Contrasena actualizada.';
+        this.passwordMessage = response.message || '';
         this.passwordForm.reset();
         this.changingPassword = false;
       },
       error: err => {
-        const message = String(err.error?.message || '').toLowerCase();
-        this.passwordError = message.includes('incorrect')
-          ? 'La contrasena actual es incorrecta.'
-          : 'No se pudo cambiar la contrasena.';
+        this.passwordError = this.serverMessage(err, 'No se pudo cambiar la contraseña.');
         this.changingPassword = false;
-      },
-    });
-  }
-
-  deactivateAccount(): void {
-    if (!this.profile?.idUser) {
-      this.error = 'No se pudo identificar el usuario.';
-      return;
-    }
-
-    this.deactivating = true;
-    this.message = '';
-    this.error = '';
-
-    this.api.deactivateUser(this.profile.idUser).subscribe({
-      next: () => {
-        this.message = 'Cuenta inactivada correctamente.';
-        this.inactivity.detener();
-        this.auth.removeToken();
-        this.router.navigate(['/auth/login']);
-      },
-      error: err => {
-        this.error = this.friendlyMessage(err.error?.message, 'No se pudo inactivar la cuenta.');
-        this.deactivating = false;
       },
     });
   }
@@ -207,18 +198,13 @@ export class ProfileComponent implements OnInit {
     this.form.controls.phone.enable();
   }
 
-  private friendlyMessage(message: string | undefined, fallback: string): string {
-    const text = (message || '').toLowerCase();
-    if (!text) return fallback;
-    if (text.includes('email') || text.includes('correo')) {
-      return 'Este correo ya esta registrado.';
+  private serverMessage(err: any, fallback: string): string {
+    const message = err?.error?.message || err?.error?.error || err?.message;
+
+    if (err?.status === 0 || message === 'Failed to fetch') {
+      return 'No se pudo conectar con el servidor. Intente nuevamente.';
     }
-    if (text.includes('phone') || text.includes('telefono')) {
-      return 'El telefono solo debe contener numeros.';
-    }
-    if (text.includes('permission') || text.includes('permiso')) {
-      return 'No tienes permiso para realizar esta accion.';
-    }
+
     return message || fallback;
   }
 }

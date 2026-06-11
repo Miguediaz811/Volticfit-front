@@ -55,7 +55,7 @@ export class QrComponent implements OnInit, OnDestroy {
         this.startTimer();
       },
       error: () => {
-        this.error = 'No se pudo generar el QR. Verifica tu sesion e intenta de nuevo.';
+        this.error = 'No se pudo generar el QR. Verifica tu sesión e intenta de nuevo.';
         this.loading = false;
       },
     });
@@ -73,6 +73,17 @@ export class QrComponent implements OnInit, OnDestroy {
   userCode(): string {
     const id = this.profile?.idUser || 8832;
     return `VF-2024-${id}`;
+  }
+
+  get timerStyle(): string {
+    const pct = (this.secondsLeft / 60) * 100;
+    return `conic-gradient(#f5a623 ${pct}%, #333 ${pct}%)`;
+  }
+
+  get timerColor(): string {
+    if (this.secondsLeft > 30) return '#35c498';
+    if (this.secondsLeft > 10) return '#f5a623';
+    return '#ef5350';
   }
 
   downloadQr(): void {

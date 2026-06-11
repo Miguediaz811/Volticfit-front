@@ -4,6 +4,50 @@
     <p>{{ isAdmin ? 'Consulta la disponibilidad de turnos y cupos por franja.' : 'Consulta disponibilidad, reserva turnos y visualiza cupos por franja.' }}</p>
   </div>
 
+  <!-- Panel reserva gimnasio completo (solo Funcionario) -->
+  <div class="vf-panel" *ngIf="isFuncionario">
+    <div class="vf-panel-heading">
+      <div>
+        <h2>Reservar gimnasio completo</h2>
+        <p class="vf-muted">Reserva el gimnasio entero para un evento o actividad institucional.</p>
+      </div>
+    </div>
+
+    <form class="vf-grid" [formGroup]="fullGymForm" (ngSubmit)="reserveFullGym()">
+      <label class="vf-field">
+        <span>Fecha *</span>
+        <input type="date" formControlName="reservationDate" [min]="minDate" />
+        <small class="vf-error" *ngIf="fullGymForm.get('reservationDate')?.touched && fullGymForm.get('reservationDate')?.invalid">
+          La fecha es obligatoria.
+        </small>
+      </label>
+
+      <label class="vf-field">
+        <span>Hora inicio *</span>
+        <input type="time" formControlName="startTime" min="08:00" max="17:00" step="3600" />
+      </label>
+
+      <label class="vf-field">
+        <span>Hora fin *</span>
+        <input type="time" formControlName="endTime" min="09:00" max="18:00" step="3600" />
+      </label>
+
+      <label class="vf-field" style="grid-column: 1 / -1">
+        <span>Motivo *</span>
+        <textarea formControlName="reason" placeholder="Describe el motivo de la reserva" rows="3"></textarea>
+        <small class="vf-error" *ngIf="fullGymForm.get('reason')?.touched && fullGymForm.get('reason')?.invalid">
+          El motivo debe tener al menos 5 caracteres.
+        </small>
+      </label>
+
+      <div class="vf-actions" style="grid-column: 1 / -1">
+        <button class="vf-btn" type="submit" [disabled]="loading">
+          {{ loading ? 'Reservando...' : 'Reservar gimnasio completo' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
   <div class="vf-panel">
     <form class="vf-actions" [formGroup]="form" (ngSubmit)="loadShifts()">
       <label class="vf-field vf-field--inline"><span>Fecha</span><input type="date" formControlName="date" [min]="minDate" /></label>
@@ -19,11 +63,11 @@
         <span class="vf-chip">{{ shift.available === false ? 'Completo' : 'Disponible' }}</span>
         <h2>{{ shift.startTime || 'Inicio' }} - {{ shift.endTime || 'Fin' }}</h2>
         <p>Cupos: {{ shift.availableSpots ?? 'Por confirmar' }} / {{ shift.totalSpots ?? shift.capacity ?? '-' }}</p>
-        <button class="vf-small-btn" type="button" (click)="reserve(shift)" [disabled]="shift.available === false" *ngIf="!isAdmin">Reservar</button>
+        <button class="vf-small-btn" type="button" (click)="reserve(shift)" [disabled]="shift.available === false" *ngIf="canReserve">Reservar</button>
       </article>
     </div>
 
-    <ng-container *ngIf="!isAdmin">
+    <ng-container *ngIf="canReserve">
     <h2>Mis reservas activas</h2>
     <p class="vf-empty" *ngIf="reservations.length === 0">No tienes reservas activas.</p>
     <table class="vf-table" *ngIf="reservations.length > 0">
