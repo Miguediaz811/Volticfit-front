@@ -400,6 +400,44 @@ $colorSuccess:  #22C55E;
 }
 
 @media (max-width: 720px) {
+  .member-dashboard,
+  .admin-dashboard {
+    max-width: 100%;
+  }
+
+  .member-hero,
+  .member-info,
+  .admin-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .member-hero {
+    gap: 18px;
+    min-height: 0;
+    padding: 20px;
+  }
+
+  .qr-shortcut {
+    width: 100%;
+    height: auto;
+    min-height: 72px;
+  }
+
+  .member-info {
+    gap: 16px;
+  }
+
+  .mini-stats {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .mini-stats article {
+    min-width: 0;
+  }
+
   .member-actions,
   .admin-stats,
   .admin-grid {
@@ -409,6 +447,16 @@ $colorSuccess:  #22C55E;
   .attendance-panel,
   .sanctions-panel {
     grid-column: auto;
+  }
+
+  .admin-panel {
+    min-height: 0;
+    overflow-x: auto;
+  }
+
+  .line-chart {
+    gap: 10px;
+    min-width: 420px;
   }
 }
 

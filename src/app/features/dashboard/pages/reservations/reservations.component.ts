@@ -18,10 +18,19 @@ export class ReservationsComponent implements OnInit {
   message = '';
   error = '';
   readonly isAdmin = this.auth.getRol() === 'admin';
+  readonly isFuncionario = this.auth.getRol() === 'funcionario';
+  readonly canReserve = !this.isAdmin;
   readonly minDate = new Date().toISOString().slice(0, 10);
 
   readonly form = this.fb.group({
     date: [new Date().toISOString().slice(0, 10), Validators.required],
+  });
+
+  readonly fullGymForm = this.fb.group({
+    reservationDate: [new Date().toISOString().slice(0, 10), Validators.required],
+    startTime: ['08:00', Validators.required],
+    endTime: ['18:00', Validators.required],
+    reason: ['', [Validators.required, Validators.minLength(5)]],
   });
 
   constructor(private fb: FormBuilder, private api: DashboardApiService, private auth: AuthService) {}
@@ -63,6 +72,43 @@ export class ReservationsComponent implements OnInit {
       error: err => {
         this.shifts = [];
         this.error = this.serverMessage(err, 'No se pudieron cargar los horarios disponibles.');
+        this.loading = false;
+      },
+    });
+  }
+
+  reserveFullGym(): void {
+    if (this.fullGymForm.invalid) {
+      this.fullGymForm.markAllAsTouched();
+      return;
+    }
+    const v = this.fullGymForm.value;
+    if ((v.endTime || '') <= (v.startTime || '')) {
+      this.error = 'La hora de fin debe ser posterior a la hora de inicio.';
+      return;
+    }
+    this.loading = true;
+    this.error = '';
+    this.message = '';
+    this.api.createFullGymReservation({
+      reservationDate: v.reservationDate || '',
+      startTime: v.startTime || '',
+      endTime: v.endTime || '',
+      reason: v.reason || '',
+    }).subscribe({
+      next: response => {
+        this.message = response.message || 'Gimnasio reservado correctamente.';
+        this.loading = false;
+        this.fullGymForm.reset({
+          reservationDate: new Date().toISOString().slice(0, 10),
+          startTime: '08:00',
+          endTime: '18:00',
+          reason: '',
+        });
+        this.loadShifts();
+      },
+      error: err => {
+        this.error = this.serverMessage(err, 'No se pudo reservar el gimnasio.');
         this.loading = false;
       },
     });

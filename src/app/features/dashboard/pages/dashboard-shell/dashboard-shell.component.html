@@ -7,7 +7,7 @@
       <span></span>
       <span></span>
     </button>
-    <a class="vf-brand vf-brand--topbar" routerLink="/">
+    <a class="vf-brand vf-brand--topbar" [routerLink]="homeRoute" (click)="closeSidebar()">
       <img src="assets/images/volticfit.png" alt="Voltic Fit" />
       <span>Voltic Fit</span>
     </a>
@@ -21,7 +21,7 @@
   <div class="vf-overlay" [class.vf-overlay--visible]="sidebarOpen" (click)="closeSidebar()"></div>
 
   <aside class="vf-sidebar" [class.vf-sidebar--open]="sidebarOpen">
-    <a class="vf-brand" routerLink="/" (click)="closeSidebar()">
+    <a class="vf-brand" [routerLink]="homeRoute" (click)="closeSidebar()">
       <img src="assets/images/volticfit.png" alt="Voltic Fit" />
       <span>Voltic Fit</span>
     </a>
@@ -60,5 +60,5 @@
     <router-outlet></router-outlet>
   </main>
 
-  <app-chatbot></app-chatbot>
+  <app-chatbot *ngIf="!isChatRoute()"></app-chatbot>
 </div>

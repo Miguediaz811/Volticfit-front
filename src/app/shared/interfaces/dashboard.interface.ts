@@ -181,6 +181,7 @@ export interface NotificationItem {
   mensaje: string;
   tipo?: string;
   usuarioDestinoId?: number;
+  usuarioDestinoNombre?: string;
   leida?: boolean;
   fechaEnvio?: string;
   fechaExpiracion?: string;

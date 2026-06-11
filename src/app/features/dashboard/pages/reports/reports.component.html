@@ -40,6 +40,15 @@
           <option value="cerrado">Cerrado</option>
         </select>
       </label>
+      <label *ngIf="selectedType === 'attendance' || selectedType === 'sanctions'">
+        <span>Usuario</span>
+        <select [(ngModel)]="selectedUserId">
+          <option value="">Todos los usuarios</option>
+          <option *ngFor="let user of users" [value]="user.idUser">
+            {{ user.names }} {{ user.surnames }} - {{ user.docNum || user.email }}
+          </option>
+        </select>
+      </label>
     </div>
 
     <div class="expected-fields">
@@ -105,6 +114,27 @@
     </div>
 
     <!-- Previsualización sanciones -->
+    <div class="preview-table" *ngIf="machineRows.length > 0">
+      <table class="vf-table">
+        <thead>
+          <tr>
+            <th>Equipo</th>
+            <th>Tipo</th>
+            <th>Fecha registro</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of machineRows">
+            <td>{{ row.name }}</td>
+            <td>{{ row.type }}</td>
+            <td>{{ row.registrationDate || '-' }}</td>
+            <td>{{ row.state ? 'Activa' : 'Inactiva' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
     <div class="preview-table" *ngIf="sanctionRows.length > 0">
       <table class="vf-table">
         <thead>

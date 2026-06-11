@@ -305,6 +305,15 @@
 }
 
 @media (max-width: 640px) {
+  :host {
+    min-height: auto;
+  }
+
+  .qr-page {
+    min-height: auto;
+    border-radius: 8px;
+  }
+
   .qr-topbar {
     height: auto;
     gap: 12px;
@@ -315,7 +324,25 @@
 
   .qr-wrapper,
   .qr-image {
-    width: 260px;
-    height: 260px;
+    width: min(260px, calc(100vw - 84px));
+    height: min(260px, calc(100vw - 84px));
+  }
+
+  .qr-content {
+    width: calc(100% - 20px);
+    margin: 16px auto 24px;
+  }
+
+  .qr-profile {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .qr-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .qr-stats article:nth-child(odd) {
+    border-right: 0;
   }
 }

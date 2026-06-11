@@ -79,27 +79,47 @@
   </ng-container>
 
   <ng-template #instructorPanel>
-    <form [formGroup]="instructorForm" (ngSubmit)="submitInstructor()" class="instructor-form">
-      <label class="chat-field">
-        <span>Asunto *</span>
-        <input type="text" formControlName="subject" placeholder="Ej. Duda sobre rutina" />
-      </label>
-      <label class="chat-field">
-        <span>Descripción *</span>
-        <textarea formControlName="description" placeholder="Cuéntanos qué necesitas revisar con el instructor"></textarea>
-      </label>
-      <label class="chat-field">
-        <span>Adjunto opcional</span>
-        <input type="text" formControlName="attachment" placeholder="Nombre o referencia del archivo" />
-      </label>
 
-      <p class="chat-success" *ngIf="success">{{ success }}</p>
-      <p class="chat-error" *ngIf="error">{{ error }}</p>
+    <!-- Estado de éxito: ticket enviado -->
+    <div class="instructor-success" *ngIf="success; else instructorFormTpl">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+        <polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+      <p>{{ success }}</p>
+      <div class="instructor-success__actions">
+        <button type="button" class="chat-submit chat-submit--outline" (click)="newTicket()">
+          Enviar otro
+        </button>
+        <button type="button" class="chat-submit" (click)="selectMode('chatbot')">
+          Volver al bot
+        </button>
+      </div>
+    </div>
 
-      <button class="chat-submit" type="submit" [disabled]="instructorForm.invalid">
-        Enviar a Instructor
-      </button>
-    </form>
+    <ng-template #instructorFormTpl>
+      <form [formGroup]="instructorForm" (ngSubmit)="submitInstructor()" class="instructor-form">
+        <label class="chat-field">
+          <span>Asunto *</span>
+          <input type="text" formControlName="subject" placeholder="Ej. Duda sobre rutina" />
+        </label>
+        <label class="chat-field">
+          <span>Descripción *</span>
+          <textarea formControlName="description" placeholder="Cuéntanos qué necesitas revisar con el instructor"></textarea>
+        </label>
+        <label class="chat-field">
+          <span>Adjunto opcional</span>
+          <input type="text" formControlName="attachment" placeholder="Nombre o referencia del archivo" />
+        </label>
+
+        <p class="chat-error" *ngIf="error">{{ error }}</p>
+
+        <button class="chat-submit" type="submit" [disabled]="instructorForm.invalid || loading">
+          {{ loading ? 'Enviando...' : 'Enviar a Instructor' }}
+        </button>
+      </form>
+    </ng-template>
+
   </ng-template>
 
 </aside>

@@ -1,1 +1,9 @@
-:host { display: block; }
+:host {
+  display: block;
+}
+
+@media (max-width: 720px) {
+  :host ::ng-deep .vf-table {
+    font-size: .82rem;
+  }
+}

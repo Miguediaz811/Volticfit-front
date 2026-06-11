@@ -1,1 +1,12 @@
-:host { display: block; }
+:host {
+  display: block;
+}
+
+@media (max-width: 720px) {
+  :host ::ng-deep .vf-actions,
+  :host ::ng-deep .vf-actions > *,
+  :host ::ng-deep .vf-btn,
+  :host ::ng-deep .vf-small-btn {
+    width: 100%;
+  }
+}

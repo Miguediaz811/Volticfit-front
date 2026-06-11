@@ -290,3 +290,32 @@
   &:hover:not(:disabled) { background: #dc2626; }
   &:disabled { opacity: .35; cursor: not-allowed; }
 }
+
+@media (max-width: 560px) {
+  .da-overlay {
+    padding: 20px 12px 36px;
+  }
+
+  .da-page {
+    gap: 16px;
+  }
+
+  .da-user-card,
+  .da-warning-banner,
+  .da-item,
+  .da-step {
+    gap: 10px;
+  }
+
+  .da-actions {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .da-cancel-btn,
+  .da-confirm-btn,
+  .da-trigger-btn {
+    justify-content: center;
+    width: 100%;
+  }
+}

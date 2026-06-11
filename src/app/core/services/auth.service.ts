@@ -119,4 +119,14 @@ export class AuthService {
       return null;
     }
   }
+
+  getAvatarStorageKey(): string {
+    const userId = this.getUserId();
+    if (userId) return `vf_avatar_${userId}`;
+
+    const email = this.getEmailFromToken();
+    if (email) return `vf_avatar_${email.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+
+    return 'vf_avatar_guest';
+  }
 }

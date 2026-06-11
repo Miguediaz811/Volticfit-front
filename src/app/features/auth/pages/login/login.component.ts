@@ -69,9 +69,20 @@ export class LoginComponent implements OnInit {
 
   private serverMessage(err: any, fallback: string): string {
     const message = err?.error?.message || err?.error?.error || err?.message;
+    const normalized = String(message || '').toLowerCase();
 
     if (err?.status === 0 || message === 'Failed to fetch') {
       return 'No se pudo conectar con el servidor. Intente nuevamente.';
+    }
+
+    if (
+      normalized.includes('unable to acquire jdbc connection') ||
+      normalized.includes('communications link failure') ||
+      normalized.includes('driver has not received any packets') ||
+      normalized.includes('connection refused') ||
+      normalized.includes('cannot connect')
+    ) {
+      return 'No se pudo conectar con la base de datos. Verifica que MySQL este encendido y que la configuracion de conexion sea correcta.';
     }
 
     return message || fallback;

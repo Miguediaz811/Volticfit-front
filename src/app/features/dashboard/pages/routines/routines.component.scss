@@ -178,7 +178,79 @@
   }
 
   strong {
+    &.status--active  { color: #86efac; }
+    &.status--done    { color: #9ca3af; }
+  }
+}
+
+/* ── Contador de días de rutina ─────────────────────── */
+.routine-day-counter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+
+  &__ring {
+    position: relative;
+    width: 80px;
+    height: 80px;
+
+    svg {
+      width: 80px;
+      height: 80px;
+      transform: rotate(-90deg);
+    }
+
+    .ring-bg {
+      fill: none;
+      stroke: #333;
+      stroke-width: 4;
+    }
+
+    .ring-progress {
+      fill: none;
+      stroke: #f5a623;
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-dasharray: 150.8;
+      transition: stroke-dashoffset 0.6s ease;
+    }
+  }
+
+  &__text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+  }
+
+  &__day {
+    font-size: 1.4rem;
+    font-weight: 900;
     color: #f5a623;
+    line-height: 1;
+  }
+
+  small {
+    font-size: 0.65rem;
+    color: #9ca3af;
+  }
+
+  &__label {
+    font-size: 0.72rem;
+    color: #9ca3af;
+    text-align: center;
+    max-width: 100px;
+    line-height: 1.4;
+  }
+
+  .vf-btn--sm {
+    padding: 6px 14px;
+    font-size: 0.75rem;
   }
 }
 

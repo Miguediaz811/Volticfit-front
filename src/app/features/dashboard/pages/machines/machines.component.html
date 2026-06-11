@@ -10,9 +10,9 @@
   <p class="vf-alert vf-alert--success" *ngIf="message">{{ message }}</p>
   <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
 
-  <section class="panel">
+  <section class="panel" #machineFormPanel>
     <h2>Nueva máquina</h2>
-    <form [formGroup]="form" (ngSubmit)="save()" class="machine-form">
+    <form [formGroup]="form" (ngSubmit)="editing ? update() : save()" class="machine-form">
       <label>
         <span>Nombre *</span>
         <input type="text" formControlName="name" placeholder="Ej. Prensa de pierna" />
@@ -31,9 +31,12 @@
         </select>
       </label>
 
-      <button class="vf-btn" type="submit" [disabled]="saving || form.invalid">
-        {{ saving ? 'Guardando...' : 'Registrar máquina' }}
-      </button>
+      <div class="vf-actions">
+        <button class="vf-btn" type="submit" [disabled]="saving || form.invalid">
+          {{ saving ? 'Guardando...' : (editing ? 'Actualizar máquina' : 'Registrar máquina') }}
+        </button>
+        <button class="vf-btn vf-btn--secondary" type="button" *ngIf="editing" (click)="cancelEdit()">Cancelar</button>
+      </div>
     </form>
   </section>
 
@@ -54,9 +57,18 @@
           <p>{{ machine.type }}</p>
           <small>Registro: {{ machine.registrationDate || 'Sin fecha' }}</small>
         </div>
-        <span [class.is-inactive]="machine.state === false">
-          {{ machine.state === false ? 'Inactiva' : 'Activa' }}
-        </span>
+        <div class="machine-card__right">
+          <span [class.is-inactive]="machine.state === false">
+            {{ machine.state === false ? 'Inactiva' : 'Activa' }}
+          </span>
+          <div class="vf-actions vf-actions--compact">
+            <button class="vf-small-btn" type="button" (click)="openEdit(machine)">Editar</button>
+            <button class="vf-small-btn" type="button" (click)="inactivate(machine)" [disabled]="machine.state === false" [title]="machine.state === false ? 'Ya está inactiva' : 'Inactivar'">
+              Inactivar
+            </button>
+            <button class="vf-small-btn vf-small-btn--danger" type="button" (click)="deleteMachine(machine)">Eliminar</button>
+          </div>
+        </div>
       </article>
     </div>
 

@@ -92,6 +92,16 @@ export class FailuresComponent implements OnInit {
     });
   }
 
+  selectedReport: FailureReportItem | null = null;
+
+  openDetail(report: FailureReportItem): void {
+    this.selectedReport = report;
+  }
+
+  closeDetail(): void {
+    this.selectedReport = null;
+  }
+
   markInReview(report: FailureReportItem): void {
     this.updateStatus(report, 'En revision');
   }

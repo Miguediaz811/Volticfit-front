@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { DashboardApiService } from '../../../../core/services/dashboard-api.service';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -13,6 +13,8 @@ import {
   styleUrl: './physical-evaluations.component.scss',
 })
 export class PhysicalEvaluationsComponent implements OnInit {
+  @ViewChild('availabilityPanel') availabilityPanel?: ElementRef<HTMLElement>;
+
   availability: InstructorAvailability[] = [];
   evaluations: PhysicalEvaluationItem[] = [];
   selectedSlot: InstructorAvailability | null = null;
@@ -81,7 +83,12 @@ export class PhysicalEvaluationsComponent implements OnInit {
 
     request$.subscribe({
       next: evaluations => {
-        this.evaluations = evaluations;
+        const today = new Date().toISOString().slice(0, 10);
+        // Auto-marcar como realizadas las que ya pasaron (solo localmente; el admin puede confirmarlas)
+        this.evaluations = evaluations.map(ev => ({
+          ...ev,
+          status: ev.status === 'programada' && ev.date < today ? 'realizada' : ev.status,
+        }));
         this.loadingEvaluations = false;
       },
       error: err => {
@@ -138,18 +145,33 @@ export class PhysicalEvaluationsComponent implements OnInit {
   }
 
   startReschedule(evaluation: PhysicalEvaluationItem): void {
+    if (this.isFinished(evaluation)) return;
     this.rescheduling = evaluation;
     this.form.patchValue({
       date: evaluation.date,
       notes: evaluation.notes || '',
     });
     this.loadAvailability();
+    setTimeout(() => this.availabilityPanel?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }
 
   cancelReschedule(): void {
     this.rescheduling = null;
     this.selectedSlot = null;
     this.form.patchValue({ notes: '' });
+  }
+
+  markAsCompleted(evaluation: PhysicalEvaluationItem): void {
+    this.message = '';
+    this.error = '';
+
+    this.api.markEvaluationAsCompleted(this.evaluationId(evaluation)).subscribe({
+      next: response => {
+        this.message = response.message || 'Evaluación marcada como realizada.';
+        this.loadEvaluations();
+      },
+      error: err => this.error = this.serverMessage(err, 'No se pudo marcar como realizada.'),
+    });
   }
 
   cancelEvaluation(evaluation: PhysicalEvaluationItem): void {
@@ -168,6 +190,14 @@ export class PhysicalEvaluationsComponent implements OnInit {
 
   evaluationId(evaluation: PhysicalEvaluationItem): number {
     return Number(evaluation.idEvaluation ?? evaluation.IdEvaluation);
+  }
+
+  isFinished(evaluation: PhysicalEvaluationItem): boolean {
+    return evaluation.status === 'cancelada' || evaluation.status === 'realizada';
+  }
+
+  isRescheduling(evaluation: PhysicalEvaluationItem): boolean {
+    return !!this.rescheduling && this.evaluationId(this.rescheduling) === this.evaluationId(evaluation);
   }
 
   private serverMessage(err: any, fallback: string): string {

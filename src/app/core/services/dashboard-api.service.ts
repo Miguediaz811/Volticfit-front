@@ -101,6 +101,13 @@ export class DashboardApiService {
     return this.http.get<AttendanceResult[]>(`${this.apiUrl}/attendance/all`, { params });
   }
 
+  getAllAttendanceByUser(userId: number, startDate?: string, endDate?: string): Observable<AttendanceResult[]> {
+    let params = new HttpParams().set('userId', userId);
+    if (startDate) params = params.set('startDate', startDate);
+    if (endDate)   params = params.set('endDate', endDate);
+    return this.http.get<AttendanceResult[]>(`${this.apiUrl}/attendance/all`, { params });
+  }
+
   getSanctions(): Observable<Sanction[]> {
     return this.http.get<Sanction[]>(`${this.apiUrl}/api/sanctions`);
   }
@@ -138,6 +145,10 @@ export class DashboardApiService {
 
   createReservation(date: string, startTime: string): Observable<MessageResponse> {
     return this.http.post<MessageResponse>(`${this.apiUrl}/api/reservations`, { date, startTime });
+  }
+
+  createFullGymReservation(data: { reservationDate: string; startTime: string; endTime: string; reason: string }): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${this.apiUrl}/api/reservations/full-gym`, data);
   }
 
   getMyReservations(): Observable<Reservation[]> {
@@ -245,8 +256,23 @@ export class DashboardApiService {
     return this.http.put<MachineResponse>(`${this.apiUrl}/api/maquinas/${id}`, data);
   }
 
-  exportReport(format: 'pdf' | 'excel', report: 'users' | 'attendance' | 'machines' | 'sanctions'): Observable<Blob> {
+  inactivateMachine(id: number): Observable<MachineResponse> {
+    return this.http.put<MachineResponse>(`${this.apiUrl}/api/maquinas/${id}/inactivar`, {});
+  }
+
+  deleteMachine(id: number): Observable<MachineResponse> {
+    return this.http.delete<MachineResponse>(`${this.apiUrl}/api/maquinas/${id}`);
+  }
+
+  exportReport(
+    format: 'pdf' | 'excel',
+    report: 'users' | 'attendance' | 'machines' | 'maintenance' | 'sanctions',
+    userId?: number,
+  ): Observable<Blob> {
+    let params = new HttpParams();
+    if (userId) params = params.set('userId', userId);
     return this.http.get(`${this.apiUrl}/api/export/${format}/${report}`, {
+      params,
       responseType: 'blob',
     });
   }
@@ -284,6 +310,14 @@ export class DashboardApiService {
 
   getSanctionsReport(startDate?: string, endDate?: string): Observable<any[]> {
     let params = new HttpParams();
+    if (startDate) params = params.set('startDate', startDate);
+    if (endDate)   params = params.set('endDate', endDate);
+    return this.http.get<any[]>(`${this.apiUrl}/api/sanctions/report`, { params });
+  }
+
+  getSanctionsReportByUser(userId?: number, startDate?: string, endDate?: string): Observable<any[]> {
+    let params = new HttpParams();
+    if (userId)    params = params.set('userId', userId);
     if (startDate) params = params.set('startDate', startDate);
     if (endDate)   params = params.set('endDate', endDate);
     return this.http.get<any[]>(`${this.apiUrl}/api/sanctions/report`, { params });
@@ -342,6 +376,10 @@ export class DashboardApiService {
     return this.http.get<NotificationItem[]>(`${this.apiUrl}/api/notifications/broadcast-history`);
   }
 
+  getAllNotificationsAdmin(): Observable<NotificationItem[]> {
+    return this.http.get<NotificationItem[]>(`${this.apiUrl}/api/notifications/admin/all`);
+  }
+
   getEvaluationAvailability(date: string): Observable<InstructorAvailability[]> {
     return this.http.get<InstructorAvailability[]>(`${this.apiUrl}/api/evaluations/availability`, {
       params: new HttpParams().set('date', date),
@@ -377,6 +415,10 @@ export class DashboardApiService {
     return this.http.put<MessageResponse>(`${this.apiUrl}/api/evaluations/${id}/cancel`, {});
   }
 
+  markEvaluationAsCompleted(id: number): Observable<MessageResponse> {
+    return this.http.put<MessageResponse>(`${this.apiUrl}/api/evaluations/${id}/complete`, {});
+  }
+
   sendChatbotMessage(message: string): Observable<{ response?: string; message?: string }> {
     return this.http.post<{ response?: string; message?: string }>(`${this.apiUrl}/api/chatbot/message`, { message });
   }
@@ -400,4 +442,26 @@ export class DashboardApiService {
   replySupportTicket(code: string, message: string): Observable<MessageResponse> {
     return this.http.post<MessageResponse>(`${this.apiUrl}/api/support/instructor/${code}/reply`, { message });
   }
+
+  // Clinical history documents
+  uploadClinicalHistoryDocument(historyId: number, file: File): Observable<MessageResponse> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<MessageResponse>(`${this.apiUrl}/api/clinical-history/${historyId}/documents`, formData);
+  }
+
+  getClinicalHistoryDocuments(historyId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/api/clinical-history/${historyId}/documents`);
+  }
+
+  downloadClinicalHistoryDocument(historyId: number, docId: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/api/clinical-history/${historyId}/documents/${docId}/download`, {
+      responseType: 'blob',
+    });
+  }
+
+  deleteClinicalHistoryDocument(historyId: number, docId: number): Observable<MessageResponse> {
+    return this.http.delete<MessageResponse>(`${this.apiUrl}/api/clinical-history/${historyId}/documents/${docId}`);
+  }
+
 }

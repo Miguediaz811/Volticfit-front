@@ -58,3 +58,27 @@
   background-color: #fee2e2;
   color: #991b1b;
 }
+
+/* Botón Desactivar cuando la sanción ya está inactiva */
+.vf-small-btn--inactive {
+  display: inline-flex;
+  align-items: center;
+  opacity: 0.38;
+  cursor: not-allowed;
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (max-width: 720px) {
+  .user-search-suggestions {
+    padding: .65rem;
+  }
+
+  .vf-link-button {
+    font-size: .86rem;
+  }
+
+  :host ::ng-deep .vf-table {
+    font-size: .82rem;
+  }
+}

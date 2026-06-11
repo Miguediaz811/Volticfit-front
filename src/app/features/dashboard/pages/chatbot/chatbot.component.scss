@@ -177,7 +177,7 @@
   flex-direction: column;
   gap: 8px;
   scrollbar-width: thin;
-  scrollbar-color: #3A3A3A transparent;
+  scrollbar-color: #F5A800 transparent;
 }
 
 .chat-msg {
@@ -371,18 +371,86 @@
 
   &:hover:not(:disabled) { background: #E07000; }
   &:disabled { opacity: .4; cursor: not-allowed; }
+
+  &--outline {
+    background: transparent;
+    border: 1px solid #F5A800;
+    color: #F5A800;
+
+    &:hover:not(:disabled) {
+      background: rgba(245, 168, 0, .1);
+    }
+  }
+}
+
+/* ── Instructor success screen ──────────────────────── */
+.instructor-success {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 24px 16px;
+  text-align: center;
+
+  svg {
+    width: 48px;
+    height: 48px;
+    stroke: #4ade80;
+    flex: 0 0 auto;
+  }
+
+  p {
+    font-size: .78rem;
+    color: #CCCCCC;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    margin-top: 4px;
+
+    .chat-submit {
+      flex: 1;
+    }
+  }
 }
 
 /* ── Mobile ─────────────────────────────────────────── */
 @media (max-width: 480px) {
   .chat-fab {
-    bottom: 20px;
-    right: 20px;
+    bottom: 14px;
+    right: 14px;
+    width: 50px;
+    height: 50px;
   }
 
   .chat-panel {
-    right: 12px;
-    bottom: 88px;
-    width: calc(100vw - 24px);
+    right: 8px;
+    bottom: 74px;
+    width: calc(100vw - 16px);
+    max-height: min(560px, calc(100vh - 100px));
+    border-radius: 12px;
+  }
+
+  .chat-tabs button {
+    font-size: .68rem;
+    padding-inline: 4px;
+  }
+
+  .chat-msg {
+    max-width: 92%;
+  }
+
+  .chat-form {
+    align-items: center;
+  }
+
+  .instructor-success__actions {
+    flex-direction: column;
   }
 }

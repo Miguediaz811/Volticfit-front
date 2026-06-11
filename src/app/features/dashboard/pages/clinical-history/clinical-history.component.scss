@@ -148,6 +148,32 @@ textarea {
   }
 }
 
+.document-tools,
+.document-list,
+.document-row {
+  display: grid;
+  gap: 10px;
+}
+
+.document-tools {
+  margin-top: 14px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+}
+
+.document-list {
+  margin-top: 12px;
+}
+
+.document-row {
+  align-items: center;
+  background: #1b1b1b;
+  border: 1px solid #333;
+  border-radius: 8px;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  padding: 10px;
+}
+
 .empty-state {
   padding: 22px;
   text-align: center;
@@ -190,7 +216,10 @@ textarea {
 @media (max-width: 720px) {
   .section-title,
   .history-card,
-  .actions {
+  .actions,
+  .document-tools,
+  .document-row {
     flex-direction: column;
+    grid-template-columns: 1fr;
   }
 }

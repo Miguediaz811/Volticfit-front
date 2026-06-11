@@ -11,7 +11,7 @@
   <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
 
   <!-- Panel de disponibilidad: visible para todos los roles -->
-  <section class="panel">
+  <section class="panel" #availabilityPanel>
     <div class="section-title">
       <h2>{{ isAdmin ? 'Disponibilidad de instructores' : (rescheduling ? 'Reprogramar evaluación' : 'Agendar evaluación') }}</h2>
       <button class="vf-btn vf-btn--secondary" type="button" *ngIf="rescheduling" (click)="cancelReschedule()">
@@ -42,6 +42,9 @@
         <span>Fecha</span>
         <input type="date" [value]="form.value.date" [min]="minDate" (change)="form.patchValue({ date: $any($event.target).value }); loadAvailability()" />
       </label>
+      <button class="vf-btn" type="button" *ngIf="rescheduling" (click)="save()" [disabled]="saving || !selectedSlot">
+        {{ saving ? 'Guardando...' : 'Guardar reprogramacion' }}
+      </button>
     </div>
 
     <p class="vf-muted" *ngIf="loadingAvailability">Cargando disponibilidad...</p>
@@ -51,7 +54,7 @@
         class="slot-card"
         type="button"
         *ngFor="let slot of availability"
-        [disabled]="!slot.available || isAdmin"
+        [disabled]="!slot.available || (isAdmin && !rescheduling)"
         [class.is-selected]="selectedSlot === slot"
         (click)="selectSlot(slot)"
       >
@@ -87,12 +90,23 @@
         </div>
         <div class="actions">
           <span [class.is-cancelled]="evaluation.status === 'cancelada'">{{ evaluation.status }}</span>
-          <!-- Acciones de reprogramar/cancelar: solo para aprendiz y funcionario -->
-          <ng-container *ngIf="!isAdmin">
-            <button class="vf-btn vf-btn--secondary" type="button" (click)="startReschedule(evaluation)" [disabled]="evaluation.status === 'cancelada'">
+          <ng-container *ngIf="isAdmin">
+            <button class="vf-btn vf-btn--secondary" type="button" (click)="startReschedule(evaluation)" [disabled]="isFinished(evaluation) || isRescheduling(evaluation)">
               Reprogramar
             </button>
-            <button class="vf-btn vf-btn--danger" type="button" (click)="cancelEvaluation(evaluation)" [disabled]="evaluation.status === 'cancelada'">
+            <button class="vf-btn vf-btn--danger" type="button" (click)="cancelEvaluation(evaluation)" [disabled]="isFinished(evaluation)">
+              Cancelar
+            </button>
+            <button class="vf-btn" type="button" (click)="markAsCompleted(evaluation)" [disabled]="isFinished(evaluation)">
+              Realizada
+            </button>
+          </ng-container>
+
+          <ng-container *ngIf="!isAdmin">
+            <button class="vf-btn vf-btn--secondary" type="button" (click)="startReschedule(evaluation)" [disabled]="isFinished(evaluation) || isRescheduling(evaluation)">
+              Reprogramar
+            </button>
+            <button class="vf-btn vf-btn--danger" type="button" (click)="cancelEvaluation(evaluation)" [disabled]="isFinished(evaluation)">
               Cancelar
             </button>
           </ng-container>

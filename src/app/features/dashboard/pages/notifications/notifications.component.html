@@ -116,31 +116,38 @@
     </div>
   </div>
 
-  <!-- Historial de notificaciones broadcast (solo admin) -->
+  <!-- Todas las notificaciones (solo admin) -->
   <div class="vf-panel" *ngIf="isAdmin">
     <div class="vf-panel-heading">
       <div>
-        <h2>Notificaciones enviadas a todos</h2>
-        <p class="vf-muted">Historial de avisos broadcast realizados en esta sesion.</p>
+        <h2>Todas las notificaciones</h2>
+        <p class="vf-muted">Historial completo de notificaciones enviadas a usuarios específicos y a todos.</p>
       </div>
-      <button class="vf-small-btn" type="button" (click)="clearBroadcastHistory()" *ngIf="broadcastHistory.length > 0">Limpiar</button>
+      <button class="vf-small-btn" type="button" (click)="loadAllNotifications()">Actualizar</button>
     </div>
 
-    <p class="vf-empty" *ngIf="broadcastHistory.length === 0">No se han enviado notificaciones a todos en esta sesion.</p>
+    <p class="vf-muted" *ngIf="allNotifsLoading">Cargando...</p>
+    <p class="vf-empty" *ngIf="!allNotifsLoading && allNotifications.length === 0">No hay notificaciones registradas.</p>
 
-    <div class="notification-list" *ngIf="broadcastHistory.length > 0">
-      <article class="notification-card broadcast-card" *ngFor="let notif of broadcastHistory">
+    <div class="notification-list" *ngIf="allNotifications.length > 0">
+      <article class="notification-card" *ngFor="let notif of allNotifications" [class.is-read]="notif.leida">
         <div>
           <span>{{ notif.tipo || 'General' }}</span>
           <h3>{{ notif.titulo }}</h3>
           <p>{{ notif.mensaje }}</p>
+          <small *ngIf="notif.usuarioDestinoNombre">Para: {{ notif.usuarioDestinoNombre }}</small>
+          <small *ngIf="notif.usuarioDestinoId && !notif.usuarioDestinoNombre">Para usuario #{{ notif.usuarioDestinoId }}</small>
+          <small *ngIf="!notif.usuarioDestinoId && !notif.usuarioDestinoNombre" class="broadcast-badge-inline">Para: Enviada a todos los usuarios</small>
           <small *ngIf="notif.fechaExpiracion">Vigente hasta: {{ notif.fechaExpiracion }}</small>
           <small>{{ notif.fechaEnvio }}</small>
         </div>
         <div class="broadcast-badge">
-          <span>Todos los usuarios</span>
+          <span [class.status--active]="!notif.leida" [class.status--done]="notif.leida">
+            {{ notif.leida ? 'Leída' : 'Sin leer' }}
+          </span>
         </div>
       </article>
     </div>
   </div>
+
 </section>

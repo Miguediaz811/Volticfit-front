@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../../../../core/services/auth.service';
 import { DashboardApiService } from '../../../../core/services/dashboard-api.service';
@@ -14,6 +14,8 @@ import {
   styleUrl: './diagnosis-restrictions.component.scss',
 })
 export class DiagnosisRestrictionsComponent implements OnInit {
+  @ViewChild('restrictionFormPanel') restrictionFormPanel?: ElementRef<HTMLElement>;
+
   readonly role = this.auth.getRol();
   readonly isAdmin = this.role === 'admin';
   readonly minDate = new Date().toISOString().slice(0, 10);
@@ -110,6 +112,7 @@ export class DiagnosisRestrictionsComponent implements OnInit {
         this.selectedDiagnosis = diagnoses[0] || null;
         this.loading = false;
         if (this.selectedDiagnosis) this.loadRestrictions(this.selectedDiagnosis);
+        this.loadAllRestrictions();
       },
       error: err => {
         this.diagnoses = [];
@@ -134,6 +137,50 @@ export class DiagnosisRestrictionsComponent implements OnInit {
           this.error = this.serverMessage(err, 'No se pudieron cargar las restricciones.');
         }
       },
+    });
+  }
+
+  calculatedImc: number | null = null;
+  allRestrictions: MedicalRestrictionItem[] = [];
+  showPreview: DiagnosisItem | null = null;
+  previewRestrictions: MedicalRestrictionItem[] = [];
+
+  calculateImc(): void {
+    const h = Number(this.diagnosisForm.value.height);
+    const w = Number(this.diagnosisForm.value.weight);
+    if (h > 0 && w > 0) {
+      this.calculatedImc = Math.round((w / (h * h)) * 100) / 100;
+    } else {
+      this.calculatedImc = null;
+    }
+  }
+
+  openPreview(diagnosis: DiagnosisItem): void {
+    this.showPreview = diagnosis;
+    this.previewRestrictions = [];
+    this.api.getRestrictionsByDiagnosis(diagnosis.idDiagnosis).subscribe({
+      next: r => this.previewRestrictions = r,
+      error: () => this.previewRestrictions = [],
+    });
+  }
+
+  closePreview(): void {
+    this.showPreview = null;
+    this.previewRestrictions = [];
+  }
+
+  loadAllRestrictions(): void {
+    if (!this.selectedUserId) return;
+    this.api.getDiagnosesByUser(this.selectedUserId).subscribe({
+      next: diags => {
+        const calls = diags.map(d =>
+          this.api.getRestrictionsByDiagnosis(d.idDiagnosis).toPromise().then(r => r || [])
+        );
+        Promise.all(calls).then(results => {
+          this.allRestrictions = results.flat();
+        });
+      },
+      error: () => { this.allRestrictions = []; },
     });
   }
 
@@ -219,6 +266,7 @@ export class DiagnosisRestrictionsComponent implements OnInit {
       endDate: restriction.endDate || '',
       state: restriction.state !== false,
     });
+    setTimeout(() => this.restrictionFormPanel?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }
 
   cancelRestrictionEdit(): void {

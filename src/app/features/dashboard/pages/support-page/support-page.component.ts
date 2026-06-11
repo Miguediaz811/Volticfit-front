@@ -149,15 +149,15 @@ export class SupportPageComponent implements OnInit, AfterViewChecked {
   }
 
   parseConversation(ticket: SupportTicket): ConversationTurn[] {
-    const fullText = ticket.attachment || '';
+    const fullText = (ticket.attachment || '').trim();
     const turns: ConversationTurn[] = [];
 
     if (!fullText) {
-      turns.push({ author: 'user', label: 'Tu consulta', text: ticket.lastMessage || '' });
+      turns.push({ author: 'user', label: 'Tu consulta', text: ticket.lastMessage || 'Sin mensaje registrado.' });
       if (ticket.response) {
         turns.push({ author: 'admin', label: 'Instructor', text: ticket.response });
       } else {
-        turns.push({ author: 'system', label: 'Sistema', text: 'Tu consulta ha sido recibida y está siendo revisada.' });
+        turns.push({ author: 'system', label: 'Sistema', text: 'Tu consulta ha sido recibida y esta siendo revisada.' });
       }
       return turns;
     }
@@ -165,19 +165,23 @@ export class SupportPageComponent implements OnInit, AfterViewChecked {
     const segments = fullText.split(/\n\n(?=Respuesta admin: |Respuesta usuario: )/);
 
     segments.forEach((seg, i) => {
-      if (seg.startsWith('Respuesta admin: ')) {
-        turns.push({ author: 'admin', label: 'Instructor', text: seg.replace('Respuesta admin: ', '').trim() });
-      } else if (seg.startsWith('Respuesta usuario: ')) {
-        turns.push({ author: 'user', label: 'Tú', text: seg.replace('Respuesta usuario: ', '').trim() });
+      const segment = seg.trim();
+      if (segment.startsWith('Respuesta admin: ')) {
+        const text = segment.replace('Respuesta admin: ', '').trim();
+        if (text) turns.push({ author: 'admin', label: 'Instructor', text });
+      } else if (segment.startsWith('Respuesta usuario: ')) {
+        const text = segment.replace('Respuesta usuario: ', '').trim();
+        if (text) turns.push({ author: 'user', label: 'Tu', text });
       } else if (i === 0) {
-        const parts = seg.split('\n\n');
-        const desc = parts.slice(1).join('\n\n').replace(/\n\nAdjunto:.*$/, '').trim();
-        turns.push({ author: 'user', label: 'Tu consulta', text: desc || seg });
+        const parts = segment.split('\n\n');
+        const desc = parts.slice(1).join('\n\n').replace(/\n\nAdjunto:.*$/s, '').trim();
+        const text = desc || ticket.lastMessage || parts[0] || 'Sin mensaje registrado.';
+        turns.push({ author: 'user', label: 'Tu consulta', text });
       }
     });
 
-    if (turns.length > 0 && turns[turns.length - 1].author !== 'admin') {
-      turns.push({ author: 'system', label: 'Sistema', text: 'Tu consulta ha sido recibida y está siendo revisada.' });
+    if (!turns.some(turn => turn.author === 'admin')) {
+      turns.push({ author: 'system', label: 'Sistema', text: 'Tu consulta ha sido recibida y esta siendo revisada.' });
     }
 
     return turns;

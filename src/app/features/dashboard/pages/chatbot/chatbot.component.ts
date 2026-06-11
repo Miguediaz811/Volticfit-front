@@ -18,7 +18,7 @@ type SupportMode = 'chatbot' | 'instructor';
 export class ChatbotComponent implements AfterViewChecked, OnDestroy {
   @ViewChild('messageList') private messageList?: ElementRef<HTMLDivElement>;
 
-  isOpen = true;
+  isOpen = false;
   mode: SupportMode = 'chatbot';
   loading = false;
   error = '';
@@ -80,6 +80,12 @@ export class ChatbotComponent implements AfterViewChecked, OnDestroy {
     this.mode = mode;
     this.error = '';
     this.success = '';
+  }
+
+  newTicket(): void {
+    this.success = '';
+    this.error = '';
+    this.instructorForm.reset();
   }
 
   send(): void {

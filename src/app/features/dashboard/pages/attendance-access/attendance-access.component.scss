@@ -20,4 +20,21 @@ video {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  justify-content: center;
+}
+
+@media (max-width: 900px) {
+  video {
+    max-width: min(420px, 100%);
+  }
+}
+
+@media (max-width: 560px) {
+  .scanner-actions {
+    width: 100%;
+  }
+
+  .scanner-actions > * {
+    flex: 1 1 100%;
+  }
 }

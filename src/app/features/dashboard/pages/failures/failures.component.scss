@@ -19,3 +19,42 @@ textarea {
     grid-template-columns: 1fr;
   }
 }
+
+/* Columna descripción en tabla: truncada con tooltip */
+.desc-cell {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: default;
+}
+
+/* Modal de detalle estilo edición */
+.vf-modal--failure {
+  width: min(600px, 95vw);
+}
+
+.failure-modal-description {
+  grid-column: 1 / -1;
+}
+
+.failure-modal-description textarea {
+  resize: none;
+  background: transparent;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 0.6rem 0.75rem;
+  color: inherit;
+  font-family: inherit;
+  font-size: 0.95rem;
+  width: 100%;
+  cursor: default;
+}
+
+/* inputs readonly del modal */
+.vf-modal--failure input[readonly],
+.vf-modal--failure textarea[readonly] {
+  opacity: 0.85;
+  cursor: default;
+  pointer-events: none;
+}

@@ -299,6 +299,39 @@ select {
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 640px) {
+  .reports-page {
+    gap: 14px;
+  }
+
+  .reports-header,
+  .report-panel {
+    padding: 16px;
+  }
+
+  .reports-header h1 {
+    font-size: 1.45rem;
+  }
+
+  .report-options button {
+    min-height: 0;
+  }
+
+  .expected-fields span {
+    width: 100%;
+  }
+
+  .vf-actions > *,
+  .pagination button {
+    flex: 1 1 100%;
+  }
+
+  .pagination {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
 .report-history {
   margin-top: 20px;
 }

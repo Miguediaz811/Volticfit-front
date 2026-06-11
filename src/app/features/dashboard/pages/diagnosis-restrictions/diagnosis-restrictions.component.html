@@ -55,11 +55,18 @@
       </label>
       <label>
         <span>Altura en metros *</span>
-        <input type="number" formControlName="height" min="0.1" step="0.01" />
+        <input type="number" formControlName="height" min="0.1" step="0.01" (input)="calculateImc()" />
       </label>
       <label>
         <span>Peso en kg *</span>
-        <input type="number" formControlName="weight" min="1" step="0.1" />
+        <input type="number" formControlName="weight" min="1" step="0.1" (input)="calculateImc()" />
+      </label>
+      <label>
+        <span>IMC (calculado)</span>
+        <input type="number" [value]="calculatedImc" readonly placeholder="Se calcula automáticamente" />
+        <small *ngIf="calculatedImc">
+          {{ calculatedImc < 18.5 ? 'Bajo peso' : calculatedImc < 25 ? 'Normal' : calculatedImc < 30 ? 'Sobrepeso' : 'Obesidad' }}
+        </small>
       </label>
       <label>
         <span>Porcentaje de grasa</span>
@@ -79,7 +86,7 @@
     </form>
   </section>
 
-  <section class="panel" *ngIf="selectedDiagnosis">
+  <section class="panel" *ngIf="selectedDiagnosis" #restrictionFormPanel>
     <div class="section-title">
       <h2>Restricciones médicas</h2>
       <span class="selected-tag">Diagnóstico #{{ selectedDiagnosis.idDiagnosis }}</span>
@@ -161,17 +168,20 @@
       >
         <button class="diagnosis-card__main" type="button" (click)="loadRestrictions(diagnosis)">
           <strong>{{ diagnosis.date || 'Sin fecha' }}</strong>
-          <span>IMC: {{ diagnosis.imc || 'Pendiente' }}</span>
+          <span>IMC: {{ diagnosis.imc || calculatedImc || 'Pendiente' }}</span>
           <span>Peso: {{ diagnosis.weight || '-' }} kg</span>
         </button>
-        <button
-          class="vf-btn vf-btn--danger"
-          type="button"
-          *ngIf="isAdmin"
-          (click)="deleteDiagnosis(diagnosis)"
-        >
-          Eliminar
-        </button>
+        <div class="vf-actions vf-actions--compact">
+          <button class="vf-small-btn" type="button" (click)="openPreview(diagnosis)">Vista previa</button>
+          <button
+            class="vf-btn vf-btn--danger"
+            type="button"
+            *ngIf="isAdmin"
+            (click)="deleteDiagnosis(diagnosis)"
+          >
+            Eliminar
+          </button>
+        </div>
       </article>
     </div>
 
@@ -180,3 +190,57 @@
       <p>Cuando exista un diagnóstico, sus restricciones aparecerán aquí.</p>
     </div>
 </section>
+
+<!-- Todas las restricciones médicas -->
+<section class="panel" *ngIf="allRestrictions.length > 0">
+  <div class="section-title">
+    <h2>Todas las restricciones médicas</h2>
+    <button class="vf-btn vf-btn--secondary" type="button" (click)="loadAllRestrictions()">Actualizar</button>
+  </div>
+  <div class="restriction-list">
+    <article class="restriction-card" *ngFor="let r of allRestrictions">
+      <div>
+        <strong>{{ r.type }}</strong>
+        <p>{{ r.description }}</p>
+        <small>{{ r.startDate || 'Sin inicio' }} — {{ r.endDate || 'Sin fin' }}</small>
+      </div>
+      <span class="vf-chip" [class.vf-chip--active]="r.state !== false">{{ r.state !== false ? 'Activa' : 'Inactiva' }}</span>
+    </article>
+  </div>
+</section>
+</section>
+
+<!-- Modal previsualización de diagnóstico -->
+<div class="vf-modal-backdrop" *ngIf="showPreview" (click)="closePreview()">
+  <article class="vf-modal" (click)="$event.stopPropagation()">
+    <div class="vf-modal-header">
+      <h2>Diagnóstico — {{ showPreview.date || 'Sin fecha' }}</h2>
+      <button class="vf-icon-btn" type="button" aria-label="Cerrar" (click)="closePreview()">X</button>
+    </div>
+    <div class="vf-grid">
+      <p><strong>Evaluador:</strong> {{ showPreview.evaluator || '-' }}</p>
+      <p><strong>Sexo:</strong> {{ showPreview.gender || '-' }}</p>
+      <p><strong>Edad:</strong> {{ showPreview.age || '-' }}</p>
+      <p><strong>Altura:</strong> {{ showPreview.height || '-' }} m</p>
+      <p><strong>Peso:</strong> {{ showPreview.weight || '-' }} kg</p>
+      <p><strong>IMC:</strong> {{ showPreview.imc || '-' }}</p>
+      <p><strong>% Grasa:</strong> {{ showPreview.fatPercentage || '-' }}</p>
+      <p><strong>Masa muscular:</strong> {{ showPreview.muscleMass || '-' }} kg</p>
+    </div>
+    <p *ngIf="showPreview.observations"><strong>Observaciones:</strong> {{ showPreview.observations }}</p>
+    <h3>Restricciones</h3>
+    <p *ngIf="previewRestrictions.length === 0" class="vf-muted">Sin restricciones asociadas.</p>
+    <div class="restriction-list">
+      <article class="restriction-card" *ngFor="let r of previewRestrictions">
+        <div>
+          <strong>{{ r.type }}</strong>
+          <p>{{ r.description }}</p>
+          <small>{{ r.startDate || 'Sin inicio' }} — {{ r.endDate || 'Sin fin' }}</small>
+        </div>
+      </article>
+    </div>
+    <div class="vf-actions">
+      <button class="vf-btn vf-btn--secondary" type="button" (click)="closePreview()">Cerrar</button>
+    </div>
+  </article>
+</div>

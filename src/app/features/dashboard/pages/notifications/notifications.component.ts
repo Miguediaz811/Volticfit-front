@@ -22,8 +22,9 @@ export class NotificationsComponent implements OnInit {
   // 'specific' = usuario concreto | 'all' = todos
   targetMode: 'specific' | 'all' = 'specific';
 
-  // Historial de notificaciones enviadas a todos
-  broadcastHistory: NotificationItem[] = [];
+  // Todas las notificaciones (admin)
+  allNotifications: NotificationItem[] = [];
+  allNotifsLoading = false;
 
   form = this.fb.group({
     usuarioDestinoId: ['', [Validators.required]],
@@ -39,7 +40,7 @@ export class NotificationsComponent implements OnInit {
     this.loadNotifications();
     if (this.isAdmin) {
       this.loadUsers();
-      this.loadBroadcastHistory();
+      this.loadAllNotifications();
     }
   }
 
@@ -104,10 +105,7 @@ export class NotificationsComponent implements OnInit {
     request$.subscribe({
       next: response => {
         this.message = response.message || 'Notificacion creada correctamente.';
-        // Recargar historial broadcast si fue para todos
-        if (this.targetMode === 'all') {
-          this.loadBroadcastHistory();
-        }
+        this.loadAllNotifications();
         this.form.reset({ usuarioDestinoId: '', titulo: '', mensaje: '', tipo: 'General', fechaExpiracion: '' });
         this.targetMode = 'specific';
         this.form.get('usuarioDestinoId')?.setValidators([Validators.required]);
@@ -140,14 +138,17 @@ export class NotificationsComponent implements OnInit {
     return `${user.names} ${user.surnames || ''} - ${doc}`.trim();
   }
 
-  clearBroadcastHistory(): void {
-    this.broadcastHistory = [];
-  }
-
-  loadBroadcastHistory(): void {
-    this.api.getBroadcastHistory().subscribe({
-      next: history => { this.broadcastHistory = history; },
-      error: () => { this.broadcastHistory = []; },
+  loadAllNotifications(): void {
+    this.allNotifsLoading = true;
+    this.api.getAllNotificationsAdmin().subscribe({
+      next: notifs => {
+        this.allNotifications = notifs;
+        this.allNotifsLoading = false;
+      },
+      error: () => {
+        this.allNotifications = [];
+        this.allNotifsLoading = false;
+      },
     });
   }
 

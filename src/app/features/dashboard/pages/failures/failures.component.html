@@ -75,6 +75,7 @@
           <th>Codigo</th>
           <th>Equipo</th>
           <th>Usuario</th>
+          <th>Descripción</th>
           <th>Prioridad</th>
           <th>Estado</th>
           <th>Fecha</th>
@@ -86,11 +87,13 @@
           <td>{{ report.code }}</td>
           <td>{{ report.machineName }}</td>
           <td>{{ report.user || '-' }}</td>
+          <td class="desc-cell" [title]="report.description">{{ report.description }}</td>
           <td>{{ report.priority }}</td>
           <td><span class="vf-chip">{{ report.status }}</span></td>
           <td>{{ report.createdAt }}</td>
           <td>
             <div class="vf-actions vf-actions--compact">
+              <button class="vf-small-btn" type="button" (click)="openDetail(report)">Ver detalle</button>
               <button class="vf-small-btn" type="button" (click)="markInReview(report)" [disabled]="report.status === 'Resuelta'">En revision</button>
               <button class="vf-small-btn" type="button" (click)="resolve(report)" [disabled]="report.status === 'Resuelta'">Resolver</button>
             </div>
@@ -100,3 +103,61 @@
     </table>
   </div>
 </section>
+
+<!-- Modal detalle falla (estilo edición de usuario) -->
+<div class="vf-modal-backdrop" *ngIf="selectedReport" (click)="closeDetail()">
+  <div class="vf-modal vf-modal--failure" (click)="$event.stopPropagation()">
+    <div class="vf-modal-header">
+      <h2>Detalle de falla</h2>
+      <button class="vf-icon-btn" type="button" aria-label="Cerrar" (click)="closeDetail()">X</button>
+    </div>
+
+    <div class="vf-grid">
+      <label class="vf-field">
+        <span>Código</span>
+        <input type="text" [value]="selectedReport.code" readonly />
+      </label>
+      <label class="vf-field">
+        <span>Equipo</span>
+        <input type="text" [value]="selectedReport.machineName || '-'" readonly />
+      </label>
+      <label class="vf-field">
+        <span>Reportado por</span>
+        <input type="text" [value]="selectedReport.user || '-'" readonly />
+      </label>
+      <label class="vf-field">
+        <span>Prioridad</span>
+        <input type="text" [value]="selectedReport.priority" readonly />
+      </label>
+      <label class="vf-field">
+        <span>Estado</span>
+        <input type="text" [value]="selectedReport.status" readonly />
+      </label>
+      <label class="vf-field">
+        <span>Fecha</span>
+        <input type="text" [value]="selectedReport.createdAt || '-'" readonly />
+      </label>
+      <label class="vf-field failure-modal-description">
+        <span>Descripción</span>
+        <textarea [value]="selectedReport.description" readonly rows="4"></textarea>
+      </label>
+    </div>
+
+    <div class="vf-actions" *ngIf="isAdmin">
+      <button class="vf-btn vf-btn--secondary" type="button"
+        (click)="markInReview(selectedReport); closeDetail()"
+        [disabled]="selectedReport.status === 'Resuelta'">
+        En revisión
+      </button>
+      <button class="vf-btn" type="button"
+        (click)="resolve(selectedReport); closeDetail()"
+        [disabled]="selectedReport.status === 'Resuelta'">
+        Resolver
+      </button>
+      <button class="vf-btn vf-btn--secondary" type="button" (click)="closeDetail()">Cerrar</button>
+    </div>
+    <div class="vf-actions" *ngIf="!isAdmin">
+      <button class="vf-btn vf-btn--secondary" type="button" (click)="closeDetail()">Cerrar</button>
+    </div>
+  </div>
+</div>

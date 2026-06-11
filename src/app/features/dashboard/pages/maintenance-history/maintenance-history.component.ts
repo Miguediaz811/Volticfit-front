@@ -92,7 +92,11 @@ export class MaintenanceHistoryComponent implements OnInit {
     this.error = '';
     this.api.getMaintenanceHistory().subscribe({
       next: items => {
-        this.items = items;
+        const today = new Date().toISOString().slice(0, 10);
+        this.items = items.map(item => ({
+          ...item,
+          state: item.state === false ? false : (item.date && item.date <= today ? false : true),
+        }));
         this.applyFilter();
         this.loading = false;
       },

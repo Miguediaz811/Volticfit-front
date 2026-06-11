@@ -16,6 +16,9 @@ export class ClinicalHistoryComponent implements OnInit {
   users: UserProfile[] = [];
   selectedUserId: number | null = null;
   history: ClinicalHistoryItem[] = [];
+  documentsByHistory: Record<number, any[]> = {};
+  selectedFiles: Record<number, File | null> = {};
+  formDocumentFile: File | null = null;
   editingEntry: ClinicalHistoryItem | null = null;
   loading = false;
   saving = false;
@@ -60,6 +63,7 @@ export class ClinicalHistoryComponent implements OnInit {
     this.api.getClinicalHistory(this.targetUserId()).subscribe({
       next: history => {
         this.history = history;
+        history.forEach(entry => this.loadDocuments(entry.idHistory));
         this.loading = false;
       },
       error: err => {
@@ -86,26 +90,43 @@ export class ClinicalHistoryComponent implements OnInit {
       date: this.form.value.date || '',
       description: this.form.value.description || '',
     };
-    const request$ = this.editingEntry
-      ? this.api.updateClinicalHistory(this.editingEntry.idHistory, payload)
+    const editingId = this.editingEntry?.idHistory;
+    const request$ = editingId
+      ? this.api.updateClinicalHistory(editingId, payload)
       : this.api.createClinicalHistory(payload, this.targetUserId());
 
     request$.subscribe({
       next: response => {
-        this.message = response.message || 'Registro clínico guardado correctamente.';
-        this.cancelEdit();
-        this.saving = false;
-        this.loadHistory();
+        const historyId = editingId || response.id || response.idHistory;
+        if (this.formDocumentFile && historyId) {
+          this.api.uploadClinicalHistoryDocument(historyId, this.formDocumentFile).subscribe({
+            next: uploadResponse => {
+              this.message = uploadResponse.message || response.message || 'Registro clinico y documento guardados correctamente.';
+              this.finishSave();
+            },
+            error: err => {
+              this.error = this.serverMessage(err, 'El registro se guardo, pero no se pudo subir el documento.');
+              this.finishSave(false);
+            },
+          });
+          return;
+        }
+
+        this.message = response.message || 'Registro clinico guardado correctamente.';
+        this.finishSave();
       },
       error: err => {
-        this.error = this.serverMessage(err, 'No se pudo guardar el registro clínico.');
+        this.error = this.serverMessage(err, 'No se pudo guardar el registro clinico.');
         this.saving = false;
       },
     });
   }
 
+  showEditModal = false;
+
   editEntry(entry: ClinicalHistoryItem): void {
     this.editingEntry = entry;
+    this.showEditModal = true;
     this.form.patchValue({
       date: entry.date || new Date().toISOString().slice(0, 10),
       description: entry.description || '',
@@ -114,12 +135,19 @@ export class ClinicalHistoryComponent implements OnInit {
 
   cancelEdit(): void {
     this.editingEntry = null;
+    this.showEditModal = false;
     this.form.reset({
       date: new Date().toISOString().slice(0, 10),
       description: '',
     });
+    this.formDocumentFile = null;
     this.form.markAsPristine();
     this.form.markAsUntouched();
+  }
+
+  onFormFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.formDocumentFile = input.files?.[0] || null;
   }
 
   deleteEntry(entry: ClinicalHistoryItem): void {
@@ -135,6 +163,61 @@ export class ClinicalHistoryComponent implements OnInit {
         this.loadHistory();
       },
       error: err => this.error = this.serverMessage(err, 'No se pudo eliminar el registro clínico.'),
+    });
+  }
+
+  onFileSelected(entry: ClinicalHistoryItem, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.selectedFiles[entry.idHistory] = input.files?.[0] || null;
+  }
+
+  uploadDocument(entry: ClinicalHistoryItem): void {
+    const file = this.selectedFiles[entry.idHistory];
+    if (!file) {
+      this.error = 'Selecciona un archivo PDF o Word antes de subirlo.';
+      return;
+    }
+
+    this.message = '';
+    this.error = '';
+    this.api.uploadClinicalHistoryDocument(entry.idHistory, file).subscribe({
+      next: response => {
+        this.message = response.message || 'Documento subido correctamente.';
+        this.selectedFiles[entry.idHistory] = null;
+        this.loadDocuments(entry.idHistory);
+      },
+      error: err => this.error = this.serverMessage(err, 'No se pudo subir el documento.'),
+    });
+  }
+
+  loadDocuments(historyId: number): void {
+    this.api.getClinicalHistoryDocuments(historyId).subscribe({
+      next: docs => { this.documentsByHistory[historyId] = docs; },
+      error: () => { this.documentsByHistory[historyId] = []; },
+    });
+  }
+
+  downloadDocument(entry: ClinicalHistoryItem, doc: any): void {
+    this.api.downloadClinicalHistoryDocument(entry.idHistory, doc.idDocument).subscribe({
+      next: blob => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = doc.fileName || 'historial-clinico';
+        link.click();
+        URL.revokeObjectURL(url);
+      },
+      error: err => this.error = this.serverMessage(err, 'No se pudo descargar el documento.'),
+    });
+  }
+
+  deleteDocument(entry: ClinicalHistoryItem, doc: any): void {
+    this.api.deleteClinicalHistoryDocument(entry.idHistory, doc.idDocument).subscribe({
+      next: response => {
+        this.message = response.message || 'Documento eliminado correctamente.';
+        this.loadDocuments(entry.idHistory);
+      },
+      error: err => this.error = this.serverMessage(err, 'No se pudo eliminar el documento.'),
     });
   }
 
@@ -169,6 +252,16 @@ export class ClinicalHistoryComponent implements OnInit {
 
   private targetUserId(): number | undefined {
     return this.isAdmin && this.selectedUserId ? this.selectedUserId : undefined;
+  }
+
+  private finishSave(clearForm = true): void {
+    if (clearForm) {
+      this.cancelEdit();
+    } else {
+      this.formDocumentFile = null;
+    }
+    this.saving = false;
+    this.loadHistory();
   }
 
   private serverMessage(err: any, fallback: string): string {

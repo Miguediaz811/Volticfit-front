@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { DashboardApiService } from '../../../../core/services/dashboard-api.service';
 import { RoutineHistoryItem, RoutineResponse } from '../../../../shared/interfaces/dashboard.interface';
 
+const ROUTINE_DAYS = 28;
+
 @Component({
   selector: 'app-routines',
   templateUrl: './routines.component.html',
@@ -9,6 +11,7 @@ import { RoutineHistoryItem, RoutineResponse } from '../../../../shared/interfac
 })
 export class RoutinesComponent implements OnInit {
   activeRoutine: RoutineResponse | null = null;
+  activeAssignmentDate: string | null = null;
   history: RoutineHistoryItem[] = [];
   loadingActive = false;
   loadingHistory = false;
@@ -33,9 +36,11 @@ export class RoutinesComponent implements OnInit {
       next: routine => {
         this.activeRoutine = routine;
         this.loadingActive = false;
+        this.syncAssignmentDate();
       },
       error: err => {
         this.activeRoutine = null;
+        this.activeAssignmentDate = null;
         this.loadingActive = false;
         if (err?.status !== 404) {
           this.error = this.serverMessage(err, 'No se pudo cargar la rutina activa.');
@@ -51,6 +56,7 @@ export class RoutinesComponent implements OnInit {
       next: history => {
         this.history = history;
         this.loadingHistory = false;
+        this.syncAssignmentDate();
       },
       error: err => {
         this.history = [];
@@ -62,6 +68,36 @@ export class RoutinesComponent implements OnInit {
     });
   }
 
+  /** Sincroniza la fecha de asignación de la rutina activa desde el historial */
+  private syncAssignmentDate(): void {
+    if (!this.activeRoutine || !this.history.length) return;
+    const active = this.history.find(h => h.state === true || h.active === true);
+    if (active?.assignmentDate) {
+      this.activeAssignmentDate = active.assignmentDate;
+    }
+  }
+
+  /** Días transcurridos desde que se asignó la rutina (máx 28) */
+  daysElapsed(): number {
+    if (!this.activeAssignmentDate) return 0;
+    const start = new Date(this.activeAssignmentDate);
+    const today = new Date();
+    const diff = Math.floor((today.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+    return Math.min(diff, ROUTINE_DAYS);
+  }
+
+  /** Días restantes para completar los 28 días */
+  daysRemaining(): number {
+    return Math.max(0, ROUTINE_DAYS - this.daysElapsed());
+  }
+
+  /** Offset SVG del anillo de progreso (circunferencia = 2π×24 ≈ 150.8) */
+  dayCounterOffset(): number {
+    const circumference = 2 * Math.PI * 24;
+    const progress = this.daysElapsed() / ROUTINE_DAYS;
+    return circumference * (1 - progress);
+  }
+
   generateRoutine(): void {
     this.generating = true;
     this.message = '';
@@ -70,6 +106,7 @@ export class RoutinesComponent implements OnInit {
     this.api.generateRoutine().subscribe({
       next: routine => {
         this.activeRoutine = routine;
+        this.activeAssignmentDate = new Date().toISOString().split('T')[0];
         this.message = 'Rutina generada correctamente.';
         this.generating = false;
         this.generatingCooldown = false;
@@ -95,6 +132,7 @@ export class RoutinesComponent implements OnInit {
       next: response => {
         this.message = response.message || 'Rutina completada correctamente.';
         this.completing = false;
+        this.activeAssignmentDate = null;
         this.loadActiveRoutine();
         this.loadHistory();
       },
@@ -105,6 +143,13 @@ export class RoutinesComponent implements OnInit {
     });
   }
 
+  /** Puede generar rutina: si no hay activa, o si ya pasaron 28 días */
+  canGenerate(): boolean {
+    if (!this.activeRoutine) return true;
+    return this.daysRemaining() === 0;
+  }
+
+  /** Indica si la rutina activa es personalizada */
   routinePersonalized(): boolean {
     return Boolean(this.activeRoutine?.isPersonalized ?? this.activeRoutine?.personalized);
   }

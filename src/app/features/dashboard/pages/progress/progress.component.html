@@ -39,6 +39,49 @@
   </div>
 
   <div class="vf-panel" *ngIf="progress && hasData()">
+    <div class="vf-panel-heading">
+      <div>
+        <h2>Grafica de progreso</h2>
+        <p class="vf-muted">Evolucion del indicador seleccionado.</p>
+      </div>
+      <div class="metric-tabs" role="group" aria-label="Indicador de progreso">
+        <button
+          *ngFor="let option of metricOptions()"
+          type="button"
+          [class.is-active]="selectedMetric === option.key"
+          (click)="selectedMetric = option.key">
+          {{ option.label }}
+        </button>
+      </div>
+    </div>
+
+    <div class="progress-chart" *ngIf="selectedSeries().length; else emptyChart">
+      <svg viewBox="0 0 640 220" preserveAspectRatio="none" aria-label="Grafica de progreso">
+        <line x1="26" y1="194" x2="614" y2="194"></line>
+        <line x1="26" y1="26" x2="26" y2="194"></line>
+        <polyline [attr.points]="chartPoints()"></polyline>
+        <circle
+          *ngFor="let item of selectedSeries(); let i = index"
+          [attr.cx]="chartPoints().split(' ')[i].split(',')[0]"
+          [attr.cy]="chartPoints().split(' ')[i].split(',')[1]"
+          r="5">
+        </circle>
+      </svg>
+
+      <div class="chart-points">
+        <span *ngFor="let item of selectedSeries()">
+          <strong>{{ chartValue(item) }}</strong>
+          <small>{{ item.date }}</small>
+        </span>
+      </div>
+    </div>
+
+    <ng-template #emptyChart>
+      <p class="vf-empty">Este indicador aun no tiene registros.</p>
+    </ng-template>
+  </div>
+
+  <div class="vf-panel" *ngIf="progress && hasData()">
     <h2>Historial</h2>
     <table class="vf-table">
       <thead>

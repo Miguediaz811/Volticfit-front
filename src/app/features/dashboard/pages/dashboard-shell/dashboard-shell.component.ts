@@ -20,6 +20,7 @@ interface NavItem {
 export class DashboardShellComponent implements OnInit {
   readonly rol = this.auth.getRol() || 'observador';
   readonly roleLabel = this.getRoleLabel(this.rol);
+  readonly homeRoute = this.rol === 'admin' ? '/admin' : '/dashboard';
   sidebarOpen = false;
   initials = '';
   avatar = '';
@@ -103,14 +104,15 @@ export class DashboardShellComponent implements OnInit {
       .slice(0, 2)
       .map((p: string) => p[0]?.toUpperCase() || '')
       .join('') || this.rol[0]?.toUpperCase() || 'U';
-    // Avatar emoji guardado en localStorage
-    this.avatar = localStorage.getItem('vf_avatar') || '';
+    // Avatar emoji guardado en localStorage con clave por usuario
+    const avatarKey = this.auth.getAvatarStorageKey();
+    this.avatar = localStorage.getItem(avatarKey) || '';
   }
 
   ngOnInit(): void {
-    // Refrescar avatar si el usuario lo cambia en otra pestaña
+    const avatarKey = this.auth.getAvatarStorageKey();
     window.addEventListener('storage', (e) => {
-      if (e.key === 'vf_avatar') this.avatar = e.newValue || '';
+      if (e.key === avatarKey) this.avatar = e.newValue || '';
     });
   }
 
@@ -138,6 +140,10 @@ export class DashboardShellComponent implements OnInit {
 
   isQrFocus(): boolean {
     return this.router.url.endsWith('/qr');
+  }
+
+  isChatRoute(): boolean {
+    return this.router.url.includes('/chatbot');
   }
 
   logout(): void {

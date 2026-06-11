@@ -93,3 +93,30 @@
   flex-wrap: wrap;
   gap: 10px;
 }
+
+@media (max-width: 720px) {
+  .placeholder-page {
+    gap: 14px;
+  }
+
+  .placeholder-hero,
+  .placeholder-panel {
+    padding: 16px;
+  }
+
+  .placeholder-hero h1 {
+    font-size: 1.45rem;
+  }
+
+  .placeholder-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .placeholder-grid article {
+    min-height: 0;
+  }
+
+  .placeholder-actions > * {
+    flex: 1 1 100%;
+  }
+}

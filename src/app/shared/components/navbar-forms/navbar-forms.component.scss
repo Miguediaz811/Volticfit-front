@@ -21,7 +21,9 @@ $tablet:        768px;
   z-index: 100;
 
   @include mobile {
-    padding: 12px 20px;
+    grid-template-columns: auto 1fr;
+    gap: 12px;
+    padding: 12px 14px;
   }
 
   &__logo {
@@ -32,7 +34,8 @@ $tablet:        768px;
     border-radius: 10px;
 
     @include mobile {
-      height: 50px;
+      height: 42px;
+      justify-self: center;
     }
   }
 
@@ -46,6 +49,10 @@ $tablet:        768px;
 
     @include mobile {
       font-size: 0.78rem;
+      grid-column: 1 / -1;
+      justify-self: center;
+      text-align: center;
+      white-space: normal;
     }
 
     a {
@@ -96,4 +103,9 @@ $tablet:        768px;
   font-weight: 700;
   letter-spacing: 0.03em;
   font-family: 'Barlow', sans-serif;
+
+  @include mobile {
+    padding: 9px 14px;
+    font-size: .78rem;
+  }
 }

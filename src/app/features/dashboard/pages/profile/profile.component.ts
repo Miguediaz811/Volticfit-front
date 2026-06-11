@@ -51,7 +51,7 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProfile();
-    this.selectedAvatar = localStorage.getItem('vf_avatar') || '';
+    this.selectedAvatar = localStorage.getItem(this.avatarKey()) || '';
   }
 
   loadProfile(): void {
@@ -96,8 +96,13 @@ export class ProfileComponent implements OnInit {
 
   selectAvatar(avatar: string): void {
     this.selectedAvatar = avatar;
-    localStorage.setItem('vf_avatar', avatar);
+    localStorage.setItem(this.avatarKey(), avatar);
+    window.dispatchEvent(new StorageEvent('storage', { key: this.avatarKey(), newValue: avatar }));
     this.showAvatarPicker = false;
+  }
+
+  private avatarKey(): string {
+    return this.auth.getAvatarStorageKey();
   }
 
   cancelEditing(): void {

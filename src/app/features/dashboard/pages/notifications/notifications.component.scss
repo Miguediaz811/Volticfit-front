@@ -55,6 +55,20 @@ textarea {
     align-items: flex-start;
     flex-direction: column;
   }
+
+  .notif-target-toggle,
+  .notif-tab-btn,
+  .broadcast-badge {
+    width: 100%;
+  }
+
+  .notif-tab-btn {
+    min-width: 0;
+  }
+
+  .broadcast-badge span {
+    white-space: normal;
+  }
 }
 
 .notif-target-toggle {

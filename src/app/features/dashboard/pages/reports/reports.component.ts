@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DashboardApiService } from '../../../../core/services/dashboard-api.service';
 import { AttendanceResult } from '../../../../shared/interfaces/dashboard.interface';
 
-type ReportType = 'maintenance' | 'attendance' | 'sanctions';
+type ReportType = 'maintenance' | 'machines' | 'attendance' | 'sanctions';
 
 interface ReportOption {
   id: ReportType;
@@ -29,8 +29,14 @@ export class ReportsComponent implements OnInit {
     {
       id: 'maintenance',
       title: 'Reporte de mantenimiento',
-      description: 'Fallas, mantenimientos preventivos y estado de equipos.',
-      fields: ['Equipo', 'Estado', 'Rango de fechas'],
+      description: 'Mantenimientos preventivos, responsables y fechas programadas.',
+      fields: ['Equipo', 'Tipo', 'Responsable', 'Estado', 'Rango de fechas'],
+    },
+    {
+      id: 'machines',
+      title: 'Reporte de equipos',
+      description: 'Inventario de maquinas registradas y su estado operativo.',
+      fields: ['Equipo', 'Tipo', 'Estado'],
     },
     {
       id: 'attendance',
@@ -66,6 +72,12 @@ export class ReportsComponent implements OnInit {
   // Datos de sanciones
   sanctionRows: any[] = [];
 
+  // Datos de maquinas
+  machineRows: any[] = [];
+
+  users: any[] = [];
+  selectedUserId = '';
+
   // Historial de reportes generados (Realiza_Reporte)
   reportHistory: ReportRecord[] = [];
   historyLoading = false;
@@ -82,6 +94,7 @@ export class ReportsComponent implements OnInit {
     this.fromDate = past.toISOString().split('T')[0];
     this.toDate = this.maxDate;
     this.loadReportHistory();
+    this.loadUsers();
   }
 
   get selectedReport(): ReportOption {
@@ -99,6 +112,8 @@ export class ReportsComponent implements OnInit {
     this.attendanceRows = [];
     this.maintenanceRows = [];
     this.sanctionRows = [];
+    this.machineRows = [];
+    this.selectedUserId = '';
     this.totalElements = 0;
     this.currentPage = 0;
     this.toDate = this.maxDate;
@@ -109,9 +124,16 @@ export class ReportsComponent implements OnInit {
     this.error = '';
     this.message = '';
     this.attendanceRows = [];
+    this.maintenanceRows = [];
+    this.sanctionRows = [];
+    this.machineRows = [];
 
     if (this.selectedType === 'attendance') {
-      this.api.getAllAttendance(this.fromDate || undefined, this.toDate || undefined).subscribe({
+      const userId = this.selectedUserId ? Number(this.selectedUserId) : undefined;
+      const request$ = userId
+        ? this.api.getAllAttendanceByUser(userId, this.fromDate || undefined, this.toDate || undefined)
+        : this.api.getAllAttendance(this.fromDate || undefined, this.toDate || undefined);
+      request$.subscribe({
         next: rows => {
           this.attendanceRows = rows;
           this.totalElements = rows.length;
@@ -142,7 +164,8 @@ export class ReportsComponent implements OnInit {
         },
       });
     } else if (this.selectedType === 'sanctions') {
-      this.api.getSanctionsReport(this.fromDate || undefined, this.toDate || undefined).subscribe({
+      const userId = this.selectedUserId ? Number(this.selectedUserId) : undefined;
+      this.api.getSanctionsReportByUser(userId, this.fromDate || undefined, this.toDate || undefined).subscribe({
         next: rows => {
           this.sanctionRows = rows;
           this.loading = false;
@@ -153,6 +176,21 @@ export class ReportsComponent implements OnInit {
         },
         error: err => {
           this.error = err?.error?.message || 'No se pudo obtener los datos de sanciones.';
+          this.loading = false;
+        },
+      });
+    } else if (this.selectedType === 'machines') {
+      this.api.getMachines().subscribe({
+        next: rows => {
+          this.machineRows = rows.filter(m => (m.name || '').toLowerCase() !== 'sin maquina');
+          this.loading = false;
+          if (this.machineRows.length === 0) {
+            this.message = 'No se encontraron equipos registrados.';
+          }
+          this.persistReportRecord('machines');
+        },
+        error: err => {
+          this.error = err?.error?.message || 'No se pudo obtener los datos de equipos.';
           this.loading = false;
         },
       });
@@ -174,7 +212,11 @@ export class ReportsComponent implements OnInit {
     this.error = '';
     this.message = '';
 
-    this.api.exportReport(format, reportKey).subscribe({
+    const userId = (reportKey === 'attendance' || reportKey === 'sanctions') && this.selectedUserId
+      ? Number(this.selectedUserId)
+      : undefined;
+
+    this.api.exportReport(format, reportKey, userId).subscribe({
       next: blob => {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
@@ -238,6 +280,7 @@ export class ReportsComponent implements OnInit {
       attendance:  'Asistencia',
       sanctions:   'Sanciones',
       maintenance: 'Mantenimiento',
+      machines:    'Equipos',
     };
     return map[type?.toLowerCase()] ?? type;
   }
@@ -252,9 +295,17 @@ export class ReportsComponent implements OnInit {
     return map[format?.toLowerCase()] ?? format;
   }
 
-  private exportType(): 'attendance' | 'machines' | 'sanctions' {
+  private exportType(): 'attendance' | 'machines' | 'maintenance' | 'sanctions' {
     if (this.selectedType === 'attendance') return 'attendance';
     if (this.selectedType === 'sanctions') return 'sanctions';
+    if (this.selectedType === 'maintenance') return 'maintenance';
     return 'machines';
+  }
+
+  private loadUsers(): void {
+    this.api.getUsers().subscribe({
+      next: users => { this.users = users; },
+      error: () => { this.users = []; },
+    });
   }
 }

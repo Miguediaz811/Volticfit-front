@@ -6,8 +6,8 @@
       <p>Consulta tu rutina activa, genera una nueva cuando esté permitido y revisa tu historial.</p>
     </div>
 
-    <button class="vf-btn" type="button" (click)="generateRoutine()" [disabled]="generating || loadingActive || generatingCooldown">
-      {{ generating ? 'Generando...' : 'Generar rutina' }}
+    <button class="vf-btn" type="button" (click)="generateRoutine()" [disabled]="generating || loadingActive || generatingCooldown || !canGenerate()">
+      {{ generating ? 'Generando...' : (canGenerate() ? 'Generar rutina' : 'Rutina activa — ' + daysRemaining() + ' días restantes') }}
     </button>
   </header>
 
@@ -33,9 +33,32 @@
           <h3>{{ activeRoutine.objective || 'Rutina de entrenamiento' }}</h3>
           <p>{{ activeRoutine.description }}</p>
         </div>
-        <button class="vf-btn" type="button" (click)="completeRoutine()" [disabled]="completing">
-          {{ completing ? 'Guardando...' : 'Completar rutina' }}
-        </button>
+
+        <!-- Contador de días: 28 días de duración -->
+        <div class="routine-day-counter">
+          <div class="routine-day-counter__ring">
+            <svg viewBox="0 0 56 56">
+              <circle cx="28" cy="28" r="24" class="ring-bg"/>
+              <circle cx="28" cy="28" r="24" class="ring-progress"
+                [style.stroke-dashoffset]="dayCounterOffset()"/>
+            </svg>
+            <div class="routine-day-counter__text">
+              <span class="routine-day-counter__day">{{ daysElapsed() }}</span>
+              <small>de 28</small>
+            </div>
+          </div>
+          <span class="routine-day-counter__label">
+            {{ daysRemaining() > 0 ? daysRemaining() + ' días restantes' : 'Lista para completar' }}
+          </span>
+          <button
+            class="vf-btn vf-btn--sm"
+            type="button"
+            (click)="completeRoutine()"
+            [disabled]="completing"
+            *ngIf="daysRemaining() === 0">
+            {{ completing ? 'Guardando...' : 'Finalizar rutina' }}
+          </button>
+        </div>
       </div>
 
       <p class="vf-alert vf-alert--warning" *ngIf="activeRoutine.warningMessage">
@@ -92,7 +115,9 @@
         </div>
         <div class="history-item__meta">
           <span>{{ item.assignmentDate || 'Sin fecha' }}</span>
-          <strong>{{ item.active ? 'Activa' : 'Finalizada' }}</strong>
+          <strong [class.status--active]="item.state || item.active" [class.status--done]="!(item.state || item.active)">
+            {{ (item.state || item.active) ? 'Activa' : 'Finalizada' }}
+          </strong>
         </div>
       </article>
     </div>

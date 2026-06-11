@@ -44,7 +44,20 @@
             <div class="vf-actions vf-actions--compact">
               <button class="vf-small-btn" type="button" (click)="openDetailModal(sanction)">Detalle</button>
               <button class="vf-small-btn" type="button" *ngIf="isAdmin" (click)="openEditModal(sanction)">Editar</button>
-              <button class="vf-small-btn vf-small-btn--danger" type="button" *ngIf="isAdmin" (click)="deleteSanction(sanction)">Desactivar</button>
+              <button
+                class="vf-small-btn vf-small-btn--danger"
+                type="button"
+                *ngIf="isAdmin && sanction.state"
+                (click)="deleteSanction(sanction)"
+                title="Desactivar sanción">
+                Desactivar
+              </button>
+              <span
+                class="vf-small-btn vf-small-btn--danger vf-small-btn--inactive"
+                *ngIf="isAdmin && !sanction.state"
+                title="Sanción ya inactiva">
+                Desactivar
+              </span>
             </div>
           </td>
         </tr>
