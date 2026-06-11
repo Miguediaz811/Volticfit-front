@@ -1,9 +1,12 @@
-<div>
-  <label [for]="name">{{ text }}</label>
-  <input
-    [id]="name"
-    [type]="type"
-    [placeholder]="placeholder"
-    [formControl]="$any(control)"
-  />
+<div class="input-wrapper">
+  <label [for]="name" *ngIf="text">{{ text }}</label>
+  <div class="input-field">
+    <input
+      [id]="name"
+      [type]="type"
+      [placeholder]="placeholder"
+      [formControl]="$any(control)"
+    />
+    <ng-content></ng-content>
+  </div>
 </div>

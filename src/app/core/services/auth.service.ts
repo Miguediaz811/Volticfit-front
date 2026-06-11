@@ -6,19 +6,19 @@ import { Router } from '@angular/router';
 import {
   LoginRequest,
   LoginResponse,
-  MessageResponse,
   ForgotPasswordRequest,
-  VerifyCodeRequest,
   RestorePasswordRequest,
   ChangePasswordRequest,
-} from '../../features/auth/interfaces/auth.interface';
-import { RegisterRequest }  from '../../features/auth/interfaces/register-request';
-import { RegisterResponse } from '../../features/auth/interfaces/register-response';
+} from '../../shared/interfaces/auth.interface';
+import { RegisterRequest }  from '../../shared/interfaces/register-request';
+import { RegisterResponse } from '../../shared/interfaces/register-response';
+import { MessageResponse }  from '../../shared/interfaces/message-response';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  private apiUrl = 'http://localhost:9090';
+  private readonly apiUrl = environment.apiUrl;
   private readonly TOKEN_KEY = 'volticfit_token';
 
   constructor(
@@ -41,20 +41,22 @@ export class AuthService {
     return this.http.post<RegisterResponse>(`${this.apiUrl}/auth/register`, data);
   }
 
+  /** Paso 1: envía código de recuperación al correo. POST /auth/forgot-password */
   forgotPassword(data: ForgotPasswordRequest): Observable<MessageResponse> {
     return this.http.post<MessageResponse>(`${this.apiUrl}/auth/forgot-password`, data);
   }
 
-  verifyCode(data: VerifyCodeRequest): Observable<MessageResponse> {
-    return this.http.post<MessageResponse>(`${this.apiUrl}/auth/recovery/verify`, data);
-  }
-
+  /** Paso 2: verifica el código y cambia la contraseña. POST /auth/recovery/reset */
   restorePassword(data: RestorePasswordRequest): Observable<MessageResponse> {
     return this.http.post<MessageResponse>(`${this.apiUrl}/auth/recovery/reset`, data);
   }
 
   changePassword(data: ChangePasswordRequest): Observable<MessageResponse> {
     return this.http.post<MessageResponse>(`${this.apiUrl}/auth/change-password`, data);
+  }
+
+  logout(): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${this.apiUrl}/auth/logout`, {});
   }
 
   saveToken(token: string): void {
@@ -80,14 +82,51 @@ export class AuthService {
     }
   }
 
+  /** El JWT guarda el rol en 'role': "admin", "aprendiz", "funcionario" */
   getRol(): string | null {
     const token = this.getToken();
     if (!token) return null;
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.rol ?? null;
+      const role = payload.role ?? payload.rol ?? null;
+      if (typeof role !== 'string') return null;
+      return role.toLowerCase().replace(/^role_/, '');
     } catch {
       return null;
     }
+  }
+
+  getUserId(): number | null {
+    const token = this.getToken();
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const rawId = payload.userId ?? payload.idUser ?? payload.id ?? null;
+      return rawId !== null ? Number(rawId) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  /** El sub del JWT es el email del usuario */
+  getEmailFromToken(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.sub ?? null;
+    } catch {
+      return null;
+    }
+  }
+
+  getAvatarStorageKey(): string {
+    const userId = this.getUserId();
+    if (userId) return `vf_avatar_${userId}`;
+
+    const email = this.getEmailFromToken();
+    if (email) return `vf_avatar_${email.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+
+    return 'vf_avatar_guest';
   }
 }

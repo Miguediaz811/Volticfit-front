@@ -29,7 +29,9 @@ export class JwtInterceptor implements HttpInterceptor {
 
     return next.handle(authReq).pipe(
       catchError((err: HttpErrorResponse) => {
-        if (err.status === 401) {
+        const staysOnPage = req.url.includes('/attendance/manual');
+
+        if (err.status === 401 && !staysOnPage) {
           this.auth.removeToken();
           this.router.navigate(['/auth/login']);
         }

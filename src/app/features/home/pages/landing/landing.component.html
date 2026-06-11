@@ -1,34 +1,52 @@
 <nav class="navbar">
-  <div class="navbar__logo">
+  <a class="navbar__brand" routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMenu()">
     <img src="assets/images/volticfit.png" alt="Voltic Fit Logo" class="navbar__logo" />
-  </div>
-  <div class="navbar__actions">
-    <button class="btn btn--outline" routerLink="/auth/login">Iniciar Sesión</button>
-    <button class="btn btn--primary" routerLink="/auth/register">Registrarse</button>
+  </a>
+
+  <button
+    class="navbar__toggle"
+    type="button"
+    aria-label="Abrir menu"
+    [attr.aria-expanded]="menuOpen"
+    (click)="toggleMenu()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <div class="navbar__menu" [class.navbar__menu--open]="menuOpen">
+    <a href="javascript:void(0)" (click)="scrollTo('top')">Inicio</a>
+    <a href="javascript:void(0)" (click)="scrollTo('categorias')">Categorias</a>
+    <a href="javascript:void(0)" (click)="scrollTo('sobre-nosotros')">Sobre nosotros</a>
+
+    <div class="navbar__actions">
+      <button class="btn btn--outline" routerLink="/auth/login" routerLinkActive="is-active" (click)="closeMenu()">Iniciar Sesion</button>
+      <button class="btn btn--primary" routerLink="/auth/register" routerLinkActive="is-active" (click)="closeMenu()">Registrarse</button>
+    </div>
   </div>
 </nav>
 
 <section class="hero">
   <div class="hero__content">
     <span class="hero__badge">
-      <span class="hero__badge__icon">⚡</span>
+      <span class="hero__badge__icon">VF</span>
       BIENVENIDO A VOLTIC FIT
     </span>
 
     <h1 class="hero__title">
-      Tu mejor versión<br />
-      empieza <span class="text--accent">aquí</span>
+      Tu mejor versi&oacute;n<br />
+      empieza <span class="text--accent">aqu&iacute;</span>
     </h1>
 
     <p class="hero__subtitle">
       Entrena con los mejores equipos, instructores certificados y una comunidad
-      que te motiva a superar tus límites cada día.
+      que te motiva a superar tus limites cada dia.
     </p>
 
     <button class="btn btn--primary btn--lg" routerLink="/auth/register">Comenzar Ahora</button>
 
     <div class="hero__image-placeholder">
-      <img src="../../..//../../assets/images/landingPageImg.jpeg" alt="Gimnasio SENA">
+      <img src="assets/images/landingPageImg.jpeg" alt="Gimnasio SENA">
     </div>
   </div>
 </section>
@@ -43,16 +61,15 @@
   </div>
 </section>
 
-<!-- FEATURES SECTION -->
-<section class="features">
+<section class="features" id="categorias">
   <div class="features__header">
-    <span class="section__eyebrow">¿POR QUÉ ELEGIRNOS?</span>
+    <span class="section__eyebrow">POR QUE ELEGIRNOS</span>
     <h2 class="section__title">
       Todo lo que <span class="text--accent">necesitas</span>
     </h2>
     <p class="section__subtitle">
-      Diseñamos cada detalle del gimnasio para que tu experiencia sea
-      única, cómoda y efectiva.
+      Disenamos cada detalle del gimnasio para que tu experiencia sea
+      unica, comoda y efectiva.
     </p>
   </div>
 
@@ -65,10 +82,10 @@
   </div>
 </section>
 
-<!-- ABOUT SECTION -->
-<section class="about">
+
+<section class="about" id="sobre-nosotros">
   <div class="about__image-placeholder">
-    <img src="../../../../../assets/images/aboutUsImg.jpeg" alt="ABOUT US">
+    <img src="assets/images/aboutUsImg.jpeg" alt="Sobre nosotros">
   </div>
 
   <div class="about__content">
@@ -79,23 +96,22 @@
     </h2>
     <p class="about__desc">
       No somos solo un gimnasio. Somos una comunidad comprometida con tu
-      transformación física y mental, con instalaciones de primer nivel y
-      un equipo humano que te acompaña.
+      transformacion fisica y mental, con instalaciones de primer nivel y
+      un equipo humano que te acompa&ntilde;a.
     </p>
     <ul class="about__list">
       <li class="about__list-item" *ngFor="let point of aboutPoints">
-        <span class="aboutCheck">✓</span>
+        <span class="about__check">OK</span>
         {{ point }}
       </li>
     </ul>
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer class="footer">
   <div class="footer__brand">
-    <img src="../../../../../assets/images/volticfit.png" alt="Voltic Fit" class="footer__logo" />
-    <p class="footer__tagline">Tu mejor versión empieza aquí.</p>
+    <img src="assets/images/volticfit.png" alt="Voltic Fit" class="footer__logo" />
+    <p class="footer__tagline">Tu mejor versi&oacute;n empieza aqu&iacute;.</p>
   </div>
   <p class="footer__copy">&copy; 2026 Voltic Fit. Todos los derechos reservados.</p>
 </footer>

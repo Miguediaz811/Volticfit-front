@@ -1,12 +1,10 @@
-<nav class="navbar">
-  <button class="back-btn" routerLink="/">←</button>
-  <img src="assets/images/volticfit.png" alt="VolticFit" class="navbar__logo" />
-  <h3 class="navbar__login-text">¿Ya tienes cuenta? <a routerLink="/auth/login">Iniciar sesión</a></h3>
-</nav>
-
-<div class="banner">
-  Únete a Voltic Fit — tu transformación comienza hoy
-</div>
+<app-navbar-forms
+  backRoute="/"
+  linkText="¿Ya tienes cuenta?"
+  linkLabel="Iniciar sesión"
+  linkRoute="/auth/login"
+  bannerText="Únete a Voltic Fit — tu transformación comienza hoy"
+/>
 
 <div class="register-page">
   <div class="register-wrapper">
@@ -15,7 +13,9 @@
 
       <div class="section-card">
         <div class="section-card__header">
-          <div class="section-card__icon">👤</div>
+          <div class="section-card__icon">
+            <img src="assets/images/avatar.png" alt="avatar" width="20" height="20">
+          </div>
           <div>
             <p class="section-card__title">Datos personales</p>
             <p class="section-card__subtitle">Información básica de identificación</p>
@@ -24,14 +24,14 @@
 
         <div class="form-grid">
 
-          <div class="form-field">
-            <label class="form-label">Nombre(s) <span class="required">*</span></label>
-            <app-input
-              name="firstName"
-              type="text"
-              placeholder="Ej. Juan David"
-              [control]="form.get('firstName')!"
-            />
+        <div class="form-field">
+          <app-input
+            name="firstName"
+            text="Nombre(s) *"
+            type="text"
+            placeholder="Ej. Juan David"
+            [control]="form.get('firstName')!"
+          />
             <div class="field-errors" *ngIf="form.get('firstName')?.invalid && form.get('firstName')?.touched">
               <span *ngIf="form.get('firstName')?.hasError('required')">El nombre es obligatorio.</span>
               <span *ngIf="form.get('firstName')?.hasError('minlength')">Debe tener al menos 2 caracteres.</span>
@@ -40,13 +40,13 @@
           </div>
 
           <div class="form-field">
-            <label class="form-label">Apellidos <span class="required">*</span></label>
-            <app-input
-              name="lastName"
-              type="text"
-              placeholder="Ej. García López"
-              [control]="form.get('lastName')!"
-            />
+          <app-input
+            name="lastName"
+            text="Apellidos *"
+            type="text"
+            placeholder="Ej. Martínez Rodríguez"
+            [control]="form.get('lastName')!"
+          />
             <div class="field-errors" *ngIf="form.get('lastName')?.invalid && form.get('lastName')?.touched">
               <span *ngIf="form.get('lastName')?.hasError('required')">Los apellidos son obligatorios.</span>
               <span *ngIf="form.get('lastName')?.hasError('minlength')">Debe tener al menos 2 caracteres.</span>
@@ -55,11 +55,11 @@
           </div>
 
           <div class="form-field">
-            <label class="form-label">Correo electrónico <span class="required">*</span></label>
             <app-input
               name="email"
+              text="Correo Electronico *"
               type="email"
-              placeholder="correo@ejemplo.com"
+              placeholder="Ej. correo@ejemplo.com"
               [control]="form.get('email')!"
             />
             <div class="field-errors" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
@@ -69,11 +69,11 @@
           </div>
 
           <div class="form-field">
-            <label class="form-label">Número de teléfono <span class="required">*</span></label>
             <app-input
               name="phone"
+              text="Telefono *"
               type="text"
-              placeholder="+57 300 000 0000"
+              placeholder="1234567890"
               [control]="form.get('phone')!"
             />
             <div class="field-errors" *ngIf="form.get('phone')?.invalid && form.get('phone')?.touched">
@@ -83,7 +83,7 @@
           </div>
 
           <div class="form-field">
-            <label class="form-label" for="documentType">Tipo de documento <span class="required">*</span></label>
+            <label class="form-label" for="documentType">Tipo de documento *</label>
             <select id="documentType" formControlName="documentType">
               <option value="">Selecciona...</option>
               <option *ngFor="let type of documentTypes" [value]="type">{{ type }}</option>
@@ -94,9 +94,9 @@
           </div>
 
           <div class="form-field">
-            <label class="form-label">Número de documento <span class="required">*</span></label>
             <app-input
               name="documentNumber"
+              text="Numero de documento *"
               type="text"
               placeholder="Ej. 1234567890"
               [control]="form.get('documentNumber')!"
@@ -112,7 +112,9 @@
 
       <div class="section-card">
         <div class="section-card__header">
-          <div class="section-card__icon">🔒</div>
+          <div class="section-card__iconLock">
+            <img src="assets/images/candado.png" alt="candado" width="20" height="20">
+          </div>
           <div>
             <p class="section-card__title">Datos de acceso</p>
             <p class="section-card__subtitle">Credenciales para ingresar a la plataforma</p>
@@ -122,18 +124,22 @@
         <div class="form-grid form-grid--full">
 
           <div class="form-field">
-            <label class="form-label">Contraseña <span class="required">*</span></label>
-            <div class="password-wrapper">
-              <app-input
-                name="password"
-                [type]="showPassword ? 'text' : 'password'"
-                placeholder="Mínimo 8 caracteres"
-                [control]="form.get('password')!"
+            <app-input
+              name="password"
+              text="Contraseña *"
+              [type]="showPassword ? 'text' : 'password'"
+              placeholder="Mínimo 8 caracteres"
+              [control]="form.get('password')!"
+            >
+            <button type="button" class="password-toggle" (click)="showPassword = !showPassword">
+              <img 
+                [src]="showPassword ? 'assets/images/esconder.png' : 'assets/images/ojo.png'"
+                alt="toggle password"
+                width="20"
+                height="20"
               />
-              <button type="button" class="password-toggle" (click)="showPassword = !showPassword">
-                {{ showPassword ? '🙈' : '👁️' }}
-              </button>
-            </div>
+            </button>
+            </app-input>
             <div class="password-hints">
               <span [class.valid]="hasMinLength()">Mínimo 8 caracteres</span>
 <span [class.valid]="hasUppercase()">Una mayúscula</span>
@@ -147,28 +153,29 @@
             </div>
           </div>
 
-          <!-- Confirmar contraseña -->
+          
           <div class="form-field">
-            <label class="form-label">Confirmar contraseña <span class="required">*</span></label>
-            <div class="password-wrapper">
-              <app-input
-                name="confirmPassword"
-                [type]="showConfirmPassword ? 'text' : 'password'"
-                placeholder="Repite tu contraseña"
-                [control]="form.get('confirmPassword')!"
+            <app-input
+              name="confirmPassword"
+              text="Confirmar contraseña *"
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              placeholder="Repite tu contraseña"
+              [control]="form.get('confirmPassword')!"
+            >
+            <button type="button" class="password-toggle" (click)="showConfirmPassword = !showConfirmPassword">
+              <img 
+                [src]="showConfirmPassword ? 'assets/images/esconder.png' : 'assets/images/ojo.png'"
+                alt="toggle password"
+                width="20"
+                height="20"
               />
-              <button type="button" class="password-toggle" (click)="showConfirmPassword = !showConfirmPassword">
-                {{ showConfirmPassword ? '🙈' : '👁️' }}
-              </button>
-            </div>
+            </button>
+            </app-input>
             <div class="field-errors" *ngIf="form.get('confirmPassword')?.touched">
               <span *ngIf="form.get('confirmPassword')?.hasError('required')">Debe confirmar la contraseña.</span>
-              <span *ngIf="form.hasError('passwordMismatch')">Las contraseñas no coinciden.</span>
+              <span *ngIf="form.get('confirmPassword')?.hasError('passwordMismatch')">Las contraseñas no coinciden.</span>
             </div>
           </div>
-
-        </div>
-      </div>
 
       <p class="success-message" *ngIf="successMessage">{{ successMessage }}</p>
       <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
@@ -177,6 +184,4 @@
         Registrarse
       </button>
 
-    </form>
-  </div>
-</div>
+

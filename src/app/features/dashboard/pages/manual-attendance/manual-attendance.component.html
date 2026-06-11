@@ -1,0 +1,26 @@
+<section class="vf-page">
+  <div class="vf-header">
+    <h1>Registro manual</h1>
+    <p>Busca el usuario, confirma la acción y registra la asistencia.</p>
+  </div>
+
+  <form class="vf-panel" [formGroup]="form">
+    <label class="vf-field">
+      <span>Documento</span>
+      <input formControlName="docNumber" placeholder="Numero de documento" />
+    </label>
+    <button type="button" class="vf-btn vf-btn--secondary" (click)="search()" [disabled]="loading">Buscar usuario</button>
+
+    <div class="vf-card" *ngIf="foundUser">
+      <h2>Usuario encontrado</h2>
+      <p>{{ foundUser.names || foundUser.fullName || 'Usuario' }}</p>
+      <p>Documento: {{ foundUser.docNumber || '-' }}</p>
+    </div>
+
+    <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
+    <p class="vf-alert vf-alert--success" *ngIf="message">{{ message }}</p>
+    <button type="button" class="vf-btn" (click)="register()" [disabled]="loading || !confirmMode">
+      {{ loading ? 'Procesando...' : 'Registrar asistencia' }}
+    </button>
+  </form>
+</section>

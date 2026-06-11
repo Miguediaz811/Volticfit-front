@@ -1,33 +1,77 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+<app-navbar-forms
+  backRoute="/"
+  linkText="¿No tienes cuenta?"
+  linkLabel="Regístrate"
+  linkRoute="/auth/register"
+  bannerText="Bienvenido de nuevo — sigue con tu transformación"
+/>
 
-  <app-input
-    name="correo"
-    text="Correo electrónico"
-    type="email"
-    placeholder="correo@ejemplo.com"
-    [control]="correo"
-  />
-  <span *ngIf="correo.invalid && correo.touched">Ingresa un correo válido.</span>
+<div class="login-page">
+  <div class="login-card">
 
-  <app-input
-    name="contrasena"
-    text="Contraseña"
-    [type]="showPassword ? 'text' : 'password'"
-    placeholder="Tu contraseña"
-    [control]="contrasena"
-  />
-  <button type="button" (click)="togglePassword()">
-    {{ showPassword ? 'Ocultar' : 'Mostrar' }}
-  </button>
-  <span *ngIf="contrasena.invalid && contrasena.touched">Mínimo 8 caracteres.</span>
+    <div class="login-card__icon">
+      <span>👤</span>
+    </div>
 
-  <a routerLink="/auth/forgot-password">¿Olvidaste tu contraseña?</a>
+    <h2 class="login-card__title">¡Hola de nuevo!</h2>
+    <p class="login-card__subtitle">Ingresa tus credenciales para continuar</p>
 
-  <p *ngIf="errorMessage">{{ errorMessage }}</p>
+    <p class="info-message" *ngIf="sesionExpirada">Tu sesión se cerró por inactividad. Inicia sesión de nuevo.</p>
 
-  <button type="submit">Iniciar sesión</button>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
 
-  <p>¿No tienes cuenta? <a routerLink="/auth/register">Regístrate gratis</a></p>
+      <div class="form-field">
+        <label class="form-label">Correo electrónico</label>
+        <app-input
+          name="correo"
+          type="email"
+          placeholder="correo@ejemplo.com"
+          [control]="correo"
+        />
+        <div class="field-errors" *ngIf="correo.invalid && correo.touched">
+          <span *ngIf="correo.hasError('required')">El correo es obligatorio.</span>
+          <span *ngIf="correo.hasError('pattern')">Ingrese un correo válido.</span>
+        </div>
+      </div>
 
-</form>
+      <div class="form-field">
+        <div class="form-label-row">
+          <label class="form-label">Contraseña</label>
+          <a class="forgot-link" routerLink="/auth/forgot-password">¿Olvidaste tu contraseña?</a>
+        </div>
+        <app-input
+          name="contrasena"
+          [type]="showPassword ? 'text' : 'password'"
+          placeholder="Tu contraseña"
+          [control]="contrasena"
+        >
+          <button type="button" class="password-toggle" (click)="showPassword = !showPassword">
+            <img
+              [src]="showPassword ? 'assets/images/esconder.png' : 'assets/images/ojo.png'"
+              alt="toggle password"
+              width="20"
+              height="20"
+            />
+          </button>
+        </app-input>
+        <div class="field-errors" *ngIf="contrasena.invalid && contrasena.touched">
+          <span *ngIf="contrasena.hasError('required')">La contraseña es obligatoria.</span>
+          <span *ngIf="contrasena.hasError('minlength')">Debe tener al menos 8 caracteres.</span>
+        </div>
+      </div>
 
+      <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+      <button type="submit" class="submit-btn" [disabled]="form.invalid || isLoading">
+        {{ isLoading ? 'Iniciando sesión...' : 'Iniciar sesión' }}
+      </button>
+
+    </form>
+
+    <div class="login-card__footer">
+      <p class="register-link">¿No tienes cuenta? <a routerLink="/auth/register">Regístrate gratis ↗</a></p>
+      <p class="secure-text">🔒 Conexión segura — tus datos están protegidos</p>
+    </div>
+
+  </div>
+</div>

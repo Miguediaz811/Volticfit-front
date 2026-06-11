@@ -1,6 +1,3 @@
-// ═══════════════════════════════════════════
-// VARIABLES
-// ═══════════════════════════════════════════
 $primary:          #F5A623;
 $primaryDark:      #C47D0E;
 $bg:               #1A1A1A;
@@ -14,13 +11,13 @@ $textSecondary:    #9CA3AF;
 $textPlaceholder:  #555555;
 $colorError:       #EF4444;
 $colorSuccess:     #22C55E;
+$colorLock:        #1b64f7 ;
 $radiusCard:       14px;
 $radiusInput:      8px;
 $radiusBtn:        8px;
 
-// ═══════════════════════════════════════════
 // BREAKPOINTS
-// ═══════════════════════════════════════════
+
 $tablet:  768px;
 $desktop: 1024px;
 
@@ -31,9 +28,8 @@ $desktop: 1024px;
   @media (min-width: #{$tablet}) and (max-width: #{$desktop - 1px}) { @content; }
 }
 
-// ═══════════════════════════════════════════
 // HOST
-// ═══════════════════════════════════════════
+
 :host {
   display: block;
   min-height: 100vh;
@@ -42,92 +38,8 @@ $desktop: 1024px;
   font-family: 'Barlow', sans-serif;
 }
 
-// ═══════════════════════════════════════════
-// NAVBAR
-// ═══════════════════════════════════════════
-.navbar {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  padding: 16px 40px;
-  background-color: $bg;
-  border-bottom: 1px solid $borderColor;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-
-  @include mobile {
-    padding: 12px 20px;
-  }
-
-  .back-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: none;
-  border: 1px solid #2E2E2E;
-  border-radius: 8px;
-  color: #9CA3AF;
-  font-family: 'Barlow', sans-serif;
-  font-size: 0.85rem;
-  font-weight: 600;
-  padding: 8px 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    border-color: #F5A623;
-    color: #F5A623;
-  }
-  }
-
-  &__logo {
-    height: 36px;
-    width: auto;
-    object-fit: contain;
-    justify-self: center;
-
-    @include mobile {
-      height: 28px;
-    }
-  }
-
-  &__login-text {
-    justify-self: end;
-    font-size: 0.88rem;
-    font-weight: 400;
-    color: $textSecondary;
-    margin: 0;
-
-    a {
-      color: $primary;
-      font-weight: 700;
-      text-decoration: none;
-      transition: color 0.2s;
-
-      &:hover {
-        color: $primaryDark;
-      }
-    }
-  }
-}
-
-// ═══════════════════════════════════════════
-// BANNER
-// ═══════════════════════════════════════════
-.banner {
-  background-color: $primary;
-  color: #000;
-  text-align: center;
-  padding: 10px 20px;
-  font-size: 0.88rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-}
-
-// ═══════════════════════════════════════════
 // PAGE LAYOUT
-// ═══════════════════════════════════════════
+
 .register-page {
   display: flex;
   justify-content: center;
@@ -146,14 +58,14 @@ $desktop: 1024px;
   gap: 20px;
 }
 
-// ═══════════════════════════════════════════
 // SECTION CARD
-// ═══════════════════════════════════════════
+
 .section-card {
   background-color: $bgCard;
   border: 1px solid $borderColor;
   border-radius: $radiusCard;
   padding: 28px;
+  margin-bottom: 40px;
 
   @include mobile {
     padding: 20px;
@@ -180,6 +92,18 @@ $desktop: 1024px;
     flex-shrink: 0;
   }
 
+  &__iconLock {
+    width: 40px;
+    height: 40px;
+    background-color: rgba($colorLock, 0.12);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
   &__title {
     font-size: 1.05rem;
     font-weight: 700;
@@ -194,9 +118,8 @@ $desktop: 1024px;
   }
 }
 
-// ═══════════════════════════════════════════
 // FORM GRID
-// ═══════════════════════════════════════════
+
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -211,9 +134,8 @@ $desktop: 1024px;
   }
 }
 
-// ═══════════════════════════════════════════
 // FORM FIELD
-// ═══════════════════════════════════════════
+
 .form-field {
   display: flex;
   flex-direction: column;
@@ -226,16 +148,10 @@ $desktop: 1024px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: $textSecondary;
-
-  .required {
-    color: $primary;
-    margin-left: 2px;
-  }
 }
 
-// ═══════════════════════════════════════════
 // SELECT
-// ═══════════════════════════════════════════
+
 select {
   width: 100%;
   background-color: $bgInput;
@@ -263,9 +179,8 @@ select {
   }
 }
 
-// ═══════════════════════════════════════════
 // PASSWORD
-// ═══════════════════════════════════════════
+
 .password-wrapper {
   position: relative;
   display: flex;
@@ -322,9 +237,8 @@ select {
   }
 }
 
-// ═══════════════════════════════════════════
 // FIELD ERRORS
-// ═══════════════════════════════════════════
+
 .field-errors {
   display: flex;
   flex-direction: column;
@@ -340,9 +254,8 @@ select {
   }
 }
 
-// ═══════════════════════════════════════════
 // GLOBAL MESSAGES
-// ═══════════════════════════════════════════
+
 .success-message {
   background-color: rgba($colorSuccess, 0.1);
   border: 1px solid rgba($colorSuccess, 0.3);
@@ -365,9 +278,8 @@ select {
   margin: 0;
 }
 
-// ═══════════════════════════════════════════
 // SUBMIT BUTTON
-// ═══════════════════════════════════════════
+
 .submit-btn {
   width: 100%;
   padding: 14px;

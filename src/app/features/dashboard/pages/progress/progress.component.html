@@ -1,0 +1,107 @@
+<section class="vf-page">
+  <div class="vf-header">
+    <h1>Progreso</h1>
+    <p>Consulta la evolucion registrada en tus diagnosticos fisicos.</p>
+  </div>
+
+  <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
+
+  <div class="vf-panel">
+    <div class="vf-panel-heading">
+      <div>
+        <h2>Indicadores actuales</h2>
+        <p class="vf-muted">Valores mas recientes segun tus evaluaciones.</p>
+      </div>
+      <button class="vf-small-btn" type="button" (click)="load()">Actualizar</button>
+    </div>
+
+    <p class="vf-muted" *ngIf="loading">Cargando progreso...</p>
+    <p class="vf-empty" *ngIf="!loading && !hasData()">Aun no hay diagnosticos para calcular tu progreso.</p>
+
+    <div class="metric-grid" *ngIf="progress && hasData()">
+      <article>
+        <span>Peso</span>
+        <strong>{{ latest(progress.weightHistory) }}</strong>
+      </article>
+      <article>
+        <span>IMC</span>
+        <strong>{{ latest(progress.bmiHistory) }}</strong>
+      </article>
+      <article>
+        <span>Grasa</span>
+        <strong>{{ latest(progress.fatPercentageHistory) }}</strong>
+      </article>
+      <article>
+        <span>Masa muscular</span>
+        <strong>{{ latest(progress.muscleMassHistory) }}</strong>
+      </article>
+    </div>
+  </div>
+
+  <div class="vf-panel" *ngIf="progress && hasData()">
+    <div class="vf-panel-heading">
+      <div>
+        <h2>Grafica de progreso</h2>
+        <p class="vf-muted">Evolucion del indicador seleccionado.</p>
+      </div>
+      <div class="metric-tabs" role="group" aria-label="Indicador de progreso">
+        <button
+          *ngFor="let option of metricOptions()"
+          type="button"
+          [class.is-active]="selectedMetric === option.key"
+          (click)="selectedMetric = option.key">
+          {{ option.label }}
+        </button>
+      </div>
+    </div>
+
+    <div class="progress-chart" *ngIf="selectedSeries().length; else emptyChart">
+      <svg viewBox="0 0 640 220" preserveAspectRatio="none" aria-label="Grafica de progreso">
+        <line x1="26" y1="194" x2="614" y2="194"></line>
+        <line x1="26" y1="26" x2="26" y2="194"></line>
+        <polyline [attr.points]="chartPoints()"></polyline>
+        <circle
+          *ngFor="let item of selectedSeries(); let i = index"
+          [attr.cx]="chartPoints().split(' ')[i].split(',')[0]"
+          [attr.cy]="chartPoints().split(' ')[i].split(',')[1]"
+          r="5">
+        </circle>
+      </svg>
+
+      <div class="chart-points">
+        <span *ngFor="let item of selectedSeries()">
+          <strong>{{ chartValue(item) }}</strong>
+          <small>{{ item.date }}</small>
+        </span>
+      </div>
+    </div>
+
+    <ng-template #emptyChart>
+      <p class="vf-empty">Este indicador aun no tiene registros.</p>
+    </ng-template>
+  </div>
+
+  <div class="vf-panel" *ngIf="progress && hasData()">
+    <h2>Historial</h2>
+    <table class="vf-table">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Peso</th>
+          <th>IMC</th>
+          <th>Grasa</th>
+          <th>Masa muscular</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of progress.weightHistory; let i = index">
+          <td>{{ item.date }}</td>
+          <td>{{ item.value }}</td>
+          <td>{{ valueAt(progress.bmiHistory, i) }}</td>
+          <td>{{ valueAt(progress.fatPercentageHistory, i) }}</td>
+          <td>{{ valueAt(progress.muscleMassHistory, i) }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

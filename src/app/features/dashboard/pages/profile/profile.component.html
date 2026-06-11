@@ -1,0 +1,110 @@
+<section class="vf-page">
+  <div class="vf-header">
+    <h1>Perfil</h1>
+    <p>Información de tu cuenta registrada en el sistema.</p>
+  </div>
+
+  <section class="vf-panel profile-card">
+    <p class="vf-muted" *ngIf="loading">Cargando perfil...</p>
+    <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
+    <p class="vf-alert vf-alert--success" *ngIf="message">{{ message }}</p>
+
+    <ng-container *ngIf="profile && !loading">
+      <div class="profile-head">
+        <div class="profile-avatar" (click)="toggleAvatarPicker()" title="Cambiar avatar">
+          <span *ngIf="selectedAvatar; else initials">{{ selectedAvatar }}</span>
+          <ng-template #initials>{{ (profile.names || 'U').charAt(0) }}</ng-template>
+          <span class="profile-avatar__hint">✎</span>
+        </div>
+        <div>
+          <h2>{{ profile.names }} {{ profile.surnames }}</h2>
+          <span class="vf-chip">{{ profile.state === false ? 'Inactivo' : 'Activo' }}</span>
+        </div>
+      </div>
+
+      <!-- Avatar picker -->
+      <div class="avatar-picker" *ngIf="showAvatarPicker">
+        <p class="avatar-picker__label">Elige tu avatar</p>
+        <div class="avatar-picker__grid">
+          <button
+            *ngFor="let avatar of avatars"
+            type="button"
+            class="avatar-option"
+            [class.avatar-option--selected]="selectedAvatar === avatar"
+            (click)="selectAvatar(avatar)">
+            {{ avatar }}
+          </button>
+        </div>
+      </div>
+
+      <form class="profile-form" [class.is-readonly]="!editing" [formGroup]="form" (ngSubmit)="saveProfile()">
+        <div class="vf-grid">
+          <label class="vf-field"><span>Nombres</span><input formControlName="names" /></label>
+          <label class="vf-field"><span>Apellidos</span><input formControlName="surnames" /></label>
+          <label class="vf-field"><span>Correo</span><input formControlName="email" /></label>
+          <label class="vf-field"><span>Telefono</span><input type="number" formControlName="phone" /></label>
+        </div>
+
+        <div class="profile-grid profile-grid--compact">
+          <article>
+            <span>Rol</span>
+            <strong>{{ roleName() }}</strong>
+          </article>
+          <article>
+            <span>Documento</span>
+            <strong>{{ profile.docType || '-' }} {{ documentNumber() }}</strong>
+          </article>
+        </div>
+
+        <div class="vf-actions">
+          <button class="vf-btn vf-btn--secondary" type="button" *ngIf="!editing" (click)="startEditing()">Editar perfil</button>
+          <button class="vf-btn" type="submit" *ngIf="editing" [disabled]="saving">{{ saving ? 'Guardando...' : 'Guardar cambios' }}</button>
+          <button class="vf-btn vf-btn--secondary" type="button" *ngIf="editing" (click)="cancelEditing()" [disabled]="saving">Cancelar</button>
+        </div>
+      </form>
+
+      <section class="security-zone">
+        <div>
+          <h3>Seguridad</h3>
+          <p>Cambia tu contraseña usando tu contraseña actual.</p>
+        </div>
+
+        <form class="security-form" [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+          <label class="vf-field">
+            <span>Contraseña actual</span>
+            <input type="password" formControlName="contrasenaActual" placeholder="Tu contraseña actual" />
+          </label>
+          <label class="vf-field">
+            <span>Nueva contraseña</span>
+            <input type="password" formControlName="nuevaContrasena" placeholder="Tu nueva contraseña" />
+          </label>
+          <label class="vf-field">
+            <span>Confirmar contraseña</span>
+            <input type="password" formControlName="confirmarContrasena" placeholder="Repite tu nueva contraseña" />
+          </label>
+
+          <p class="vf-alert vf-alert--error" *ngIf="passwordForm.get('nuevaContrasena')?.hasError('pattern') && passwordForm.get('nuevaContrasena')?.touched">
+            Debe incluir mayúscula, minúscula, número y carácter especial.
+          </p>
+          <p class="vf-alert vf-alert--error" *ngIf="passwordForm.get('confirmarContrasena')?.hasError('passwordMismatch') && passwordForm.get('confirmarContrasena')?.touched">
+            Las contraseñas no coinciden.
+          </p>
+          <p class="vf-alert vf-alert--error" *ngIf="passwordError">{{ passwordError }}</p>
+          <p class="vf-alert vf-alert--success" *ngIf="passwordMessage">{{ passwordMessage }}</p>
+
+          <button class="vf-btn" type="submit" [disabled]="changingPassword">
+            {{ changingPassword ? 'Guardando...' : 'Cambiar contraseña' }}
+          </button>
+        </form>
+      </section>
+
+      <div class="danger-zone">
+        <div>
+          <h3>Inactivar cuenta</h3>
+          <p>Tu cuenta quedará inactiva y se cerrará la sesión. Para reactivarla necesitas apoyo de un administrador.</p>
+        </div>
+        <app-delete-account></app-delete-account>
+      </div>
+    </ng-container>
+  </section>
+</section>

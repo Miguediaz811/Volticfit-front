@@ -1,21 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RegexPatterns } from '../../../../shared/validators/regex.constants';
 import { AuthService } from '../../../../core/services/auth.service';
-import { RegisterRequest } from '../../interfaces/register-request';
-
-export function passwordMatchValidator(): ValidatorFn {
-  return (group: AbstractControl): { [key: string]: boolean } | null => {
-    const password = group.get('contrasena');
-    const confirmPassword = group.get('confirmarContrasena');
-
-    if (!password || !confirmPassword) return null;
-
-    return password.value === confirmPassword.value
-      ? null
-      : { passwordMismatch: true };
-  };
-}
+import { RegisterRequest } from '../../../../shared/interfaces/register-request';
+import { RegisterResponse } from '../../../../shared/interfaces/register-response';
+import { passwordMatchValidator } from '../../../../shared/validators/password-match.validator';
 
 @Component({
   selector: 'app-user-register',
@@ -25,19 +15,17 @@ export function passwordMatchValidator(): ValidatorFn {
 export class RegisterComponent implements OnInit {
 
   form!: FormGroup;
-
   documentTypes: string[] = ['CC', 'CE', 'TI', 'PAS', 'NIT'];
-
-  showPassword: boolean = false;
-  showConfirmPassword: boolean = false;
-
-  loading: boolean = false;
-  successMessage: string = '';
-  errorMessage: string = '';
+  showPassword = false;
+  showConfirmPassword = false;
+  loading = false;
+  successMessage = '';
+  errorMessage = '';
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -48,108 +36,86 @@ export class RegisterComponent implements OnInit {
         Validators.maxLength(60),
         Validators.pattern(RegexPatterns.onlyLetters)
       ]],
-
       lastName: ['', [
         Validators.required,
         Validators.minLength(2),
         Validators.maxLength(60),
         Validators.pattern(RegexPatterns.onlyLetters)
       ]],
-
       documentType: ['', Validators.required],
-
       documentNumber: ['', [
         Validators.required,
         Validators.pattern(RegexPatterns.documentNumber)
       ]],
-
       email: ['', [
         Validators.required,
         Validators.email,
         Validators.pattern(RegexPatterns.email)
       ]],
-
       phone: ['', [
         Validators.required,
         Validators.pattern(RegexPatterns.phone)
       ]],
-
       password: ['', [
         Validators.required,
         Validators.minLength(8),
         Validators.pattern(RegexPatterns.passwordVoltic)
       ]],
-
       confirmPassword: ['', [Validators.required]]
-    }, {
-      validators: passwordMatchValidator()
-    });
+    }, { validators: passwordMatchValidator('password', 'confirmPassword') });
   }
 
   onSubmit(): void {
-    if (this.form.valid) {
-      this.loading = true;
-      this.successMessage = '';
-      this.errorMessage = '';
+    if (this.form.invalid) { this.markAllAsTouched(); return; }
 
-      const { firstName, lastName, documentType, documentNumber, email, phone, password } = this.form.value;
+    this.loading = true;
+    this.successMessage = '';
+    this.errorMessage = '';
 
-      const registerData: RegisterRequest = {
-        names:    firstName,
-        surnames: lastName,
-        docType:  documentType,
-        docNum:   documentNumber,
-        email:    email,
-        phone:    phone,
-        password: password,
-      };
+    const { firstName, lastName, documentType, documentNumber, email, phone, password } = this.form.value;
 
-      this.authService.register(registerData).subscribe({
-        next: () => {
-          this.loading = false;
-          this.successMessage = 'User registered successfully.';
-          this.form.reset();
-          this.form.markAsPristine();
-          this.form.markAsUntouched();
-        },
-        error: (err) => {
-          this.loading = false;
-          if (err.status === 409) {
-            this.errorMessage = 'This email is already registered.';
-          } else {
-            this.errorMessage = 'An error occurred. Please try again.';
-          }
-        }
-      });
+    const registerData: RegisterRequest = {
+      names: firstName,
+      surnames: lastName,
+      docType: documentType,
+      docNum: documentNumber,
+      email,
+      phone,
+      password,
+    };
 
-    } else {
-      this.markAllAsTouched();
-    }
-  }
-
-  private markAllAsTouched(): void {
-    Object.keys(this.form.controls).forEach(key => {
-      this.form.get(key)?.markAsTouched();
+    this.authService.register(registerData).subscribe({
+      next: (response: RegisterResponse) => {
+        this.loading = false;
+        this.successMessage = response.message || 'Registro exitoso. Redirigiendo al inicio de sesión...';
+        this.form.reset();
+        this.form.markAsPristine();
+        this.form.markAsUntouched();
+        setTimeout(() => this.router.navigate(['/auth/login']), 2000);
+      },
+      error: (err: any) => {
+        this.loading = false;
+        this.errorMessage = this.serverMessage(err, 'Ocurrió un error al registrarse. Intente nuevamente.');
+      }
     });
   }
 
-  hasUppercase(): boolean {
-    const value = this.form.get('password')?.value || '';
-    return /[A-Z]/.test(value);
+  private markAllAsTouched(): void {
+    Object.keys(this.form.controls).forEach(key => this.form.get(key)?.markAsTouched());
   }
 
-  hasNumber(): boolean {
-    const value = this.form.get('password')?.value || '';
-    return /\d/.test(value);
-  }
+  hasUppercase(): boolean { return /[A-Z]/.test(this.form.get('password')?.value || ''); }
+  hasNumber(): boolean { return /\d/.test(this.form.get('password')?.value || ''); }
+  hasSpecialChar(): boolean { return /[@$!%*?&.#_-]/.test(this.form.get('password')?.value || ''); }
+  hasMinLength(): boolean { return (this.form.get('password')?.value || '').length >= 8; }
 
-  hasSpecialChar(): boolean {
-    const value = this.form.get('password')?.value || '';
-    return /[@$!%*?&.#_-]/.test(value);
-  }
+  private serverMessage(err: any, fallback: string): string {
+    const message = err?.error?.message || err?.error?.error || err?.message;
 
-  hasMinLength(): boolean {
-    const value = this.form.get('password')?.value || '';
-    return value.length >= 8;
+    if (err?.status === 0 || message === 'Failed to fetch') {
+      return 'No se pudo conectar con el servidor. Intente nuevamente.';
+    }
+
+    return message || fallback;
   }
 }

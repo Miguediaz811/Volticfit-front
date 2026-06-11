@@ -1,0 +1,172 @@
+<section class="clinical-page">
+  <header class="clinical-header">
+    <div>
+      <p class="eyebrow">Salud</p>
+      <h1>Historia clínica</h1>
+      <p>Registra y consulta antecedentes relevantes para el entrenamiento.</p>
+    </div>
+  </header>
+
+  <p class="vf-alert vf-alert--success" *ngIf="message">{{ message }}</p>
+  <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
+
+  <section class="clinical-panel" *ngIf="isAdmin">
+    <label>
+      <span>Usuario</span>
+      <input type="text" placeholder="Buscar usuario..." [(ngModel)]="userSearchTerm" />
+    </label>
+
+    <div class="user-search-suggestions" *ngIf="userSearchTerm.trim() && filteredUsers().length">
+      <ul>
+        <li *ngFor="let user of filteredUsers()">
+          <button type="button" class="vf-link-button" (click)="selectUserForHistory(user)">
+            {{ userLabel(user) }}
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <label *ngIf="selectedUserId">
+      <span>Usuario seleccionado</span>
+      <select [(ngModel)]="selectedUserId" (change)="onUserChange()">
+        <option *ngFor="let user of users" [ngValue]="user.idUser">
+          {{ user.names }} {{ user.surnames || '' }} - {{ user.email }}
+        </option>
+      </select>
+    </label>
+  </section>
+
+  <section class="clinical-panel">
+    <div class="section-title">
+      <h2>Nuevo registro</h2>
+    </div>
+    <form [formGroup]="form" (ngSubmit)="save()" class="clinical-form">
+      <label>
+        <span>Fecha *</span>
+        <input type="date" formControlName="date" />
+      </label>
+
+      <label>
+        <span>Descripción *</span>
+        <textarea formControlName="description" placeholder="Describe la condición, antecedente o recomendación"></textarea>
+      </label>
+
+      <label>
+        <span>Documento PDF o Word</span>
+        <input
+          type="file"
+          accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+          (change)="onFormFileSelected($event)" />
+      </label>
+
+      <p class="vf-muted" *ngIf="formDocumentFile">
+        Archivo seleccionado: {{ formDocumentFile.name }}
+      </p>
+
+      <p class="field-error" *ngIf="form.get('description')?.invalid && form.get('description')?.touched">
+        La descripción es obligatoria y debe tener al menos 5 caracteres.
+      </p>
+
+      <div class="actions">
+        <button class="vf-btn" type="submit" [disabled]="saving || form.invalid">
+          {{ saving ? 'Guardando...' : 'Guardar registro' }}
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <section class="clinical-panel">
+    <div class="section-title">
+      <h2>Registros</h2>
+      <button class="vf-btn vf-btn--secondary" type="button" (click)="loadHistory()" [disabled]="loading">
+        Actualizar
+      </button>
+    </div>
+
+    <p class="vf-muted" *ngIf="loading">Cargando historia clínica...</p>
+
+    <div class="history-list" *ngIf="!loading && history.length">
+      <article class="history-card" *ngFor="let entry of history">
+        <div>
+          <strong>{{ entry.date }}</strong>
+          <p>{{ entry.description }}</p>
+          <div class="document-tools">
+            <label>
+              <span>Documento PDF o Word</span>
+              <input
+                type="file"
+                accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                (change)="onFileSelected(entry, $event)" />
+            </label>
+            <button class="vf-small-btn" type="button" (click)="uploadDocument(entry)">
+              Subir documento
+            </button>
+          </div>
+          <div class="document-list" *ngIf="documentsByHistory[entry.idHistory]?.length">
+            <div class="document-row" *ngFor="let doc of documentsByHistory[entry.idHistory]">
+              <span>{{ doc.fileName }}</span>
+              <button class="vf-small-btn" type="button" (click)="downloadDocument(entry, doc)">Descargar</button>
+              <button class="vf-small-btn vf-small-btn--danger" type="button" (click)="deleteDocument(entry, doc)">Eliminar</button>
+            </div>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="vf-btn vf-btn--secondary" type="button" (click)="editEntry(entry)">
+            Editar
+          </button>
+          <button class="vf-btn vf-btn--danger" type="button" (click)="deleteEntry(entry)">
+            Eliminar
+          </button>
+        </div>
+      </article>
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && !history.length">
+      <h3>No hay registros clínicos</h3>
+      <p>Cuando se agregue información aparecerá en esta sección.</p>
+    </div>
+  </section>
+</section>
+
+<!-- Modal editar registro clínico -->
+<div class="vf-modal-backdrop" *ngIf="showEditModal" (click)="cancelEdit()">
+  <form class="vf-modal" [formGroup]="form" (ngSubmit)="save()" (click)="$event.stopPropagation()">
+    <div class="vf-modal-header">
+      <h2>Editar registro clínico</h2>
+      <button class="vf-icon-btn" type="button" aria-label="Cerrar" (click)="cancelEdit()">X</button>
+    </div>
+
+    <label>
+      <span>Fecha *</span>
+      <input type="date" formControlName="date" />
+    </label>
+
+    <label>
+      <span>Descripción *</span>
+      <textarea formControlName="description" placeholder="Describe la condición, antecedente o recomendación"></textarea>
+    </label>
+
+    <label>
+      <span>Documento PDF o Word</span>
+      <input
+        type="file"
+        accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        (change)="onFormFileSelected($event)" />
+    </label>
+
+    <p class="vf-muted" *ngIf="formDocumentFile">
+      Archivo seleccionado: {{ formDocumentFile.name }}
+    </p>
+
+    <p class="field-error" *ngIf="form.get('description')?.invalid && form.get('description')?.touched">
+      La descripción es obligatoria y debe tener al menos 5 caracteres.
+    </p>
+
+    <div class="vf-actions">
+      <button class="vf-btn" type="submit" [disabled]="saving || form.invalid">
+        {{ saving ? 'Guardando...' : 'Actualizar registro' }}
+      </button>
+      <button class="vf-btn vf-btn--secondary" type="button" (click)="cancelEdit()">Cancelar</button>
+    </div>
+  </form>
+</div>

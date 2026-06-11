@@ -1,0 +1,143 @@
+<section class="vf-page">
+  <div class="vf-header">
+    <h1>Soporte</h1>
+    <p>Envía una consulta al instructor y revisa el estado de tus solicitudes anteriores.</p>
+  </div>
+
+  <!-- Formulario nueva consulta -->
+  <div class="vf-panel support-form-wrapper">
+    <div class="support-form-heading">
+      <div>
+        <h2>Nueva consulta</h2>
+        <p class="vf-muted">Describe tu caso para que el instructor pueda revisarlo.</p>
+      </div>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="send()" class="support-form-page">
+      <label class="vf-field">
+        <span>Asunto</span>
+        <input type="text" formControlName="subject" placeholder="Ej. Duda sobre rutina" />
+        <small class="vf-error" *ngIf="form.get('subject')?.touched && form.get('subject')?.invalid">
+          El asunto debe tener al menos 4 caracteres.
+        </small>
+      </label>
+
+      <label class="vf-field">
+        <span>Descripción</span>
+        <textarea formControlName="description" placeholder="Explica qué necesitas revisar"></textarea>
+        <small class="vf-error" *ngIf="form.get('description')?.touched && form.get('description')?.invalid">
+          La descripción debe tener al menos 12 caracteres.
+        </small>
+      </label>
+
+      <label class="vf-field">
+        <span>Adjunto opcional</span>
+        <input type="text" formControlName="attachment" placeholder="Nombre o referencia del archivo" />
+      </label>
+
+      <p class="vf-alert vf-alert--success" *ngIf="message">{{ message }}</p>
+      <p class="vf-alert vf-alert--error" *ngIf="formError">{{ formError }}</p>
+      <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
+
+      <button class="vf-btn" type="submit" [disabled]="saving">
+        {{ saving ? 'Enviando...' : 'Enviar consulta' }}
+      </button>
+    </form>
+  </div>
+
+  <!-- Mis consultas: lista + chat -->
+  <div class="support-chat-panel">
+    <div class="support-chat-panel__header">
+      <div>
+        <h2>Mis consultas</h2>
+        <p>Historial de consultas enviadas al instructor.</p>
+      </div>
+      <button class="vf-small-btn" type="button" (click)="loadMyTickets()">Actualizar</button>
+    </div>
+
+    <p class="vf-muted loading-msg" *ngIf="loading">Cargando consultas...</p>
+    <p class="vf-empty loading-msg" *ngIf="!loading && myTickets.length === 0">
+      Aún no has enviado ninguna consulta.
+    </p>
+
+    <div class="support-layout" *ngIf="!loading && myTickets.length > 0">
+
+      <!-- Lista -->
+      <aside class="ticket-list">
+        <button
+          type="button"
+          *ngFor="let ticket of myTickets"
+          [class.is-active]="selectedTicket?.code === ticket.code"
+          (click)="selectTicket(ticket)">
+          <strong>{{ ticket.subject }}</strong>
+          <span>{{ ticket.code }}</span>
+          <small [class.status--done]="ticket.status === 'Resuelta'"
+                 [class.status--review]="ticket.status === 'En revision'">
+            {{ ticket.status }}
+          </small>
+        </button>
+      </aside>
+
+      <!-- Chat -->
+      <article class="ticket-detail" *ngIf="selectedTicket; else emptyDetail">
+        <div class="ticket-title">
+          <div>
+            <span>{{ selectedTicket.code }}</span>
+            <h2>{{ selectedTicket.subject }}</h2>
+            <p>{{ selectedTicket.createdAt }}</p>
+          </div>
+          <strong [class.is-done]="selectedTicket.status === 'Resuelta'">{{ selectedTicket.status }}</strong>
+        </div>
+
+        <div class="chat-window" #chatWindow>
+          <ng-container *ngFor="let turn of parseConversation(selectedTicket)">
+            <div class="chat-row"
+              [class.chat-row--right]="turn.author === 'user'"
+              [class.chat-row--center]="turn.author === 'system'">
+              <div class="chat-bubble"
+                [class.chat-bubble--user]="turn.author === 'user'"
+                [class.chat-bubble--admin]="turn.author === 'admin'"
+                [class.chat-bubble--system]="turn.author === 'system'">
+                <span class="chat-label">{{ turn.label }}</span>
+                <p>{{ turn.text }}</p>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+
+        <div class="chat-input-area" *ngIf="selectedTicket.status !== 'Resuelta'">
+          <textarea
+            [(ngModel)]="replyMap[selectedTicket.code]"
+            placeholder="Escribe una respuesta al instructor..."
+            (keydown.control.enter)="sendReply(selectedTicket)"
+            rows="2">
+          </textarea>
+          <div class="chat-input-actions">
+            <span class="chat-hint">Ctrl + Enter para enviar</span>
+            <button
+              class="vf-btn send-btn"
+              type="button"
+              (click)="sendReply(selectedTicket)"
+              [disabled]="!replyMap[selectedTicket.code].trim() || replyingCode === selectedTicket.code">
+              {{ replyingCode === selectedTicket.code ? 'Enviando...' : 'Enviar' }}
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+          <p class="vf-alert vf-alert--success" *ngIf="replySuccessMap[selectedTicket.code]">{{ replySuccessMap[selectedTicket.code] }}</p>
+          <p class="vf-alert vf-alert--error" *ngIf="replyErrorMap[selectedTicket.code]">{{ replyErrorMap[selectedTicket.code] }}</p>
+        </div>
+
+        <div class="chat-resolved" *ngIf="selectedTicket.status === 'Resuelta'">
+          ✅ Esta consulta ha sido marcada como resuelta.
+        </div>
+      </article>
+
+      <ng-template #emptyDetail>
+        <article class="ticket-detail ticket-detail--empty">
+          <p class="vf-empty">Selecciona una consulta para ver el detalle.</p>
+        </article>
+      </ng-template>
+
+    </div>
+  </div>
+</section>
