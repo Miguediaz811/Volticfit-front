@@ -55,7 +55,10 @@
       <article *ngFor="let stat of adminStats" [ngClass]="'tone-' + stat.tone">
         <span>{{ stat.label }}</span>
         <strong>{{ stat.value }}</strong>
-        <small>{{ stat.note }}</small>
+        <div class="stat-footer">
+          <small>{{ stat.note }}</small>
+          <a [routerLink]="stat.route" class="stat-link">Ver →</a>
+        </div>
       </article>
     </div>
 
@@ -104,6 +107,11 @@
       <section class="admin-panel">
         <div class="panel-title"><h2>Usuarios</h2><a routerLink="users">Ver lista</a></div>
         <p>Consulta, revisa detalle y edita usuarios desde el listado del sistema.</p>
+        <div class="panel-links">
+          <a routerLink="users">Lista de usuarios</a>
+          <a routerLink="reservations">Reservas de turnos</a>
+          <a routerLink="evaluations">Evaluaciones físicas</a>
+        </div>
       </section>
 
       <section class="admin-panel">
@@ -116,7 +124,7 @@
         </div>
       </section>
 
-      <section class="admin-panel sanctions-panel">
+      <section class="admin-panel">
         <div class="panel-title"><h2>Sanciones recientes</h2><a routerLink="reports">Reporte</a></div>
         <p>Administra el historial, registra nuevas sanciones y consulta reportes.</p>
         <div class="panel-links">

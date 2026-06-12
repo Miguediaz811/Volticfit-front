@@ -20,7 +20,6 @@ $colorSuccess:  #22C55E;
   position: relative;
   display: grid;
   gap: 20px;
-  padding-right: 340px;
 }
 
 .member-hero {
@@ -170,7 +169,12 @@ $colorSuccess:  #22C55E;
 .tone-purple .action-icon { background: #302b4d; color: #9184ff; }
 .tone-red .action-icon { background: #4a2020; color: #ef5350; }
 
-.action-card strong,
+.action-card strong {
+  color: #f5a623;
+  text-decoration: none;
+  justify-self: end;
+}
+
 .panel-title a {
   color: #f5a623;
   text-decoration: none;
@@ -259,6 +263,7 @@ $colorSuccess:  #22C55E;
   background: #222;
   padding: 14px;
   display: grid;
+  align-content: space-between;
 }
 
 .admin-stats span,
@@ -270,12 +275,36 @@ $colorSuccess:  #22C55E;
 }
 
 .admin-stats strong {
-  font-size: 2rem;
+  font-size: 2xrem;
+  line-height: 1.1;
 }
 
 .admin-stats .tone-green small { color: #35c498; }
 .admin-stats .tone-gold small,
 .admin-stats .tone-orange small { color: #f5a623; }
+
+.stat-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.stat-link {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #f5a623;
+  text-decoration: none;
+  transition: opacity 0.2s, transform 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+
+  &:hover {
+    opacity: 0.85;
+    transform: translateX(2px);
+  }
+}
 
 .admin-grid {
   display: grid;
@@ -289,10 +318,6 @@ $colorSuccess:  #22C55E;
 }
 
 .attendance-panel {
-  grid-column: span 2;
-}
-
-.sanctions-panel {
   grid-column: span 2;
 }
 
@@ -444,8 +469,7 @@ $colorSuccess:  #22C55E;
     grid-template-columns: 1fr;
   }
 
-  .attendance-panel,
-  .sanctions-panel {
+  .attendance-panel {
     grid-column: auto;
   }
 

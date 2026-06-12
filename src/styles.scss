@@ -100,8 +100,6 @@ svg {
 .vf-role-badge {
   display: inline-flex;
   width: fit-content;
-  margin-left: 42px;
-  margin-top: -6px;
   padding: 4px 8px;
   border: 1px solid rgba(245, 168, 0, .6);
   border-radius: 4px;
@@ -115,6 +113,7 @@ svg {
   gap: 12px;
   overflow: auto;
   padding-top: 10px;
+  padding-left: 0.7rem;
   scrollbar-width: thin;
 }
 
@@ -421,7 +420,6 @@ svg {
   width: 100%;
   border-collapse: collapse;
   overflow: hidden;
-  display: block;
   max-width: 100%;
   overflow-x: auto;
   white-space: nowrap;
@@ -432,7 +430,7 @@ svg {
   padding: 12px;
   border-bottom: 1px solid #3A3A3A;
   text-align: left;
-  vertical-align: top;
+  vertical-align: center;
 }
 
 .vf-table th {
@@ -629,7 +627,6 @@ app-sanction-alert p {
   }
 
   .vf-role-badge {
-    margin-left: 40px;
     font-size: .58rem;
   }
 

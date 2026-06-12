@@ -90,25 +90,6 @@
         <div>
           <strong>{{ entry.date }}</strong>
           <p>{{ entry.description }}</p>
-          <div class="document-tools">
-            <label>
-              <span>Documento PDF o Word</span>
-              <input
-                type="file"
-                accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                (change)="onFileSelected(entry, $event)" />
-            </label>
-            <button class="vf-small-btn" type="button" (click)="uploadDocument(entry)">
-              Subir documento
-            </button>
-          </div>
-          <div class="document-list" *ngIf="documentsByHistory[entry.idHistory]?.length">
-            <div class="document-row" *ngFor="let doc of documentsByHistory[entry.idHistory]">
-              <span>{{ doc.fileName }}</span>
-              <button class="vf-small-btn" type="button" (click)="downloadDocument(entry, doc)">Descargar</button>
-              <button class="vf-small-btn vf-small-btn--danger" type="button" (click)="deleteDocument(entry, doc)">Eliminar</button>
-            </div>
-          </div>
         </div>
         <div class="actions">
           <button class="vf-btn vf-btn--secondary" type="button" (click)="editEntry(entry)">
@@ -146,17 +127,26 @@
       <textarea formControlName="description" placeholder="Describe la condición, antecedente o recomendación"></textarea>
     </label>
 
-    <label>
-      <span>Documento PDF o Word</span>
-      <input
-        type="file"
-        accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-        (change)="onFormFileSelected($event)" />
-    </label>
+    <div class="document-tools" *ngIf="editingEntry">
+      <label>
+        <span>Documento PDF o Word</span>
+        <input
+          type="file"
+          accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+          (change)="onFileSelected(editingEntry, $event)" />
+      </label>
+      <button class="vf-small-btn" type="button" (click)="uploadDocument(editingEntry)">
+        Subir documento
+      </button>
+    </div>
 
-    <p class="vf-muted" *ngIf="formDocumentFile">
-      Archivo seleccionado: {{ formDocumentFile.name }}
-    </p>
+    <div class="document-list" *ngIf="editingEntry && documentsByHistory[editingEntry.idHistory]?.length">
+      <div class="document-row" *ngFor="let doc of documentsByHistory[editingEntry.idHistory]">
+        <span>{{ doc.fileName }}</span>
+        <button class="vf-small-btn" type="button" (click)="downloadDocument(editingEntry, doc)">Descargar</button>
+        <button class="vf-small-btn vf-small-btn--danger" type="button" (click)="deleteDocument(editingEntry, doc)">Eliminar</button>
+      </div>
+    </div>
 
     <p class="field-error" *ngIf="form.get('description')?.invalid && form.get('description')?.touched">
       La descripción es obligatoria y debe tener al menos 5 caracteres.

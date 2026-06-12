@@ -223,3 +223,31 @@ textarea {
     grid-template-columns: 1fr;
   }
 }
+
+input[type="file"] {
+  background: #2a2a2a;
+  border: 1px dashed #444;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: #c6cbd4;
+  cursor: pointer;
+  font-size: 0.88rem;
+  width: 100%;
+  box-sizing: border-box;
+
+  &::file-selector-button {
+    background: #f5a623;
+    color: #111;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-right: 12px;
+    transition: background 0.2s, opacity 0.2s;
+
+    &:hover {
+      background: #c47d0e;
+    }
+  }
+}

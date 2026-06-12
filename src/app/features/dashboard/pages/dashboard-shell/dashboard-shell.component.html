@@ -25,7 +25,6 @@
       <img src="assets/images/volticfit.png" alt="Voltic Fit" />
       <span>Voltic Fit</span>
     </a>
-    <span class="vf-role-badge">{{ roleLabel }}</span>
 
     <nav class="vf-nav" aria-label="Navegación principal">
       <section class="vf-nav-section" *ngFor="let section of visibleSections()">
@@ -49,6 +48,7 @@
         <span *ngIf="avatar">{{ avatar }}</span>
         <span *ngIf="!avatar">{{ initials }}</span>
       </a>
+      <span class="vf-role-badge">{{ roleLabel }}</span>
       <button type="button" class="vf-logout-btn" (click)="logout()" title="Cerrar sesión">
         <span class="vf-nav-icon" [innerHTML]="buildSvg('logout')"></span>
       </button>
