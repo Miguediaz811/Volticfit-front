@@ -75,7 +75,50 @@
 
   <div class="features__grid">
     <div class="feature-card" *ngFor="let feature of features">
-      <div class="feature-card__icon">{{ feature.icon }}</div>
+      <div class="feature-card__icon" [ngSwitch]="feature.icon">
+        <!-- Equipos modernos (EQ) -->
+        <svg *ngSwitchCase="'EQ'" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6.5 6.5h11"/>
+          <path d="M6.5 17.5h11"/>
+          <path d="M3 10v4"/>
+          <path d="M21 10v4"/>
+          <path d="M6.5 5v14"/>
+          <path d="M17.5 5v14"/>
+        </svg>
+        <!-- App intuitiva (APP) -->
+        <svg *ngSwitchCase="'APP'" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+          <line x1="12" y1="18" x2="12" y2="18.01"/>
+        </svg>
+        <!-- Seguimiento real (PR) -->
+        <svg *ngSwitchCase="'PR'" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10"/>
+          <line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6" y1="20" x2="6" y2="14"/>
+        </svg>
+        <!-- Instructores (IN) -->
+        <svg *ngSwitchCase="'IN'" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        <!-- Seguridad (SE) -->
+        <svg *ngSwitchCase="'SE'" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        <!-- Acceso rapido (QR) -->
+        <svg *ngSwitchCase="'QR'" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7"/>
+          <rect x="14" y="3" width="7" height="7"/>
+          <rect x="14" y="14" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/>
+          <line x1="7" y1="7" x2="7" y2="7.01"/>
+          <line x1="17" y1="7" x2="17" y2="7.01"/>
+          <line x1="17" y1="17" x2="17" y2="17.01"/>
+          <line x1="7" y1="17" x2="7" y2="17.01"/>
+        </svg>
+      </div>
       <h3 class="feature-card__title">{{ feature.title }}</h3>
       <p class="feature-card__desc">{{ feature.description }}</p>
     </div>
@@ -101,7 +144,9 @@
     </p>
     <ul class="about__list">
       <li class="about__list-item" *ngFor="let point of aboutPoints">
-        <span class="about__check">OK</span>
+        <svg class="about__check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
         {{ point }}
       </li>
     </ul>
