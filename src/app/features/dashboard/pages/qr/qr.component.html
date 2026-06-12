@@ -1,24 +1,24 @@
 <section class="qr-page">
   <header class="qr-topbar">
     <div class="qr-logo">
-      <span>*</span>
       <div>
         <strong>VOLTIC FIT</strong>
         <small>Mi código QR</small>
       </div>
     </div>
-    <span>Martes 17 - 9:24 AM</span>
+    <span>{{ currentDateTime }}</span>
   </header>
 
   <div class="qr-notice">Presenta este código en recepción para registrar tu entrada</div>
 
   <main class="qr-content">
     <section class="qr-profile">
-      <div class="avatar">{{ initials() }}</div>
+      <div class="avatar">
+        <span *ngIf="avatar">{{ avatar }}</span>
+        <span *ngIf="!avatar">{{ initials() }}</span>
+      </div>
       <div>
         <h1>{{ displayName() }}</h1>
-        <p>ID: {{ userCode() }}</p>
-        <span>Membresia activa - Pro</span>
       </div>
     </section>
 
@@ -42,27 +42,10 @@
           <small>seg</small>
         </div>
       </div>
-      <p>El código expira en</p>
+      <p class="timer-text">El código expira en</p>
     </section>
 
-    <section class="qr-stats">
-      <article>
-        <span>Estado</span>
-        <strong>Activo y válido</strong>
-      </article>
-      <article>
-        <span>Membresia vence</span>
-        <strong>30 abr 2026</strong>
-      </article>
-      <article>
-        <span>Ultimo acceso</span>
-        <strong>Hoy - 6:02 AM</strong>
-      </article>
-      <article>
-        <span>Asistencias este mes</span>
-        <strong>12 / 20</strong>
-      </article>
-    </section>
+
 
     <div class="qr-actions">
       <button type="button" class="primary" (click)="downloadQr()" [disabled]="!qrImage">Descargar</button>

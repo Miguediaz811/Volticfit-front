@@ -47,10 +47,10 @@ export class OverviewComponent implements OnInit {
   ];
 
   adminStats = [
-    { label: 'Usuarios registrados', value: '0', note: 'segun listado actual', tone: 'green' },
-    { label: 'Sanciones activas', value: '0', note: 'requieren seguimiento', tone: 'orange' },
-    { label: 'Turnos disponibles', value: '0', note: 'cupos para hoy', tone: 'gold' },
-    { label: 'Equipos operativos', value: '0', note: 'segun inventario', tone: 'green' },
+    { label: 'Usuarios registrados', value: '0', note: 'segun listado actual', tone: 'green', route: 'users' },
+    { label: 'Sanciones activas', value: '0', note: 'requieren seguimiento', tone: 'orange', route: 'sanctions' },
+    { label: 'Turnos disponibles', value: '0', note: 'cupos para hoy', tone: 'gold', route: 'reservations' },
+    { label: 'Equipos operativos', value: '0', note: 'segun inventario', tone: 'green', route: 'machines' },
   ];
 
   // Gráfico de asistencia semanal
@@ -84,10 +84,10 @@ export class OverviewComponent implements OnInit {
           const operativeMachines = data.machines.filter(m => m.state === true && m.name && m.name.trim().toLowerCase() !== 'sin maquina').length;
 
           this.adminStats = [
-            { label: 'Usuarios registrados', value: String(registeredUsers),   note: 'segun listado actual',    tone: 'green'  },
-            { label: 'Sanciones activas',    value: String(activeSanctions),   note: 'requieren seguimiento',   tone: 'orange' },
-            { label: 'Turnos disponibles',   value: String(availableSpots),    note: 'cupos para hoy',          tone: 'gold'   },
-            { label: 'Equipos operativos',   value: String(operativeMachines), note: 'segun inventario',        tone: 'green'  },
+            { label: 'Usuarios registrados', value: String(registeredUsers),   note: 'segun listado actual',    tone: 'green',  route: 'users' },
+            { label: 'Sanciones activas',    value: String(activeSanctions),   note: 'requieren seguimiento',   tone: 'orange', route: 'sanctions' },
+            { label: 'Turnos disponibles',   value: String(availableSpots),    note: 'cupos para hoy',          tone: 'gold',   route: 'reservations' },
+            { label: 'Equipos operativos',   value: String(operativeMachines), note: 'segun inventario',        tone: 'green',  route: 'machines' },
           ];
 
           this.buildWeekChart(data.attendance);

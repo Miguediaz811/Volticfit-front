@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AuthService } from '../../../../core/services/auth.service';
 import { DashboardApiService } from '../../../../core/services/dashboard-api.service';
 import { UserProfile } from '../../../../shared/interfaces/dashboard.interface';
 
@@ -14,11 +15,20 @@ export class QrComponent implements OnInit, OnDestroy {
   loading = false;
   error = '';
   profile: UserProfile | null = null;
+  avatar = '';
+  currentDateTime = '';
   private intervalId: ReturnType<typeof setInterval> | null = null;
 
-  constructor(private api: DashboardApiService) {}
+  constructor(
+    private api: DashboardApiService,
+    private auth: AuthService,
+  ) {}
 
   ngOnInit(): void {
+    const avatarKey = this.auth.getAvatarStorageKey();
+    this.avatar = localStorage.getItem(avatarKey) || '';
+    this.updateDateTime();
+
     this.api.getMe().subscribe({
       next: profile => {
         this.profile = profile;
@@ -32,6 +42,21 @@ export class QrComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.intervalId) clearInterval(this.intervalId);
+  }
+
+  updateDateTime(): void {
+    const now = new Date();
+    const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+    const dayName = days[now.getDay()];
+    const dayNum = now.getDate();
+
+    let hours = now.getHours();
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+
+    this.currentDateTime = `${dayName} ${dayNum} - ${hours}:${minutes} ${ampm}`;
   }
 
   generate(): void {
@@ -67,7 +92,8 @@ export class QrComponent implements OnInit, OnDestroy {
   }
 
   displayName(): string {
-    return this.profile?.names || 'Juan Garcia';
+    if (!this.profile) return 'Juan Garcia';
+    return `${this.profile.names} ${this.profile.surnames || ''}`.trim();
   }
 
   userCode(): string {
@@ -86,19 +112,66 @@ export class QrComponent implements OnInit, OnDestroy {
     return '#ef5350';
   }
 
-  downloadQr(): void {
+  async downloadQr(): Promise<void> {
     if (!this.qrImage) return;
-    const link = document.createElement('a');
-    link.href = this.qrImage;
-    link.download = 'volticfit-qr.png';
-    link.click();
+
+    try {
+      const html2canvas = (await import('html2canvas')).default;
+      const captureArea = document.querySelector('.qr-page') as HTMLElement;
+      if (!captureArea) return;
+
+      // 1. Obtener referencias y guardar estilos originales de visualización
+      const timerRing = document.querySelector('.timer-ring') as HTMLElement;
+      const timerText = document.querySelector('.timer-text') as HTMLElement;
+      const actions = document.querySelector('.qr-actions') as HTMLElement;
+
+      const originalRingDisplay = timerRing ? timerRing.style.display : '';
+      const originalTextDisplay = timerText ? timerText.style.display : '';
+      const originalActionsDisplay = actions ? actions.style.display : '';
+
+      // 2. Ocultar físicamente los elementos del flujo para obligar al navegador a recalcular las alturas
+      if (timerRing) timerRing.style.display = 'none';
+      if (timerText) timerText.style.display = 'none';
+      if (actions) actions.style.display = 'none';
+
+      // Esperar un frame de animación para asegurar que el navegador aplique el reflow del layout
+      await new Promise(resolve => requestAnimationFrame(resolve));
+
+      // 3. Generar la captura con html2canvas
+      const canvas = await html2canvas(captureArea, {
+        backgroundColor: '#1b1b1b',
+        scale: 2, // Imagen nítida de alta resolución
+        logging: false,
+        useCORS: true
+      });
+
+      // 4. Restaurar los estilos originales en el DOM de inmediato
+      if (timerRing) timerRing.style.display = originalRingDisplay;
+      if (timerText) timerText.style.display = originalTextDisplay;
+      if (actions) actions.style.display = originalActionsDisplay;
+
+      // 5. Descargar la imagen resultante
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png');
+      link.download = `volticfit-acceso-${this.profile?.names || 'usuario'}.png`;
+      link.click();
+    } catch (err) {
+      console.error('Error al generar la captura de la interfaz:', err);
+      // Fallback: descargar solo la imagen del QR original si la captura falla
+      const link = document.createElement('a');
+      link.href = this.qrImage;
+      link.download = 'volticfit-qr.png';
+      link.click();
+    }
   }
 
   private startTimer(): void {
     if (this.intervalId) clearInterval(this.intervalId);
     this.secondsLeft = 60;
+    this.updateDateTime();
     this.intervalId = setInterval(() => {
       this.secondsLeft -= 1;
+      this.updateDateTime();
       if (this.secondsLeft <= 0) {
         this.generate();
       }
