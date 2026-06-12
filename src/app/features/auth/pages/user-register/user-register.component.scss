@@ -305,3 +305,46 @@ select {
     cursor: not-allowed;
   }
 }
+
+// TERMS FIELD
+
+.terms-field {
+  margin: 20px 0 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.terms-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: $textSecondary;
+  user-select: none;
+  line-height: 1.4;
+
+  input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin-top: 3px;
+    accent-color: $primary;
+    border: 1px solid $borderColor;
+    border-radius: 4px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  a {
+    color: $primary;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+
+    &:hover {
+      color: $primaryDark;
+      text-decoration: underline;
+    }
+  }
+}
