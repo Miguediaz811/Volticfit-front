@@ -6,6 +6,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { RegisterRequest } from '../../../../shared/interfaces/register-request';
 import { RegisterResponse } from '../../../../shared/interfaces/register-response';
 import { passwordMatchValidator } from '../../../../shared/validators/password-match.validator';
+import { LoadingService } from '../../../../core/services/loading.service';
 
 @Component({
   selector: 'app-user-register',
@@ -25,7 +26,8 @@ export class RegisterComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private loadingService: LoadingService
   ) {}
 
   ngOnInit(): void {
@@ -87,11 +89,16 @@ export class RegisterComponent implements OnInit {
     this.authService.register(registerData).subscribe({
       next: (response: RegisterResponse) => {
         this.loading = false;
+        this.loadingService.show(); // Mantener el spinner activo
         this.successMessage = response.message || 'Registro exitoso. Redirigiendo al inicio de sesión...';
         this.form.reset();
         this.form.markAsPristine();
         this.form.markAsUntouched();
-        setTimeout(() => this.router.navigate(['/auth/login']), 2000);
+        setTimeout(() => {
+          this.router.navigate(['/auth/login'])
+            .then(() => this.loadingService.hide())
+            .catch(() => this.loadingService.hide());
+        }, 2000);
       },
       error: (err: any) => {
         this.loading = false;
