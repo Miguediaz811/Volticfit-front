@@ -4,7 +4,6 @@ import { provideHttpClient, withFetch, withInterceptorsFromDi, HTTP_INTERCEPTORS
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent }     from './app.component';
-import { IdempotencyInterceptor } from './core/interceptors/idempotency.interceptor';
 import { JwtInterceptor }     from './core/interceptors/jwt.interceptor';
 import { LoadingInterceptor }  from './core/interceptors/loading.interceptor';
 import { UsersModule }      from './features/users/users.module';
@@ -26,7 +25,6 @@ import { SharedModule }     from './shared/shared.module';
       withFetch(),
       withInterceptorsFromDi(),
     ),
-    { provide: HTTP_INTERCEPTORS, useClass: IdempotencyInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
   ],
