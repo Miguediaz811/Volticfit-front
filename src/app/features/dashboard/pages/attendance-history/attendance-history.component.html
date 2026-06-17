@@ -9,26 +9,28 @@
     <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
     <p class="vf-empty" *ngIf="!loading && records.length === 0">No hay asistencias registradas.</p>
 
-    <table class="vf-table" *ngIf="records.length > 0">
-      <thead>
-        <tr>
-          <th>Usuario</th>
-          <th>Documento</th>
-          <th>Entrada</th>
-          <th>Salida</th>
-          <th>Tipo</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let record of records">
-          <td>{{ record.fullName || record.userName || '-' }}</td>
-          <td>{{ record.docNumber || '-' }}</td>
-          <td>{{ record.entryTime || '-' }}</td>
-          <td>{{ record.exitTime || '-' }}</td>
-          <td>{{ record.registrationType || record.type || '-' }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="vf-table-wrap" *ngIf="records.length > 0">
+      <table class="vf-table">
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Documento</th>
+            <th>Entrada</th>
+            <th>Salida</th>
+            <th>Tipo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let record of records">
+            <td>{{ record.fullName || record.userName || '-' }}</td>
+            <td>{{ record.docNumber || '-' }}</td>
+            <td>{{ record.entryTime || '-' }}</td>
+            <td>{{ record.exitTime || '-' }}</td>
+            <td>{{ record.registrationType || record.type || '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <div class="vf-actions" *ngIf="totalPages > 1">
       <button class="vf-btn vf-btn--secondary" type="button" (click)="load(page - 1)" [disabled]="page === 0">Anterior</button>

@@ -50,7 +50,6 @@
       <a class="admin-bell" routerLink="notifications">!</a>
     </header>
 
-    <!-- Estadísticas principales -->
     <div class="admin-stats">
       <article *ngFor="let stat of adminStats" [ngClass]="'tone-' + stat.tone">
         <span>{{ stat.label }}</span>
@@ -64,7 +63,6 @@
 
     <div class="admin-grid">
 
-      <!-- Gráfico asistencia semanal REAL -->
       <section class="admin-panel attendance-panel">
         <div class="panel-title">
           <h2>Asistencia semanal</h2>
@@ -88,7 +86,6 @@
         </p>
       </section>
 
-      <!-- Donut usuarios por turno REAL -->
       <section class="admin-panel donut-panel">
         <h2>Usuarios por turno</h2>
         <div class="donut" [style.background]="donutStyle">
@@ -103,7 +100,6 @@
         </div>
       </section>
 
-      <!-- Resto de paneles -->
       <section class="admin-panel">
         <div class="panel-title"><h2>Usuarios</h2><a routerLink="users">Ver lista</a></div>
         <p>Consulta, revisa detalle y edita usuarios desde el listado del sistema.</p>

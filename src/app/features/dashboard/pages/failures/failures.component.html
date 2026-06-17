@@ -69,38 +69,40 @@
     <p class="vf-muted" *ngIf="loading">Cargando fallas...</p>
     <p class="vf-empty" *ngIf="!loading && reports.length === 0">No hay fallas reportadas.</p>
 
-    <table class="vf-table" *ngIf="reports.length > 0">
-      <thead>
-        <tr>
-          <th>Codigo</th>
-          <th>Equipo</th>
-          <th>Usuario</th>
-          <th>Descripción</th>
-          <th>Prioridad</th>
-          <th>Estado</th>
-          <th>Fecha</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let report of reports">
-          <td>{{ report.code }}</td>
-          <td>{{ report.machineName }}</td>
-          <td>{{ report.user || '-' }}</td>
-          <td class="desc-cell" [title]="report.description">{{ report.description }}</td>
-          <td>{{ report.priority }}</td>
-          <td><span class="vf-chip">{{ report.status }}</span></td>
-          <td>{{ report.createdAt }}</td>
-          <td>
-            <div class="vf-actions vf-actions--compact">
-              <button class="vf-small-btn" type="button" (click)="openDetail(report)">Ver detalle</button>
-              <button class="vf-small-btn" type="button" (click)="markInReview(report)" [disabled]="report.status === 'Resuelta'">En revision</button>
-              <button class="vf-small-btn" type="button" (click)="resolve(report)" [disabled]="report.status === 'Resuelta'">Resolver</button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="vf-table-wrap" *ngIf="reports.length > 0">
+      <table class="vf-table">
+        <thead>
+          <tr>
+            <th>Codigo</th>
+            <th>Equipo</th>
+            <th>Usuario</th>
+            <th>Descripción</th>
+            <th>Prioridad</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let report of reports">
+            <td>{{ report.code }}</td>
+            <td>{{ report.machineName }}</td>
+            <td>{{ report.user || '-' }}</td>
+            <td class="desc-cell" [title]="report.description">{{ report.description }}</td>
+            <td>{{ report.priority }}</td>
+            <td><span class="vf-chip">{{ report.status }}</span></td>
+            <td>{{ report.createdAt }}</td>
+            <td>
+              <div class="vf-actions vf-actions--compact">
+                <button class="vf-small-btn" type="button" (click)="openDetail(report)">Ver detalle</button>
+                <button class="vf-small-btn" type="button" (click)="markInReview(report)" [disabled]="report.status === 'Resuelta'">En revision</button>
+                <button class="vf-small-btn" type="button" (click)="resolve(report)" [disabled]="report.status === 'Resuelta'">Resolver</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </section>
 

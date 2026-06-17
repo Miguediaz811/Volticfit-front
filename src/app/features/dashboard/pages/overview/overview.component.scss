@@ -73,7 +73,8 @@ $colorSuccess:  #22C55E;
   min-height: 140px;
   display: flex;
   justify-content: space-between;
-  padding: 20px;
+  align-items: center;
+  padding: 24px;
 }
 
 .admin-panel p {
@@ -96,15 +97,29 @@ $colorSuccess:  #22C55E;
 
 .mini-stats {
   display: flex;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 16px;
   margin-top: 16px;
 }
 
 .mini-stats article {
+  flex: 1;
   min-width: 160px;
-  padding: 12px;
-  border-radius: 8px;
+  padding: 20px;
+  border-radius: 12px;
   background: #181818;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #2a2a2a;
+  transition: transform 0.2s, border-color 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: rgba(245, 166, 35, 0.4);
+  }
 }
 
 .mini-stats span,
@@ -115,10 +130,23 @@ $colorSuccess:  #22C55E;
   color: #929292;
 }
 
+.mini-stats span {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 .mini-stats strong {
   display: block;
-  margin-top: 6px;
-  font-size: 1.1rem;
+  margin-top: 8px;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #f7f7f7;
+
+  &.danger {
+    color: #ef5350;
+  }
 }
 
 .danger,
@@ -129,11 +157,38 @@ $colorSuccess:  #22C55E;
 .status-pill {
   height: fit-content;
   border-radius: 999px;
-  padding: 5px 10px;
-  background: rgba(245, 166, 35, .16);
+  padding: 6px 14px;
+  background: rgba(245, 166, 35, .12);
+  border: 1px solid rgba(245, 166, 35, .3);
   color: #f5a623;
-  font-size: .76rem;
+  font-size: .8rem;
   font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #f5a623;
+    box-shadow: 0 0 8px #f5a623;
+  }
+}
+
+.status-pill--inactive {
+  background: rgba(239, 68, 68, .12);
+  border-color: rgba(239, 68, 68, .3);
+  color: #ef5350;
+
+  &::before {
+    background: #ef5350;
+    box-shadow: 0 0 8px #ef5350;
+  }
 }
 
 .member-actions {
@@ -433,14 +488,19 @@ $colorSuccess:  #22C55E;
   .member-hero,
   .member-info,
   .admin-header {
-    align-items: flex-start;
+    align-items: center;
     flex-direction: column;
+    text-align: center;
   }
 
   .member-hero {
     gap: 18px;
     min-height: 0;
     padding: 20px;
+
+    > div {
+      width: 100%;
+    }
   }
 
   .qr-shortcut {
@@ -450,17 +510,24 @@ $colorSuccess:  #22C55E;
   }
 
   .member-info {
-    gap: 16px;
+    gap: 20px;
+    padding: 20px;
+
+    > div {
+      width: 100%;
+    }
   }
 
   .mini-stats {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
     width: 100%;
   }
 
   .mini-stats article {
     min-width: 0;
+    padding: 16px;
   }
 
   .member-actions,
@@ -483,8 +550,6 @@ $colorSuccess:  #22C55E;
     min-width: 420px;
   }
 }
-
-/* ── Nuevos estilos para datos reales ── */
 
 .line-chart em {
   position: absolute;
@@ -519,7 +584,6 @@ $colorSuccess:  #22C55E;
   }
 }
 
-/* Donut legend */
 .donut-legend {
   display: grid;
   gap: 6px;
@@ -550,8 +614,3 @@ $colorSuccess:  #22C55E;
 .legend-0 .legend-dot { background: #f5a623; }
 .legend-1 .legend-dot { background: #ef7f00; }
 .legend-2 .legend-dot { background: #555; }
-
-.status-pill--inactive {
-  background: rgba(239, 68, 68, .16);
-  color: #ef5350;
-}

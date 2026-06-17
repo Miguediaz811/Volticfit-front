@@ -1,3 +1,6 @@
+/* ══════════════════════════════════════════════════════════
+   RESET & BASE
+══════════════════════════════════════════════════════════ */
 * {
   margin: 0;
   padding: 0;
@@ -6,24 +9,14 @@
   scrollbar-color: #2e2e2e #161616;
 }
 
-*::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-
-*::-webkit-scrollbar-track {
-  background: #161616;
-}
-
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-track { background: #161616; }
 *::-webkit-scrollbar-thumb {
   background: #2e2e2e;
   border: 2px solid #161616;
   border-radius: 999px;
 }
-
-*::-webkit-scrollbar-thumb:hover {
-  background: #2e2e2e;
-}
+*::-webkit-scrollbar-thumb:hover { background: #444; }
 
 body {
   margin: 0;
@@ -31,26 +24,17 @@ body {
   background-color: #1E1E1E;
   color: #FFFFFF;
   font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
-a {
-  color: inherit;
-}
+a { color: inherit; }
+button, input, select, textarea { font: inherit; }
+img, video, canvas, svg { max-width: 100%; }
 
-button,
-input,
-select,
-textarea {
-  font: inherit;
-}
-
-img,
-video,
-canvas,
-svg {
-  max-width: 100%;
-}
-
+/* ══════════════════════════════════════════════════════════
+   SHELL LAYOUT
+══════════════════════════════════════════════════════════ */
 .vf-shell {
   display: grid;
   grid-template-columns: 188px minmax(0, 1fr);
@@ -62,7 +46,7 @@ svg {
   grid-template-columns: 188px minmax(0, 1fr);
 }
 
-
+/* ── Sidebar ──────────────────────────────────────────── */
 .vf-sidebar {
   position: sticky;
   top: 0;
@@ -73,6 +57,7 @@ svg {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  overflow-y: auto;
 }
 
 .vf-shell--admin .vf-sidebar {
@@ -80,6 +65,7 @@ svg {
   background: #161616;
 }
 
+/* ── Brand ────────────────────────────────────────────── */
 .vf-brand {
   display: flex;
   align-items: center;
@@ -97,6 +83,7 @@ svg {
   object-fit: contain;
 }
 
+/* ── Role badge ───────────────────────────────────────── */
 .vf-role-badge {
   display: inline-flex;
   width: fit-content;
@@ -108,6 +95,7 @@ svg {
   font-weight: 800;
 }
 
+/* ── Nav ──────────────────────────────────────────────── */
 .vf-nav {
   display: grid;
   gap: 12px;
@@ -162,14 +150,14 @@ svg {
   opacity: .7;
   transition: opacity .2s;
   pointer-events: none;
+}
 
-  svg {
-    width: 14px;
-    height: 14px;
-    stroke: currentColor;
-    fill: none;
-    pointer-events: none;
-  }
+.vf-nav-icon svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  fill: none;
+  pointer-events: none;
 }
 
 .vf-nav a.is-active .vf-nav-icon,
@@ -177,6 +165,7 @@ svg {
   opacity: 1;
 }
 
+/* ── Main content ─────────────────────────────────────── */
 .vf-main {
   min-width: 0;
   padding: 32px;
@@ -188,7 +177,9 @@ svg {
   padding: 20px 24px;
 }
 
-
+/* ══════════════════════════════════════════════════════════
+   PAGE & LAYOUT COMPONENTS
+══════════════════════════════════════════════════════════ */
 .vf-page {
   display: grid;
   gap: 22px;
@@ -223,6 +214,7 @@ svg {
   text-transform: uppercase;
 }
 
+/* ── Panel & Card ─────────────────────────────────────── */
 .vf-panel,
 .vf-card {
   background: #272727;
@@ -249,6 +241,7 @@ svg {
   gap: 10px;
 }
 
+/* ── Grid ─────────────────────────────────────────────── */
 .vf-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -259,6 +252,7 @@ svg {
   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
 }
 
+/* ── Link card ────────────────────────────────────────── */
 .vf-link-card {
   color: #fff;
   text-decoration: none;
@@ -270,6 +264,7 @@ svg {
   font-size: 1.6rem;
 }
 
+/* ── Field ────────────────────────────────────────────── */
 .vf-field {
   display: grid;
   gap: 7px;
@@ -299,13 +294,8 @@ svg {
   resize: vertical;
 }
 
-.vf-field input[readonly] {
-  opacity: .72;
-}
-
-.vf-field select:disabled {
-  opacity: .72;
-}
+.vf-field input[readonly] { opacity: .72; }
+.vf-field select:disabled  { opacity: .72; }
 
 .vf-check {
   display: flex;
@@ -314,6 +304,7 @@ svg {
   color: #E0E0E0;
 }
 
+/* ── Actions ──────────────────────────────────────────── */
 .vf-actions {
   display: flex;
   flex-wrap: wrap;
@@ -321,6 +312,7 @@ svg {
   gap: 12px;
 }
 
+/* ── Buttons ──────────────────────────────────────────── */
 .vf-btn,
 .vf-ghost-btn,
 .vf-small-btn {
@@ -344,10 +336,7 @@ svg {
   border: 1px solid #444;
 }
 
-.vf-btn--danger {
-  background: #ef4444;
-  color: #fff;
-}
+.vf-btn--danger { background: #ef4444; color: #fff; }
 
 .vf-ghost-btn {
   margin-top: auto;
@@ -364,10 +353,7 @@ svg {
   color: #111;
 }
 
-.vf-small-btn--danger {
-  background: #ef4444;
-  color: #fff;
-}
+.vf-small-btn--danger { background: #ef4444; color: #fff; }
 
 .vf-btn:disabled,
 .vf-small-btn:disabled {
@@ -386,6 +372,7 @@ svg {
   font-weight: 800;
 }
 
+/* ── Alerts ───────────────────────────────────────────── */
 .vf-alert {
   border-radius: 8px;
   padding: 12px 14px;
@@ -404,6 +391,7 @@ svg {
   border: 1px solid rgba(34, 197, 94, .35);
 }
 
+/* ── Chip ─────────────────────────────────────────────── */
 .vf-chip {
   display: inline-flex;
   width: fit-content;
@@ -416,13 +404,18 @@ svg {
   font-weight: 800;
 }
 
+/* ── Table (with scroll wrapper) ─────────────────────── */
+.vf-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 8px;
+}
+
 .vf-table {
   width: 100%;
   border-collapse: collapse;
-  overflow: hidden;
-  max-width: 100%;
-  overflow-x: auto;
-  white-space: nowrap;
+  min-width: 480px; /* ensures content doesn't get squished; wrapper scrolls */
 }
 
 .vf-table th,
@@ -430,7 +423,8 @@ svg {
   padding: 12px;
   border-bottom: 1px solid #3A3A3A;
   text-align: left;
-  vertical-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
 }
 
 .vf-table th {
@@ -439,6 +433,7 @@ svg {
   text-transform: uppercase;
 }
 
+/* ── Modal ────────────────────────────────────────────── */
 .vf-modal-backdrop {
   position: fixed;
   inset: 0;
@@ -462,9 +457,7 @@ svg {
   box-shadow: 0 24px 80px rgba(0, 0, 0, .45);
 }
 
-.vf-modal--small {
-  width: min(520px, 100%);
-}
+.vf-modal--small { width: min(520px, 100%); }
 
 .vf-modal-header {
   display: flex;
@@ -478,6 +471,7 @@ svg {
   line-height: 1.2;
 }
 
+/* ── QR ───────────────────────────────────────────────── */
 .vf-qr {
   display: grid;
   grid-template-columns: repeat(11, 18px);
@@ -488,16 +482,10 @@ svg {
   border-radius: 8px;
 }
 
-.vf-qr span {
-  width: 18px;
-  height: 18px;
-  background: #fff;
-}
+.vf-qr span { width: 18px; height: 18px; background: #fff; }
+.vf-qr span.is-active { background: #111; }
 
-.vf-qr span.is-active {
-  background: #111;
-}
-
+/* ── Code / token ─────────────────────────────────────── */
 .vf-token,
 .vf-code {
   max-width: 100%;
@@ -508,6 +496,7 @@ svg {
   color: #E0E0E0;
 }
 
+/* ── Chart ────────────────────────────────────────────── */
 .vf-chart {
   height: 280px;
   display: grid;
@@ -530,8 +519,7 @@ svg {
   background: linear-gradient(180deg, #F5A800, #E07000);
 }
 
-/* delete-account styles are component-scoped */
-
+/* ── Misc ─────────────────────────────────────────────── */
 app-sanction-alert p {
   margin: 0 0 10px;
   padding: 12px 14px;
@@ -540,8 +528,54 @@ app-sanction-alert p {
   color: #fecaca;
 }
 
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE ── 921-1279px: Laptops / small desktops
+══════════════════════════════════════════════════════════ */
+@media (max-width: 1279px) {
+  .vf-shell {
+    grid-template-columns: 172px minmax(0, 1fr);
+  }
+  .vf-shell--admin {
+    grid-template-columns: 172px minmax(0, 1fr);
+  }
+  .vf-main,
+  .vf-shell--admin .vf-main {
+    padding: 24px 20px;
+  }
+  .vf-header h1 { font-size: 1.85rem; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE ── 769-920px: Laptops / larger tablets landscape
+   Dashboard-shell hamburger takes over at ≤ 768px
+══════════════════════════════════════════════════════════ */
+@media (max-width: 920px) {
+  .vf-shell {
+    grid-template-columns: 160px minmax(0, 1fr);
+  }
+  .vf-shell--admin {
+    grid-template-columns: 160px minmax(0, 1fr);
+  }
+  .vf-main,
+  .vf-shell--admin .vf-main {
+    padding: 20px 16px;
+  }
+  .vf-header h1 { font-size: 1.7rem; }
+  .vf-page { max-width: 100%; gap: 18px; }
+  .vf-grid--cards {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE ── 481-768px: Tablets & larger phones
+   The dashboard-shell.component.scss handles hamburger here
+══════════════════════════════════════════════════════════ */
 @media (max-width: 860px) {
   .vf-shell {
+    grid-template-columns: 1fr;
+  }
+  .vf-shell--admin {
     grid-template-columns: 1fr;
   }
 
@@ -555,31 +589,22 @@ app-sanction-alert p {
     max-height: none;
   }
 
-  .vf-main {
+  .vf-main,
+  .vf-shell--admin .vf-main {
     padding: 20px;
   }
 
-  .vf-page {
-    max-width: 100%;
-    gap: 18px;
-  }
-
-  .vf-header h1 {
-    font-size: 1.6rem;
-  }
+  .vf-page { max-width: 100%; gap: 18px; }
+  .vf-header h1 { font-size: 1.6rem; }
 
   .vf-grid,
   .vf-grid--cards {
     grid-template-columns: 1fr;
   }
 
-  .vf-field--inline {
-    min-width: 0;
-  }
+  .vf-field--inline { min-width: 0; }
 
-  .vf-actions {
-    align-items: stretch;
-  }
+  .vf-actions { align-items: stretch; }
 
   .vf-actions > *,
   .vf-btn,
@@ -588,66 +613,43 @@ app-sanction-alert p {
     max-width: 100%;
   }
 
-  .vf-panel-heading {
-    display: grid;
-  }
+  .vf-panel-heading { display: grid; }
 
   .vf-modal-backdrop {
     align-items: end;
     padding: 12px;
   }
-
-  .vf-modal {
-    max-height: 90vh;
-    padding: 18px;
-  }
+  .vf-modal { max-height: 90vh; padding: 18px; }
 
   .vf-chart {
     grid-template-columns: repeat(2, minmax(70px, 1fr));
   }
 }
 
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE ── 352-480px: Small phones
+══════════════════════════════════════════════════════════ */
 @media (max-width: 640px) {
-  body {
-    overflow-x: hidden;
-  }
+  body { overflow-x: hidden; }
 
   .vf-sidebar,
   .vf-shell--admin .vf-sidebar {
     padding: 12px;
   }
 
-  .vf-brand {
-    font-size: .78rem;
-  }
+  .vf-brand { font-size: .78rem; }
+  .vf-brand img { width: 32px; height: 32px; }
+  .vf-role-badge { font-size: .58rem; }
 
-  .vf-brand img {
-    width: 32px;
-    height: 32px;
-  }
-
-  .vf-role-badge {
-    font-size: .58rem;
-  }
-
-  .vf-nav {
-    grid-template-columns: 1fr;
-  }
+  .vf-nav { grid-template-columns: 1fr; }
 
   .vf-main,
   .vf-shell--admin .vf-main {
     padding: 16px 12px 96px;
   }
 
-  .vf-panel,
-  .vf-card {
-    padding: 16px;
-  }
-
-  .vf-panel-heading,
-  .vf-modal-header {
-    gap: 10px;
-  }
+  .vf-panel, .vf-card { padding: 16px; }
+  .vf-panel-heading, .vf-modal-header { gap: 10px; }
 
   .vf-actions,
   .vf-panel-heading,
@@ -655,31 +657,22 @@ app-sanction-alert p {
     align-items: stretch;
   }
 
-  .vf-btn,
-  .vf-ghost-btn,
-  .vf-small-btn {
+  .vf-btn, .vf-ghost-btn {
     width: 100%;
     justify-content: center;
     text-align: center;
   }
 
-  .vf-icon-btn {
-    flex: 0 0 auto;
-  }
-
-  .vf-alert {
-    overflow-wrap: anywhere;
-  }
+  .vf-icon-btn { flex: 0 0 auto; }
+  .vf-alert { overflow-wrap: anywhere; }
 
   .vf-table th,
   .vf-table td {
-    padding: 10px;
+    padding: 10px 8px;
+    font-size: .8rem;
   }
 
-  .vf-modal-backdrop {
-    padding: 8px;
-  }
-
+  .vf-modal-backdrop { padding: 8px; }
   .vf-modal {
     width: 100%;
     max-height: 92vh;
@@ -692,7 +685,6 @@ app-sanction-alert p {
     width: min(100%, 260px);
     padding: 10px;
   }
-
   .vf-qr span {
     width: 100%;
     aspect-ratio: 1 / 1;
@@ -703,4 +695,30 @@ app-sanction-alert p {
     height: 220px;
     grid-template-columns: 1fr;
   }
+
+  .vf-header h1 { font-size: 1.4rem; }
+  .vf-header p { font-size: .88rem; }
+
+  /* Prevent iOS auto-zoom on inputs */
+  .vf-field input,
+  .vf-field select,
+  .vf-field textarea {
+    font-size: 16px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE ── ≤ 400px: Extra small phones
+══════════════════════════════════════════════════════════ */
+@media (max-width: 400px) {
+  .vf-panel, .vf-card { padding: 14px 12px; }
+  .vf-header h1 { font-size: 1.25rem; }
+
+  .vf-chip {
+    font-size: .72rem;
+    padding: 5px 8px;
+  }
+
+  .vf-btn { min-height: 44px; font-size: .88rem; } /* better touch target */
+  .vf-small-btn { padding: 10px 12px; } /* bigger touch target */
 }

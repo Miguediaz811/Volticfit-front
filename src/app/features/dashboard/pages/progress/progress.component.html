@@ -83,25 +83,27 @@
 
   <div class="vf-panel" *ngIf="progress && hasData()">
     <h2>Historial</h2>
-    <table class="vf-table">
-      <thead>
-        <tr>
-          <th>Fecha</th>
-          <th>Peso</th>
-          <th>IMC</th>
-          <th>Grasa</th>
-          <th>Masa muscular</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of progress.weightHistory; let i = index">
-          <td>{{ item.date }}</td>
-          <td>{{ item.value }}</td>
-          <td>{{ valueAt(progress.bmiHistory, i) }}</td>
-          <td>{{ valueAt(progress.fatPercentageHistory, i) }}</td>
-          <td>{{ valueAt(progress.muscleMassHistory, i) }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="vf-table-wrap">
+      <table class="vf-table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Peso</th>
+            <th>IMC</th>
+            <th>Grasa</th>
+            <th>Masa muscular</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of progress.weightHistory; let i = index">
+            <td>{{ item.date }}</td>
+            <td>{{ item.value }}</td>
+            <td>{{ valueAt(progress.bmiHistory, i) }}</td>
+            <td>{{ valueAt(progress.fatPercentageHistory, i) }}</td>
+            <td>{{ valueAt(progress.muscleMassHistory, i) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </section>

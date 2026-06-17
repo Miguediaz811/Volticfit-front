@@ -255,3 +255,29 @@
 
   .chat-window { min-height: 260px; }
 }
+
+@media (max-width: 480px) {
+  .ticket-list {
+    max-height: 160px;
+    padding: 8px;
+  }
+
+  .chat-window {
+    min-height: 200px;
+  }
+
+  .chat-input-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .send-btn {
+    width: 100%;
+    justify-content: center;
+    flex-shrink: 1;
+  }
+
+  .chat-status-btns {
+    flex-direction: column;
+  }
+}

@@ -215,3 +215,37 @@ form {
   opacity: 0.6;
   margin: 0;
 }
+
+/* ── Extra small phones (≤ 480px) ───────────────────────────── */
+@media (max-width: 480px) {
+  .login-page {
+    padding: 20px 12px 40px;
+    min-height: calc(100vh - 100px);
+  }
+
+  .login-card {
+    padding: 22px 16px;
+    gap: 16px;
+  }
+
+  .login-card__title {
+    font-size: 1.5rem;
+  }
+
+  .form-label-row {
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+  }
+
+  .submit-btn {
+    min-height: 48px; /* bigger touch target */
+  }
+
+  /* Prevent iOS auto-zoom on input focus */
+  .submit-btn,
+  input,
+  select {
+    font-size: 16px;
+  }
+}

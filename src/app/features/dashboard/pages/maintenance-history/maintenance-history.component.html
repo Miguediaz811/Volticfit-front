@@ -69,27 +69,29 @@
     <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
     <p class="vf-empty" *ngIf="!loading && filteredItems.length === 0">No hay mantenimientos para mostrar.</p>
 
-    <table class="vf-table" *ngIf="filteredItems.length > 0">
-      <thead>
-        <tr>
-          <th>Equipo</th>
-          <th>Tipo</th>
-          <th>Descripcion</th>
-          <th>Fecha</th>
-          <th>Responsable</th>
-          <th>Estado</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of filteredItems">
-          <td>{{ item.machine?.name || 'Equipo' }}</td>
-          <td>{{ item.type || 'Preventivo' }}</td>
-          <td>{{ item.description || '-' }}</td>
-          <td>{{ item.date }}</td>
-          <td>{{ item.responsible || '-' }}</td>
-          <td><span class="vf-chip">{{ item.state ? 'Activo' : 'Cerrado' }}</span></td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="vf-table-wrap" *ngIf="filteredItems.length > 0">
+      <table class="vf-table">
+        <thead>
+          <tr>
+            <th>Equipo</th>
+            <th>Tipo</th>
+            <th>Descripcion</th>
+            <th>Fecha</th>
+            <th>Responsable</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of filteredItems">
+            <td>{{ item.machine?.name || 'Equipo' }}</td>
+            <td>{{ item.type || 'Preventivo' }}</td>
+            <td>{{ item.description || '-' }}</td>
+            <td>{{ item.date }}</td>
+            <td>{{ item.responsible || '-' }}</td>
+            <td><span class="vf-chip">{{ item.state ? 'Activo' : 'Cerrado' }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </section>
