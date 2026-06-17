@@ -53,10 +53,7 @@ export class OverviewComponent implements OnInit {
     { label: 'Equipos operativos', value: '0', note: 'segun inventario', tone: 'green', route: 'machines' },
   ];
 
-  // Gráfico de asistencia semanal
   weekBars: DayBar[] = [];
-
-  // Donut usuarios por turno
   shiftSlices: ShiftSlice[] = [];
   totalAttendanceWeek = 0;
   donutStyle = '';
@@ -110,18 +107,13 @@ export class OverviewComponent implements OnInit {
         next: data => {
           this.profile = data.profile;
 
-          // Estado del usuario
           this.memberStatus = data.profile?.state === false ? 'Inactivo' : 'Activo';
-
-          // Sanciones y reservas
           const activeSanctions    = data.sanctions.filter(s => s.state).length;
           const activeReservations = data.reservations.filter(r => r.state).length;
           this.memberStats = [
             { label: 'Reservas activas',  value: String(activeReservations) },
             { label: 'Sanciones activas', value: String(activeSanctions), danger: activeSanctions > 0 },
           ];
-
-          // Próximo turno disponible
           const nextShift = data.shifts
             .filter(s => (s.availableSpots ?? 0) > 0)
             .sort((a, b) => (a.startTime ?? '').localeCompare(b.startTime ?? ''))[0];
@@ -143,8 +135,6 @@ export class OverviewComponent implements OnInit {
       });
     }
   }
-
-  // ── Gráfico semanal ──────────────────────────────────────────────────────────
 
   private buildWeekChart(records: AttendanceResult[]): void {
     const days = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'];
@@ -176,8 +166,6 @@ export class OverviewComponent implements OnInit {
     }));
   }
 
-  // ── Donut por turno ──────────────────────────────────────────────────────────
-
   private buildShiftDonut(records: AttendanceResult[]): void {
     const buckets: Record<string, number> = { Mañana: 0, Tarde: 0, Noche: 0 };
 
@@ -207,8 +195,6 @@ export class OverviewComponent implements OnInit {
     });
     this.donutStyle = `conic-gradient(${stops.join(', ')})`;
   }
-
-  // ── Helpers ──────────────────────────────────────────────────────────────────
 
   private formatDate(date: Date): string {
     const m = String(date.getMonth() + 1).padStart(2, '0');

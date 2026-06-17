@@ -18,51 +18,53 @@
     <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
     <p class="vf-empty" *ngIf="!loading && sanctions.length === 0">No hay sanciones registradas.</p>
 
-    <table class="vf-table" *ngIf="sanctions.length > 0">
-      <thead>
-        <tr>
-          <th *ngIf="isAdmin">Usuario</th>
-          <th>Clasificación</th>
-          <th>Inicio</th>
-          <th>Fin</th>
-          <th>Estado</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let sanction of sanctions">
-          <td *ngIf="isAdmin">{{ sanctionUserLabel(sanction) }}</td>
-          <td>
-            <span class="vf-chip vf-chip--{{ sanction.clasificacion?.toLowerCase() }}">
-              {{ sanction.clasificacion || '—' }}
-            </span>
-          </td>
-          <td>{{ sanction.startDate }}</td>
-          <td>{{ sanction.endDate }}</td>
-          <td><span class="vf-chip">{{ sanction.state ? 'Activa' : 'Inactiva' }}</span></td>
-          <td>
-            <div class="vf-actions vf-actions--compact">
-              <button class="vf-small-btn" type="button" (click)="openDetailModal(sanction)">Detalle</button>
-              <button class="vf-small-btn" type="button" *ngIf="isAdmin" (click)="openEditModal(sanction)">Editar</button>
-              <button
-                class="vf-small-btn vf-small-btn--danger"
-                type="button"
-                *ngIf="isAdmin && sanction.state"
-                (click)="deleteSanction(sanction)"
-                title="Desactivar sanción">
-                Desactivar
-              </button>
-              <span
-                class="vf-small-btn vf-small-btn--danger vf-small-btn--inactive"
-                *ngIf="isAdmin && !sanction.state"
-                title="Sanción ya inactiva">
-                Desactivar
+    <div class="vf-table-wrap" *ngIf="sanctions.length > 0">
+      <table class="vf-table">
+        <thead>
+          <tr>
+            <th *ngIf="isAdmin">Usuario</th>
+            <th>Clasificación</th>
+            <th>Inicio</th>
+            <th>Fin</th>
+            <th>Estado</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let sanction of sanctions">
+            <td *ngIf="isAdmin">{{ sanctionUserLabel(sanction) }}</td>
+            <td>
+              <span class="vf-chip vf-chip--{{ sanction.clasificacion?.toLowerCase() }}">
+                {{ sanction.clasificacion || '—' }}
               </span>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            </td>
+            <td>{{ sanction.startDate }}</td>
+            <td>{{ sanction.endDate }}</td>
+            <td><span class="vf-chip">{{ sanction.state ? 'Activa' : 'Inactiva' }}</span></td>
+            <td>
+              <div class="vf-actions vf-actions--compact">
+                <button class="vf-small-btn" type="button" (click)="openDetailModal(sanction)">Detalle</button>
+                <button class="vf-small-btn" type="button" *ngIf="isAdmin" (click)="openEditModal(sanction)">Editar</button>
+                <button
+                  class="vf-small-btn vf-small-btn--danger"
+                  type="button"
+                  *ngIf="isAdmin && sanction.state"
+                  (click)="deleteSanction(sanction)"
+                  title="Desactivar sanción">
+                  Desactivar
+                </button>
+                <span
+                  class="vf-small-btn vf-small-btn--danger vf-small-btn--inactive"
+                  *ngIf="isAdmin && !sanction.state"
+                  title="Sanción ya inactiva">
+                  Desactivar
+                </span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <!-- Modal crear / editar -->

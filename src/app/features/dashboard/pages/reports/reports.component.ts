@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DashboardApiService } from '../../../../core/services/dashboard-api.service';
-import { AttendanceResult } from '../../../../shared/interfaces/dashboard.interface';
+import { AttendanceResult, UserProfile } from '../../../../shared/interfaces/dashboard.interface';
 
 type ReportType = 'maintenance' | 'machines' | 'attendance' | 'sanctions';
 
@@ -75,8 +75,9 @@ export class ReportsComponent implements OnInit {
   // Datos de maquinas
   machineRows: any[] = [];
 
-  users: any[] = [];
+  users: UserProfile[] = [];
   selectedUserId = '';
+  userSearchTerm = '';
 
   // Historial de reportes generados (Realiza_Reporte)
   reportHistory: ReportRecord[] = [];
@@ -165,9 +166,9 @@ export class ReportsComponent implements OnInit {
       });
     } else if (this.selectedType === 'sanctions') {
       const userId = this.selectedUserId ? Number(this.selectedUserId) : undefined;
-      this.api.getSanctionsReportByUser(userId, this.fromDate || undefined, this.toDate || undefined).subscribe({
+      this.api.getSanctionsReportByUser(userId, this.fromDate || undefined, this.toDate || undefined, this.status || undefined).subscribe({
         next: rows => {
-          this.sanctionRows = rows;
+          this.sanctionRows = rows.sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
           this.loading = false;
           if (rows.length === 0) {
             this.message = 'No se encontraron sanciones para los filtros seleccionados.';
@@ -182,7 +183,17 @@ export class ReportsComponent implements OnInit {
     } else if (this.selectedType === 'machines') {
       this.api.getMachines().subscribe({
         next: rows => {
-          this.machineRows = rows.filter(m => (m.name || '').toLowerCase() !== 'sin maquina');
+          let filtered = rows.filter(m => {
+            const name = (m.name || '').toLowerCase();
+            const type = (m.type || '').toLowerCase();
+            return name !== 'sin maquina' && type !== 'peso corporal';
+          });
+          if (this.status === 'activo') {
+            filtered = filtered.filter(m => m.state === true);
+          } else if (this.status === 'inactivo') {
+            filtered = filtered.filter(m => m.state === false);
+          }
+          this.machineRows = filtered;
           this.loading = false;
           if (this.machineRows.length === 0) {
             this.message = 'No se encontraron equipos registrados.';
@@ -216,7 +227,8 @@ export class ReportsComponent implements OnInit {
       ? Number(this.selectedUserId)
       : undefined;
 
-    this.api.exportReport(format, reportKey, userId).subscribe({
+    const status = (reportKey === 'sanctions' || reportKey === 'machines') ? (this.status || undefined) : undefined;
+    this.api.exportReport(format, reportKey, userId, this.fromDate || undefined, this.toDate || undefined, status).subscribe({
       next: blob => {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
@@ -307,5 +319,27 @@ export class ReportsComponent implements OnInit {
       next: users => { this.users = users; },
       error: () => { this.users = []; },
     });
+  }
+
+  get filteredUsers(): UserProfile[] {
+    const term = this.normalize(this.userSearchTerm);
+    if (!term) return this.users;
+    return this.users.filter(user =>
+      this.normalize([user.names, user.surnames, user.email, user.docNumber, user.docNum, user.phone].join(' ')).includes(term)
+    );
+  }
+
+  userLabel(user: UserProfile): string {
+    const doc = user.docNumber || user.docNum || 'sin documento';
+    return `${user.names} ${user.surnames || ''} - ${doc}`.trim();
+  }
+
+  selectUser(user: UserProfile): void {
+    this.selectedUserId = String(user.idUser);
+    this.userSearchTerm = '';
+  }
+
+  private normalize(value: string): string {
+    return value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
   }
 }

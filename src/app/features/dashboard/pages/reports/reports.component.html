@@ -31,21 +31,31 @@
         <span>Fecha final</span>
         <input type="date" [(ngModel)]="toDate" [max]="maxDate" />
       </label>
-      <label>
+      <label *ngIf="selectedType === 'sanctions' || selectedType === 'machines'">
         <span>Estado</span>
         <select [(ngModel)]="status">
           <option value="">Todos</option>
           <option value="activo">Activo</option>
-          <option value="pendiente">Pendiente</option>
-          <option value="cerrado">Cerrado</option>
+          <option value="inactivo">Inactivo</option>
         </select>
       </label>
-      <label *ngIf="selectedType === 'attendance' || selectedType === 'sanctions'">
+      <label *ngIf="selectedType === 'attendance' || selectedType === 'sanctions'" class="vf-user-search">
         <span>Usuario</span>
+        <input type="search" [(ngModel)]="userSearchTerm" placeholder="Buscar por nombre, correo o documento" />
+        <div class="user-search-suggestions" *ngIf="userSearchTerm.trim()">
+          <p class="vf-muted" *ngIf="filteredUsers.length === 0">No se encontraron usuarios.</p>
+          <ul *ngIf="filteredUsers.length > 0">
+            <li *ngFor="let user of filteredUsers">
+              <button type="button" class="vf-link-button" (click)="selectUser(user)">
+                {{ userLabel(user) }}
+              </button>
+            </li>
+          </ul>
+        </div>
         <select [(ngModel)]="selectedUserId">
           <option value="">Todos los usuarios</option>
-          <option *ngFor="let user of users" [value]="user.idUser">
-            {{ user.names }} {{ user.surnames }} - {{ user.docNum || user.email }}
+          <option *ngFor="let user of filteredUsers" [value]="user.idUser">
+            {{ userLabel(user) }}
           </option>
         </select>
       </label>
@@ -53,6 +63,18 @@
 
     <div class="expected-fields">
       <span *ngFor="let field of selectedReport.fields">{{ field }}</span>
+    </div>
+
+    <div class="vf-actions">
+      <button class="vf-btn" type="button" (click)="generateReport()" [disabled]="loading">
+        {{ loading ? 'Generando...' : 'Generar reporte' }}
+      </button>
+      <button class="vf-btn vf-btn--secondary" type="button" (click)="exportReport('pdf')" [disabled]="loading">
+        Exportar PDF
+      </button>
+      <button class="vf-btn vf-btn--secondary" type="button" (click)="exportReport('excel')" [disabled]="loading">
+        Exportar Excel
+      </button>
     </div>
 
     <p class="vf-alert vf-alert--success" *ngIf="message">{{ message }}</p>
@@ -162,17 +184,6 @@
       </table>
     </div>
 
-    <div class="vf-actions">
-      <button class="vf-btn" type="button" (click)="generateReport()" [disabled]="loading">
-        {{ loading ? 'Generando...' : 'Generar reporte' }}
-      </button>
-      <button class="vf-btn vf-btn--secondary" type="button" (click)="exportReport('pdf')" [disabled]="loading">
-        Exportar PDF
-      </button>
-      <button class="vf-btn vf-btn--secondary" type="button" (click)="exportReport('excel')" [disabled]="loading">
-        Exportar Excel
-      </button>
-    </div>
   </section>
 
   <!-- Historial de reportes generados -->
@@ -188,24 +199,26 @@
         Aún no has generado ningún reporte.
       </p>
 
-      <table class="vf-table" *ngIf="!historyLoading && reportHistory.length > 0">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Tipo</th>
-            <th>Formato</th>
-            <th>Fecha generación</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let r of reportHistory">
-            <td>{{ r.id }}</td>
-            <td>{{ translateType(r.type) }}</td>
-            <td>{{ translateFormat(r.format) }}</td>
-            <td>{{ r.generationDate | date:'dd/MM/yyyy' }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="vf-table-wrap" *ngIf="!historyLoading && reportHistory.length > 0">
+        <table class="vf-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Tipo</th>
+              <th>Formato</th>
+              <th>Fecha generación</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of reportHistory">
+              <td>{{ r.id }}</td>
+              <td>{{ translateType(r.type) }}</td>
+              <td>{{ translateFormat(r.format) }}</td>
+              <td>{{ r.generationDate | date:'dd/MM/yyyy' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </ng-container>
   </section>
 </section>

@@ -18,7 +18,7 @@ export class LandingComponent implements OnInit {
   stats = [
     { value: '0', label: 'Miembros activos' },
     { value: '0', label: 'Equipos disponibles' },
-    { value: '0', label: 'Anos de experiencia' }
+    { value: '0', label: 'Años de experiencia' }
   ];
 
   menuOpen = false;
@@ -97,14 +97,14 @@ export class LandingComponent implements OnInit {
         this.stats = [
           { value: String(stats.activeMembers ?? 0), label: 'Miembros activos' },
           { value: String(stats.availableEquipment ?? 0), label: 'Equipos disponibles' },
-          { value: String(stats.experienceYears ?? 0), label: 'Anos de experiencia' },
+          { value: String(stats.experienceYears ?? 0), label: 'Años de experiencia' },
         ];
       },
       error: () => {
         this.stats = [
           { value: '0', label: 'Miembros activos' },
           { value: '0', label: 'Equipos disponibles' },
-          { value: '0', label: 'Anos de experiencia' },
+          { value: '0', label: 'Años de experiencia' },
         ];
       },
     });

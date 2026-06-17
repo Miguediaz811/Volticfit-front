@@ -268,9 +268,15 @@ export class DashboardApiService {
     format: 'pdf' | 'excel',
     report: 'users' | 'attendance' | 'machines' | 'maintenance' | 'sanctions',
     userId?: number,
+    startDate?: string,
+    endDate?: string,
+    status?: string,
   ): Observable<Blob> {
     let params = new HttpParams();
     if (userId) params = params.set('userId', userId);
+    if (startDate) params = params.set('startDate', startDate);
+    if (endDate) params = params.set('endDate', endDate);
+    if (status) params = params.set('status', status);
     return this.http.get(`${this.apiUrl}/api/export/${format}/${report}`, {
       params,
       responseType: 'blob',
@@ -315,11 +321,12 @@ export class DashboardApiService {
     return this.http.get<any[]>(`${this.apiUrl}/api/sanctions/report`, { params });
   }
 
-  getSanctionsReportByUser(userId?: number, startDate?: string, endDate?: string): Observable<any[]> {
+  getSanctionsReportByUser(userId?: number, startDate?: string, endDate?: string, status?: string): Observable<any[]> {
     let params = new HttpParams();
     if (userId)    params = params.set('userId', userId);
     if (startDate) params = params.set('startDate', startDate);
     if (endDate)   params = params.set('endDate', endDate);
+    if (status)    params = params.set('status', status);
     return this.http.get<any[]>(`${this.apiUrl}/api/sanctions/report`, { params });
   }
 

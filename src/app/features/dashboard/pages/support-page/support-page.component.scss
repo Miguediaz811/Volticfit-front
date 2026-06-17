@@ -255,6 +255,38 @@
   .chat-window { min-height: 240px; }
 }
 
+@media (max-width: 480px) {
+  .support-chat-panel__header {
+    padding: 14px 16px;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ticket-list {
+    max-height: 160px;
+    padding: 8px;
+  }
+
+  .chat-window {
+    min-height: 200px;
+  }
+
+  .chat-input-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .support-form-wrapper {
+    padding: 16px;
+  }
+
+  .support-form-heading {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
 /* ── Formulario nueva consulta ───────────────────────────────── */
 .support-form-wrapper {
   background: #242424;
