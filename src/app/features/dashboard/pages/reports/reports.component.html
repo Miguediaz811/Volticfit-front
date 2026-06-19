@@ -81,7 +81,7 @@
     <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
 
     <!-- Previsualización asistencia -->
-    <div class="preview-table" *ngIf="attendanceRows.length > 0">
+    <div class="vf-table-wrap" *ngIf="attendanceRows.length > 0">
       <table class="vf-table">
         <thead>
           <tr>
@@ -110,7 +110,7 @@
     </div>
 
     <!-- Previsualización mantenimiento -->
-    <div class="preview-table" *ngIf="maintenanceRows.length > 0">
+    <div class="vf-table-wrap" *ngIf="maintenanceRows.length > 0">
       <table class="vf-table">
         <thead>
           <tr>
@@ -136,7 +136,7 @@
     </div>
 
     <!-- Previsualización sanciones -->
-    <div class="preview-table" *ngIf="machineRows.length > 0">
+    <div class="vf-table-wrap" *ngIf="machineRows.length > 0">
       <table class="vf-table">
         <thead>
           <tr>
@@ -157,7 +157,7 @@
       </table>
     </div>
 
-    <div class="preview-table" *ngIf="sanctionRows.length > 0">
+    <div class="vf-table-wrap" *ngIf="sanctionRows.length > 0">
       <table class="vf-table">
         <thead>
           <tr>
