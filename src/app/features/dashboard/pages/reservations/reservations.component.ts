@@ -22,14 +22,27 @@ export class ReservationsComponent implements OnInit {
   readonly canReserve = !this.isAdmin;
   readonly minDate = new Date().toISOString().slice(0, 10);
 
+  get minFullGymDate(): string {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().slice(0, 10);
+  }
+
   readonly form = this.fb.group({
     date: [new Date().toISOString().slice(0, 10), Validators.required],
   });
 
   readonly fullGymForm = this.fb.group({
-    reservationDate: [new Date().toISOString().slice(0, 10), Validators.required],
+    reservationDate: [
+      (() => {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        return tomorrow.toISOString().slice(0, 10);
+      })(),
+      Validators.required
+    ],
     startTime: ['08:00', Validators.required],
-    endTime: ['18:00', Validators.required],
+    endTime: [{ value: '09:00', disabled: true }, Validators.required],
     reason: ['', [Validators.required, Validators.minLength(5)]],
   });
 
@@ -44,6 +57,16 @@ export class ReservationsComponent implements OnInit {
         this.shifts = [];
       }
     });
+
+    this.fullGymForm.controls.startTime.valueChanges.subscribe(start => {
+      if (start) {
+        const [hours, minutes] = start.split(':').map(Number);
+        const endHour = hours + 1;
+        const endStr = `${String(endHour).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+        this.fullGymForm.controls.endTime.setValue(endStr);
+      }
+    });
+
     if (this.isAdmin) {
       this.loadAdminReservations();
     } else {
@@ -82,7 +105,11 @@ export class ReservationsComponent implements OnInit {
       this.fullGymForm.markAllAsTouched();
       return;
     }
-    const v = this.fullGymForm.value;
+    const v = this.fullGymForm.getRawValue();
+    if (v.reservationDate && v.reservationDate < this.minFullGymDate) {
+      this.error = 'La reserva del gimnasio completo debe hacerse con al menos un dia de antelacion.';
+      return;
+    }
     if ((v.endTime || '') <= (v.startTime || '')) {
       this.error = 'La hora de fin debe ser posterior a la hora de inicio.';
       return;
@@ -100,9 +127,9 @@ export class ReservationsComponent implements OnInit {
         this.message = response.message || 'Gimnasio reservado correctamente.';
         this.loading = false;
         this.fullGymForm.reset({
-          reservationDate: new Date().toISOString().slice(0, 10),
+          reservationDate: this.minFullGymDate,
           startTime: '08:00',
-          endTime: '18:00',
+          endTime: '09:00',
           reason: '',
         });
         this.loadShifts();

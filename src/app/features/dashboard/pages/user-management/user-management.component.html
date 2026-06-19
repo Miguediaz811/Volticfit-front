@@ -83,7 +83,7 @@
       </div>
 
       <div class="vf-actions">
-        <button class="vf-btn vf-btn--secondary" type="button" *ngIf="!editing" (click)="startEditing()">Editar</button>
+        <button class="vf-btn" type="button" *ngIf="!editing" (click)="startEditing()">Editar</button>
         <button class="vf-btn" type="submit" *ngIf="editing" [disabled]="loading">Guardar cambios</button>
         <button class="vf-btn vf-btn--secondary" type="button" *ngIf="editing" (click)="cancelEditing()">Cancelar</button>
         <button class="vf-btn vf-btn--secondary" type="button" *ngIf="!editing" (click)="closeUserModal()">Cerrar</button>

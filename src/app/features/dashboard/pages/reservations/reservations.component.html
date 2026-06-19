@@ -16,7 +16,7 @@
     <form class="vf-grid" [formGroup]="fullGymForm" (ngSubmit)="reserveFullGym()">
       <label class="vf-field">
         <span>Fecha *</span>
-        <input type="date" formControlName="reservationDate" [min]="minDate" />
+        <input type="date" formControlName="reservationDate" [min]="minFullGymDate" />
         <small class="vf-error" *ngIf="fullGymForm.get('reservationDate')?.touched && fullGymForm.get('reservationDate')?.invalid">
           La fecha es obligatoria.
         </small>

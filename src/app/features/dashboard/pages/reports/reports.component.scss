@@ -44,7 +44,7 @@
 
 .report-options {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 12px;
 }
 
@@ -93,7 +93,7 @@
 
 .filter-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 12px;
 }
 
@@ -107,6 +107,9 @@ label {
 
 input,
 select {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   min-height: 42px;
   border: 1px solid #3a3a3a;
   border-radius: 8px;
@@ -346,10 +349,7 @@ select {
 }
 
 @media (max-width: 860px) {
-  .report-options,
-  .filter-grid {
-    grid-template-columns: 1fr;
-  }
+  // Dejamos que CSS grid auto-fit controle las columnas responsivas de manera fluida
 }
 
 @media (max-width: 640px) {
