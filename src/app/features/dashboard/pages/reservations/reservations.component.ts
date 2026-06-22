@@ -107,7 +107,7 @@ export class ReservationsComponent implements OnInit {
     }
     const v = this.fullGymForm.getRawValue();
     if (v.reservationDate && v.reservationDate < this.minFullGymDate) {
-      this.error = 'La reserva del gimnasio completo debe hacerse con al menos un dia de antelacion.';
+      this.error = 'La reserva del gimnasio completo debe hacerse con al menos un día de antelación.';
       return;
     }
     if ((v.endTime || '') <= (v.startTime || '')) {

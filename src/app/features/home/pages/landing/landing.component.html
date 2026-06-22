@@ -6,7 +6,7 @@
   <button
     class="navbar__toggle"
     type="button"
-    aria-label="Abrir menu"
+    aria-label="Abrir menú"
     [attr.aria-expanded]="menuOpen"
     (click)="toggleMenu()">
     <span></span>
@@ -16,11 +16,11 @@
 
   <div class="navbar__menu" [class.navbar__menu--open]="menuOpen">
     <a href="javascript:void(0)" (click)="scrollTo('top')">Inicio</a>
-    <a href="javascript:void(0)" (click)="scrollTo('categorias')">Categorias</a>
+    <a href="javascript:void(0)" (click)="scrollTo('categorias')">Categorías</a>
     <a href="javascript:void(0)" (click)="scrollTo('sobre-nosotros')">Sobre nosotros</a>
 
     <div class="navbar__actions">
-      <button class="btn btn--outline" routerLink="/auth/login" routerLinkActive="is-active" (click)="closeMenu()">Iniciar Sesion</button>
+      <button class="btn btn--outline" routerLink="/auth/login" routerLinkActive="is-active" (click)="closeMenu()">Iniciar Sesión</button>
       <button class="btn btn--primary" routerLink="/auth/register" routerLinkActive="is-active" (click)="closeMenu()">Registrarse</button>
     </div>
   </div>
@@ -40,7 +40,7 @@
 
     <p class="hero__subtitle">
       Entrena con los mejores equipos, instructores certificados y una comunidad
-      que te motiva a superar tus limites cada dia.
+      que te motiva a superar tus límites cada día.
     </p>
 
     <button class="btn btn--primary btn--lg" routerLink="/auth/register">Comenzar Ahora</button>
@@ -68,8 +68,8 @@
       Todo lo que <span class="text--accent">necesitas</span>
     </h2>
     <p class="section__subtitle">
-      Disenamos cada detalle del gimnasio para que tu experiencia sea
-      unica, comoda y efectiva.
+      Diseñamos cada detalle del gimnasio para que tu experiencia sea
+      única, cómoda y efectiva.
     </p>
   </div>
 
@@ -139,7 +139,7 @@
     </h2>
     <p class="about__desc">
       No somos solo un gimnasio. Somos una comunidad comprometida con tu
-      transformacion fisica y mental, con instalaciones de primer nivel y
+      transformación física y mental, con instalaciones de primer nivel y
       un equipo humano que te acompa&ntilde;a.
     </p>
     <ul class="about__list">

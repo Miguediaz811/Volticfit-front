@@ -26,32 +26,32 @@ export class LandingComponent implements OnInit {
     {
       icon: 'EQ',
       title: 'Equipos modernos',
-      description: 'Contamos con la maquinaria mas avanzada para que entrenes sin limites.'
+      description: 'Contamos con la maquinaria más avanzada para que entrenes sin límites.'
     },
     {
       icon: 'APP',
       title: 'App intuitiva',
-      description: 'Gestiona tus rutinas, reservas y progreso desde nuestra aplicacion movil.'
+      description: 'Gestiona tus rutinas, reservas y progreso desde nuestra aplicación móvil.'
     },
     {
       icon: 'PR',
       title: 'Seguimiento real',
-      description: 'Monitorea cada avance con metricas detalladas y reportes personalizados.'
+      description: 'Monitorea cada avance con métricas detalladas y reportes personalizados.'
     },
     {
       icon: 'IN',
       title: 'Instructores',
-      description: 'Nuestros entrenadores certificados te guian en cada paso de tu transformacion.'
+      description: 'Nuestros entrenadores certificados te guían en cada paso de tu transformación.'
     },
     {
       icon: 'SE',
       title: 'Seguridad',
-      description: 'Instalaciones con camaras, acceso controlado y protocolos de higiene.'
+      description: 'Instalaciones con cámaras, acceso controlado y protocolos de higiene.'
     },
     {
       icon: 'QR',
-      title: 'Acceso rapido',
-      description: 'Entra al gimnasio en segundos con tu tarjeta o codigo QR personalizado.'
+      title: 'Acceso rápido',
+      description: 'Entra al gimnasio en segundos con tu tarjeta o código QR personalizado.'
     }
   ];
 
