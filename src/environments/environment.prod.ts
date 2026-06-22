@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://192.168.0.106:9090'
+  apiUrl: 'https://volticfit-back-production.up.railway.app'
 };
