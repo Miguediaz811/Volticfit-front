@@ -60,3 +60,13 @@
     <p class="qr-warning">No compartas este código con otras personas. Es único e intransferible y está vinculado a tu membresía activa.</p>
   </main>
 </section>
+
+<!-- Modal de error emergente -->
+<div class="error-modal-overlay" *ngIf="error">
+  <div class="error-modal">
+    <div class="error-modal-icon">⚠️</div>
+    <h3>Acceso Denegado</h3>
+    <p>{{ error }}</p>
+    <button type="button" (click)="closeError()">Entendido</button>
+  </div>
+</div>

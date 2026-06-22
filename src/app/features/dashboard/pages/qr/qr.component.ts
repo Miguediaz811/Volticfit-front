@@ -79,11 +79,15 @@ export class QrComponent implements OnInit, OnDestroy {
         }
         this.startTimer();
       },
-      error: () => {
-        this.error = 'No se pudo generar el QR. Verifica tu sesión e intenta de nuevo.';
+      error: err => {
+        this.error = err?.error?.message || 'No se pudo generar el QR. Verifica tu sesión e intenta de nuevo.';
         this.loading = false;
       },
     });
+  }
+
+  closeError(): void {
+    this.error = '';
   }
 
   initials(): string {
