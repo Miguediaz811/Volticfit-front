@@ -34,7 +34,8 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/volticfit.png",
-              "src/assets"
+              "src/assets",
+              "src/google5d05102de18c5867.html"
             ],
             "styles": [
               "src/styles.scss"
