@@ -59,7 +59,7 @@ export class ForgotPasswordComponent {
 
     this.authService.forgotPassword({ email: this.emailGuardado }).subscribe({
       next:  () => { this.paso = 'codigoYContrasena'; },
-      error: () => { this.mensajeError = 'No se encontró una cuenta con ese correo.'; },
+      error: (err: any) => { this.mensajeError = err.error?.message || 'tu correo no está registrado'; },
     });
   }
 
