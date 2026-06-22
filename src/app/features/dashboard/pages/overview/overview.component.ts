@@ -33,24 +33,24 @@ export class OverviewComponent implements OnInit {
   ];
 
   memberStatus = 'Activo';
-  nextShiftText = 'Sin turnos proximos';
+  nextShiftText = 'Sin turnos próximos';
 
   memberActions = [
-    { title: 'Reservar turno', text: 'Sin turnos proximos', route: 'reservations', tone: 'blue' },
-    { title: 'Evaluacion fisica', text: 'Agenda tu proxima sesion', route: 'evaluations', tone: 'green' },
+    { title: 'Reservar turno', text: 'Sin turnos próximos', route: 'reservations', tone: 'blue' },
+    { title: 'Evaluación física', text: 'Agenda tu próxima sesión', route: 'evaluations', tone: 'green' },
     { title: 'Mis rutinas', text: 'Rutinas activas este mes', route: 'routines', tone: 'gold' },
     { title: 'Ver progreso', text: 'IMC, peso y masa muscular', route: 'progress', tone: 'purple' },
-    { title: 'Generar QR', text: 'Codigo de acceso dinamico', route: 'qr', tone: 'gold' },
+    { title: 'Generar QR', text: 'Código de acceso dinámico', route: 'qr', tone: 'gold' },
     { title: 'Reporte de fallas', text: 'Informa fallas en equipos', route: 'failures', tone: 'red' },
     { title: 'Notificaciones', text: 'Novedades y avisos recientes', route: 'notifications', tone: 'blue' },
     { title: 'Perfil', text: 'Edita o desactiva tu cuenta', route: 'profile', tone: 'green' },
   ];
 
   adminStats = [
-    { label: 'Usuarios registrados', value: '0', note: 'segun listado actual', tone: 'green', route: 'users' },
+    { label: 'Usuarios registrados', value: '0', note: 'según listado actual', tone: 'green', route: 'users' },
     { label: 'Sanciones activas', value: '0', note: 'requieren seguimiento', tone: 'orange', route: 'sanctions' },
     { label: 'Turnos disponibles', value: '0', note: 'cupos para hoy', tone: 'gold', route: 'reservations' },
-    { label: 'Equipos operativos', value: '0', note: 'segun inventario', tone: 'green', route: 'machines' },
+    { label: 'Equipos operativos', value: '0', note: 'según inventario', tone: 'green', route: 'machines' },
   ];
 
   weekBars: DayBar[] = [];

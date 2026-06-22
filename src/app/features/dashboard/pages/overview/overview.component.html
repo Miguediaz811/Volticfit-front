@@ -1,7 +1,7 @@
 <section class="member-dashboard" *ngIf="rol !== 'admin'; else adminDashboard">
   <header class="member-hero">
     <div>
-      <p>Buenos dias,</p>
+      <p>Buenos días,</p>
       <h1>{{ profile?.names || 'Usuario' }}</h1>
       <span>Panel de acceso, turnos, progreso y asistencia</span>
     </div>
@@ -15,7 +15,7 @@
 
   <section class="member-info">
     <div>
-      <h2>Informacion general</h2>
+      <h2>Información general</h2>
       <div class="mini-stats">
         <article *ngFor="let stat of memberStats">
           <span>{{ stat.label }}</span>
@@ -112,7 +112,7 @@
 
       <section class="admin-panel">
         <div class="panel-title"><h2>Asistencias</h2><a routerLink="manual-attendance">Registrar</a></div>
-        <p>Escanea codigos QR o registra asistencias manuales.</p>
+        <p>Escanea códigos QR o registra asistencias manuales.</p>
         <div class="panel-links">
           <a routerLink="access">Escanear QR</a>
           <a routerLink="manual-attendance">Registro manual</a>

@@ -53,16 +53,16 @@
         <select formControlName="tipo">
           <option value="General">General</option>
           <option value="Mantenimiento">Mantenimiento</option>
-          <option value="Sancion">Sancion</option>
-          <option value="Evaluacion">Evaluacion</option>
+          <option value="Sancion">Sanción</option>
+          <option value="Evaluacion">Evaluación</option>
         </select>
       </label>
 
       <label class="vf-field">
-        <span>Titulo</span>
-        <input type="text" formControlName="titulo" placeholder="Titulo del aviso" />
+        <span>Título</span>
+        <input type="text" formControlName="titulo" placeholder="Título del aviso" />
         <small class="vf-error" *ngIf="form.get('titulo')?.touched && form.get('titulo')?.invalid">
-          El titulo debe tener al menos 3 caracteres.
+          El título debe tener al menos 3 caracteres.
         </small>
       </label>
 

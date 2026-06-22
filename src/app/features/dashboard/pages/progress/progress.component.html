@@ -1,7 +1,7 @@
 <section class="vf-page">
   <div class="vf-header">
     <h1>Progreso</h1>
-    <p>Consulta la evolucion registrada en tus diagnosticos fisicos.</p>
+    <p>Consulta la evolución registrada en tus diagnósticos físicos.</p>
   </div>
 
   <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
@@ -10,13 +10,13 @@
     <div class="vf-panel-heading">
       <div>
         <h2>Indicadores actuales</h2>
-        <p class="vf-muted">Valores mas recientes segun tus evaluaciones.</p>
+        <p class="vf-muted">Valores más recientes según tus evaluaciones.</p>
       </div>
       <button class="vf-small-btn" type="button" (click)="load()">Actualizar</button>
     </div>
 
     <p class="vf-muted" *ngIf="loading">Cargando progreso...</p>
-    <p class="vf-empty" *ngIf="!loading && !hasData()">Aun no hay diagnosticos para calcular tu progreso.</p>
+    <p class="vf-empty" *ngIf="!loading && !hasData()">Aún no hay diagnósticos para calcular tu progreso.</p>
 
     <div class="metric-grid" *ngIf="progress && hasData()">
       <article>
@@ -41,8 +41,8 @@
   <div class="vf-panel" *ngIf="progress && hasData()">
     <div class="vf-panel-heading">
       <div>
-        <h2>Grafica de progreso</h2>
-        <p class="vf-muted">Evolucion del indicador seleccionado.</p>
+        <h2>Gráfica de progreso</h2>
+        <p class="vf-muted">Evolución del indicador seleccionado.</p>
       </div>
       <div class="metric-tabs" role="group" aria-label="Indicador de progreso">
         <button
@@ -77,7 +77,7 @@
     </div>
 
     <ng-template #emptyChart>
-      <p class="vf-empty">Este indicador aun no tiene registros.</p>
+      <p class="vf-empty">Este indicador aún no tiene registros.</p>
     </ng-template>
   </div>
 
