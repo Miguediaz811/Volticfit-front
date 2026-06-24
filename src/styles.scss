@@ -30,6 +30,11 @@ body {
 
 a { color: inherit; }
 button, input, select, textarea { font: inherit; }
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
 img, video, canvas, svg { max-width: 100%; }
 
 /* ══════════════════════════════════════════════════════════

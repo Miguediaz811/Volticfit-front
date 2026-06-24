@@ -24,12 +24,15 @@ export class PhysicalEvaluationsComponent implements OnInit {
   saving = false;
   message = '';
   error = '';
-  readonly minDate = new Date().toISOString().slice(0, 10);
   readonly isAdmin: boolean;
 
   form = this.fb.group({
-    date: [this.minDate, [Validators.required]],
-    notes: [''],
+    date: [(() => {
+      const d = new Date();
+      d.setDate(d.getDate() + 1);
+      return d.toISOString().slice(0, 10);
+    })(), [Validators.required]],
+    notes: ['', [Validators.maxLength(100)]],
   });
 
   constructor(
@@ -38,6 +41,12 @@ export class PhysicalEvaluationsComponent implements OnInit {
     private auth: AuthService,
   ) {
     this.isAdmin = this.auth.getRol() === 'admin';
+  }
+
+  get minDate(): string {
+    const date = new Date();
+    date.setDate(date.getDate() + 1); // Siempre a partir de mañana
+    return date.toISOString().slice(0, 10);
   }
 
   ngOnInit(): void {
@@ -50,7 +59,7 @@ export class PhysicalEvaluationsComponent implements OnInit {
     if (!date) return;
     if (date < this.minDate) {
       this.form.patchValue({ date: this.minDate });
-      this.error = 'Selecciona una fecha desde hoy en adelante.';
+      this.error = 'El agendamiento debe realizarse con al menos un día de anticipación (mañana en adelante).';
       this.availability = [];
       return;
     }
@@ -147,12 +156,31 @@ export class PhysicalEvaluationsComponent implements OnInit {
   startReschedule(evaluation: PhysicalEvaluationItem): void {
     if (this.isFinished(evaluation)) return;
     this.rescheduling = evaluation;
+
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = tomorrow.toISOString().slice(0, 10);
+
+    const initialDate = evaluation.date >= tomorrowStr ? evaluation.date : tomorrowStr;
+
     this.form.patchValue({
-      date: evaluation.date,
+      date: initialDate,
       notes: evaluation.notes || '',
     });
     this.loadAvailability();
     setTimeout(() => this.availabilityPanel?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  }
+
+  hasScheduledEvaluation(): boolean {
+    return this.evaluations.some(ev => ev.status === 'programada');
+  }
+
+  get canSchedule(): boolean {
+    if (this.isAdmin) return false;
+    if (this.hasScheduledEvaluation() && !this.rescheduling) {
+      return false;
+    }
+    return true;
   }
 
   cancelReschedule(): void {

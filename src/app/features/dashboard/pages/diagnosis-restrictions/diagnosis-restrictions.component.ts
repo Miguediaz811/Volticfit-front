@@ -38,8 +38,8 @@ export class DiagnosisRestrictionsComponent implements OnInit {
     evaluator: [''],
     gender: [''],
     age: [null as number | null],
-    height: [null as number | null, [Validators.required, Validators.min(0.1)]],
-    weight: [null as number | null, [Validators.required, Validators.min(1)]],
+    height: [null as number | null, [Validators.required, Validators.min(0.5), Validators.max(2.5)]],
+    weight: [null as number | null, [Validators.required, Validators.min(10), Validators.max(400)]],
     fatPercentage: [null as number | null],
     muscleMass: [null as number | null],
     observations: [''],
@@ -47,7 +47,7 @@ export class DiagnosisRestrictionsComponent implements OnInit {
 
   restrictionForm = this.fb.group({
     type: ['', [Validators.required]],
-    description: ['', [Validators.required, Validators.minLength(4)]],
+    description: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(100)]],
     startDate: [''],
     endDate: [''],
     state: [true],
@@ -108,8 +108,11 @@ export class DiagnosisRestrictionsComponent implements OnInit {
 
     this.api.getDiagnosesByUser(this.selectedUserId).subscribe({
       next: diagnoses => {
-        this.diagnoses = diagnoses;
-        this.selectedDiagnosis = diagnoses[0] || null;
+        this.diagnoses = diagnoses.map(d => ({
+          ...d,
+          imc: typeof d.imc === 'number' ? Math.round(d.imc * 100) / 100 : d.imc
+        }));
+        this.selectedDiagnosis = this.diagnoses[0] || null;
         this.loading = false;
         if (this.selectedDiagnosis) this.loadRestrictions(this.selectedDiagnosis);
         this.loadAllRestrictions();

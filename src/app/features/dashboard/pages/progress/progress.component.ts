@@ -24,6 +24,12 @@ export class ProgressComponent implements OnInit {
     this.error = '';
     this.api.getProgress().subscribe({
       next: progress => {
+        if (progress && progress.bmiHistory) {
+          progress.bmiHistory = progress.bmiHistory.map(item => ({
+            ...item,
+            value: typeof item.value === 'number' ? Math.round(item.value * 100) / 100 : item.value
+          }));
+        }
         this.progress = progress;
         this.loading = false;
       },

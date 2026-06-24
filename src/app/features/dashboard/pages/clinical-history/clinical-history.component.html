@@ -64,7 +64,12 @@
       </p>
 
       <p class="field-error" *ngIf="form.get('description')?.invalid && form.get('description')?.touched">
-        La descripción es obligatoria y debe tener al menos 5 caracteres.
+        <span *ngIf="form.get('description')?.hasError('required') || form.get('description')?.hasError('minlength')">
+          La descripción es obligatoria y debe tener al menos 5 caracteres.
+        </span>
+        <span *ngIf="form.get('description')?.hasError('maxlength')">
+          máximo 100 caracteres
+        </span>
       </p>
 
       <div class="actions">
@@ -149,7 +154,12 @@
     </div>
 
     <p class="field-error" *ngIf="form.get('description')?.invalid && form.get('description')?.touched">
-      La descripción es obligatoria y debe tener al menos 5 caracteres.
+      <span *ngIf="form.get('description')?.hasError('required') || form.get('description')?.hasError('minlength')">
+        La descripción es obligatoria y debe tener al menos 5 caracteres.
+      </span>
+      <span *ngIf="form.get('description')?.hasError('maxlength')">
+        máximo 100 caracteres
+      </span>
     </p>
 
     <div class="vf-actions">

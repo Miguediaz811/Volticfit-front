@@ -19,15 +19,20 @@
       </button>
     </div>
 
-    <!-- Formulario de agendado: solo visible para aprendiz y funcionario -->
-    <form [formGroup]="form" class="schedule-form" (ngSubmit)="save()" *ngIf="!isAdmin">
+    <!-- Mensaje si ya tiene una evaluación agendada -->
+    <div class="vf-alert vf-alert--success" *ngIf="!isAdmin && hasScheduledEvaluation() && !rescheduling" style="margin-bottom: 18px;">
+      Ya tienes una evaluación física programada. Si deseas cambiar la fecha o el horario, utiliza la opción <strong>Reprogramar</strong> en la sección "Mis evaluaciones" de abajo.
+    </div>
+
+    <!-- Formulario de agendado: solo visible para aprendiz y funcionario si pueden agendar -->
+    <form [formGroup]="form" class="schedule-form" (ngSubmit)="save()" *ngIf="!isAdmin && canSchedule">
       <label>
         <span>Fecha *</span>
         <input type="date" formControlName="date" [min]="minDate" (change)="loadAvailability()" />
       </label>
 
       <label>
-        <span>Notas</span>
+        <span>Notas <span *ngIf="form.get('notes')?.hasError('maxlength')" style="color: #fca5a5; margin-left: 8px; text-transform: none;">— máximo 100 caracteres</span></span>
         <input type="text" formControlName="notes" placeholder="Objetivo, lesión o comentario para el instructor" />
       </label>
 
@@ -89,7 +94,7 @@
           <small>{{ evaluation.notes || 'Sin notas' }}</small>
         </div>
         <div class="actions">
-          <span [class.is-cancelled]="evaluation.status === 'cancelada'">{{ evaluation.status }}</span>
+          <span [class.is-cancelled]="evaluation.status === 'cancelada'">{{ evaluation.status === 'programada' ? 'Programada' : evaluation.status }}</span>
           <ng-container *ngIf="isAdmin">
             <button class="vf-btn vf-btn--secondary" type="button" (click)="startReschedule(evaluation)" [disabled]="isFinished(evaluation) || isRescheduling(evaluation)">
               Reprogramar

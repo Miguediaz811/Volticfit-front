@@ -1,0 +1,274 @@
+$primary: #f5a623;
+$primary-dark: #c47d0e;
+$bg: #1a1a1a;
+$bg-elevated: #222222;
+$bg-card: #242424;
+$bg-card-hover: #2c2c2c;
+$border: #2e2e2e;
+$text-primary: #ffffff;
+$text-secondary: #9ca3af;
+$radius-card: 14px;
+$radius-btn: 8px;
+
+$tablet: 768px;
+$desktop: 1024px;
+
+@mixin mobile {
+  @media (max-width: #{$tablet - 1px}) { @content; }
+}
+
+@mixin desktop {
+  @media (min-width: #{$tablet}) { @content; }
+}
+
+:host {
+  display: block;
+  background-color: $bg;
+  color: $text-primary;
+  min-height: 100vh;
+  font-family: 'Barlow', sans-serif;
+}
+
+.policies-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 20px 80px;
+
+  @include mobile {
+    padding: 24px 16px 60px;
+  }
+}
+
+.policies-header {
+  text-align: center;
+  margin-bottom: 48px;
+  padding: 20px;
+
+  .header-logo-container {
+    margin-bottom: 20px;
+    display: inline-block;
+    
+    .header-logo {
+      height: 48px;
+      object-fit: contain;
+    }
+  }
+
+  .header-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0 0 10px;
+    background: linear-gradient(135deg, #ffffff 60%, $primary 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    @include mobile {
+      font-size: 1.8rem;
+    }
+  }
+
+  .header-subtitle {
+    font-size: 0.9rem;
+    color: $text-secondary;
+    margin: 0;
+  }
+}
+
+.policies-content {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 32px;
+  align-items: start;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+// NAVIGATION / SIDEBAR CARD
+.navigation-card {
+  background-color: $bg-card;
+  border: 1px solid $border;
+  border-radius: $radius-card;
+  padding: 24px;
+  position: sticky;
+  top: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  @include mobile {
+    position: relative;
+    top: 0;
+    padding: 16px;
+  }
+
+  .btn-back {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background-color: transparent;
+    color: $text-primary;
+    border: 1.5px solid $border;
+    border-radius: $radius-btn;
+    padding: 10px 16px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: $primary;
+      color: $primary;
+      background-color: rgba($primary, 0.05);
+    }
+  }
+
+  .nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    @include mobile {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    a {
+      color: $text-secondary;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 8px 12px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      border-left: 2px solid transparent;
+
+      @include mobile {
+        border-left: none;
+        border-bottom: 2px solid transparent;
+        padding: 6px 10px;
+        font-size: 0.8rem;
+        background-color: rgba(#fff, 0.02);
+      }
+
+      &:hover {
+        color: $primary;
+        background-color: rgba($primary, 0.04);
+        border-left-color: $primary;
+
+        @include mobile {
+          border-left-color: transparent;
+          border-bottom-color: $primary;
+        }
+      }
+    }
+  }
+}
+
+// DOCUMENT CARD
+.document-card {
+  background-color: $bg-card;
+  border: 1px solid $border;
+  border-radius: $radius-card;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+
+  @include mobile {
+    padding: 24px;
+    gap: 36px;
+  }
+}
+
+.policy-section {
+  scroll-margin-top: 100px;
+
+  .section-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid $border;
+    padding-bottom: 14px;
+
+    .section-number {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: $primary;
+      opacity: 0.8;
+      font-family: monospace;
+    }
+
+    h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: $text-primary;
+      margin: 0;
+
+      @include mobile {
+        font-size: 1.2rem;
+      }
+    }
+  }
+
+  p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: $text-secondary;
+    margin: 0 0 16px;
+    
+    strong {
+      color: $text-primary;
+      font-weight: 600;
+    }
+  }
+
+  h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: $text-primary;
+    margin: 24px 0 12px;
+  }
+
+  ul {
+    margin: 0 0 20px;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    li {
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: $text-secondary;
+      position: relative;
+      list-style-type: square;
+
+      &::marker {
+        color: $primary;
+      }
+    }
+  }
+}
+
+.policies-footer {
+  margin-top: 60px;
+  text-align: center;
+  border-top: 1px solid $border;
+  padding-top: 24px;
+
+  p {
+    font-size: 0.8rem;
+    color: $text-secondary;
+    margin: 0;
+  }
+}
