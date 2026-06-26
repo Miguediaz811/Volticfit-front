@@ -30,11 +30,6 @@
         </small>
       </label>
 
-      <label class="vf-field">
-        <span>Adjunto opcional</span>
-        <input type="text" formControlName="attachment" placeholder="Nombre o referencia del archivo" />
-      </label>
-
       <p class="vf-alert vf-alert--success" *ngIf="message">{{ message }}</p>
       <p class="vf-alert vf-alert--error" *ngIf="formError">{{ formError }}</p>
       <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
