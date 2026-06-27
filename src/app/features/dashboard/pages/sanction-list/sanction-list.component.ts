@@ -24,12 +24,13 @@ export class SanctionListComponent implements OnInit {
   userSearchTerm = '';
   readonly isAdmin = this.auth.getRol() === 'admin';
   readonly minDate = new Date().toISOString().slice(0, 10);
+  readonly descriptionMaxLength = 250;
 
   readonly form = this.fb.group({
     userId: [''],
     type: [''],
     clasificacion: ['', [Validators.required]],
-    description: ['', [Validators.required, Validators.minLength(5)]],
+    description: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(250)]],
     startDate: [this.minDate, [Validators.required]],
     endDate: [this.minDate, [Validators.required]],
   });
@@ -73,7 +74,9 @@ export class SanctionListComponent implements OnInit {
   saveSanction(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-      this.formError = 'Completa todos los campos de la sanción antes de guardar.';
+      this.formError = this.form.get('description')?.hasError('maxlength')
+        ? 'La descripcion de la sancion no puede superar 250 caracteres.'
+        : 'Completa todos los campos de la sancion antes de guardar.';
       return;
     }
 

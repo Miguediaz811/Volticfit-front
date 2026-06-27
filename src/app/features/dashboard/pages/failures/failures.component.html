@@ -42,10 +42,21 @@
 
       <label class="vf-field failure-description">
         <span>Descripcion</span>
-        <textarea formControlName="description" placeholder="Describe la falla observada"></textarea>
+        <textarea
+          formControlName="description"
+          maxlength="250"
+          placeholder="Describe la falla observada"></textarea>
         <span class="vf-field-error" *ngIf="form.get('description')?.invalid && form.get('description')?.touched">
-          La descripción es obligatoria y debe tener al menos 8 caracteres.
+          <ng-container *ngIf="form.get('description')?.hasError('maxlength'); else failureDescriptionRequired">
+            La descripcion no puede superar 250 caracteres.
+          </ng-container>
+          <ng-template #failureDescriptionRequired>
+            La descripción es obligatoria y debe tener al menos 8 caracteres.
+          </ng-template>
         </span>
+        <small class="vf-muted">
+          {{ form.value.description?.length || 0 }}/{{ descriptionMaxLength }}
+        </small>
       </label>
 
       <button class="vf-btn" type="submit" [disabled]="saving">

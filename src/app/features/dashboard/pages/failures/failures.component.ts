@@ -17,11 +17,12 @@ export class FailuresComponent implements OnInit {
   message = '';
   error = '';
   readonly isAdmin = this.auth.getRol() === 'admin';
+  readonly descriptionMaxLength = 250;
 
   form = this.fb.group({
     machineId: ['', [Validators.required]],
     priority: ['Media', [Validators.required]],
-    description: ['', [Validators.required, Validators.minLength(8)]],
+    description: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(250)]],
   });
 
   constructor(
