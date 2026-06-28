@@ -48,7 +48,10 @@
 
       <label>
         <span>Descripción *</span>
-        <textarea formControlName="description" placeholder="Describe la condición, antecedente o recomendación"></textarea>
+        <textarea formControlName="description" [maxlength]="descriptionMaxLength" placeholder="Describe la condición, antecedente o recomendación"></textarea>
+        <small class="field-counter">
+          {{ form.value.description?.length || 0 }}/{{ descriptionMaxLength }}
+        </small>
       </label>
 
       <label>
@@ -129,7 +132,10 @@
 
     <label>
       <span>Descripción *</span>
-      <textarea formControlName="description" placeholder="Describe la condición, antecedente o recomendación"></textarea>
+      <textarea formControlName="description" [maxlength]="descriptionMaxLength" placeholder="Describe la condición, antecedente o recomendación"></textarea>
+      <small class="field-counter">
+        {{ form.value.description?.length || 0 }}/{{ descriptionMaxLength }}
+      </small>
     </label>
 
     <div class="document-tools" *ngIf="editingEntry">

@@ -26,6 +26,7 @@ export class ChatbotComponent implements AfterViewChecked, OnDestroy {
   referenceCode = '';
   pendingEscalation = false;
   readonly isAdmin = this.auth.getRol() === 'admin';
+  readonly instructorDescriptionMaxLength = 250;
 
   private loadingTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -61,7 +62,7 @@ export class ChatbotComponent implements AfterViewChecked, OnDestroy {
 
   instructorForm = this.fb.group({
     subject: ['', [Validators.required, Validators.minLength(4)]],
-    description: ['', [Validators.required, Validators.minLength(12)]],
+    description: ['', [Validators.required, Validators.minLength(12), Validators.maxLength(250)]],
     attachment: [''],
   });
 

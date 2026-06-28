@@ -33,7 +33,10 @@
 
       <label>
         <span>Notas <span *ngIf="form.get('notes')?.hasError('maxlength')" style="color: #fca5a5; margin-left: 8px; text-transform: none;">— máximo 100 caracteres</span></span>
-        <input type="text" formControlName="notes" placeholder="Objetivo, lesión o comentario para el instructor" />
+        <input type="text" formControlName="notes" [maxlength]="notesMaxLength" placeholder="Objetivo, lesión o comentario para el instructor" />
+        <small class="field-counter">
+          {{ form.value.notes?.length || 0 }}/{{ notesMaxLength }}
+        </small>
       </label>
 
       <button class="vf-btn" type="submit" [disabled]="saving || !selectedSlot || form.invalid">

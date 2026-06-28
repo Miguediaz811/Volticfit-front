@@ -25,6 +25,7 @@ export class PhysicalEvaluationsComponent implements OnInit {
   message = '';
   error = '';
   readonly isAdmin: boolean;
+  readonly notesMaxLength = 100;
 
   form = this.fb.group({
     date: [(() => {
