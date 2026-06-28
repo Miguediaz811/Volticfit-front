@@ -135,6 +135,12 @@
     </div>
   </div>
 
+  <div class="policies-actions" *ngIf="returnUrl !== '/'">
+    <button type="button" class="btn-continue" (click)="goBack()">
+      Continuar con el registro
+    </button>
+  </div>
+
   <footer class="policies-footer">
     <p>&copy; 2026 Voltic Fit. Todos los derechos reservados.</p>
   </footer>

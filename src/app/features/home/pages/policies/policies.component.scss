@@ -272,3 +272,28 @@ $desktop: 1024px;
     margin: 0;
   }
 }
+
+.policies-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.btn-continue {
+  background-color: $primary;
+  color: #111111;
+  border: 1px solid $primary;
+  border-radius: $radius-btn;
+  padding: 12px 22px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: $primary-dark;
+    border-color: $primary-dark;
+  }
+}
