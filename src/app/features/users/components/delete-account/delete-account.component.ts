@@ -89,7 +89,7 @@ export class DeleteAccountComponent implements OnInit {
     this.cargando     = true;
     this.errorMessage = '';
 
-    this.http.put<MessageResponse>(`http://" + environment.apiUrl + "/auth/usuarios/${this.usuarioId}/inactivar`, {})
+    this.http.put<MessageResponse>(`${environment.apiUrl}/auth/usuarios/${this.usuarioId}/inactivar`, {})
       .subscribe({
         next: () => {
           this.cargando     = false;
