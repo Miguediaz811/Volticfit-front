@@ -23,9 +23,13 @@ export class ForgotPasswordComponent {
   emailForm: FormGroup;
   resetForm: FormGroup;
 
+  cargando          = false;
   mensajeError      = '';
   mostrarContrasena = false;
   emailGuardado     = '';
+
+  showPassword = false;
+  showConfirmPassword = false;
 
   constructor(
     private fb:          FormBuilder,
@@ -56,10 +60,17 @@ export class ForgotPasswordComponent {
 
     this.mensajeError  = '';
     this.emailGuardado = this.emailForm.value.correo;
+    this.cargando      = true;
 
     this.authService.forgotPassword({ email: this.emailGuardado }).subscribe({
-      next:  () => { this.paso = 'codigoYContrasena'; },
-      error: (err: any) => { this.mensajeError = err.error?.message || 'tu correo no está registrado'; },
+      next:  () => {
+        this.cargando = false;
+        this.paso = 'codigoYContrasena';
+      },
+      error: () => {
+        this.cargando = false;
+        this.mensajeError = 'No se encontró una cuenta con ese correo.';
+      },
     });
   }
 
@@ -68,14 +79,19 @@ export class ForgotPasswordComponent {
     if (this.resetForm.invalid) { this.resetForm.markAllAsTouched(); return; }
 
     this.mensajeError = '';
+    this.cargando     = true;
 
     this.authService.restorePassword({
       email:       this.emailGuardado,
       code:        this.resetForm.value.codigo,
       newPassword: this.resetForm.value.nuevaContrasena,
     }).subscribe({
-      next: () => { this.router.navigate(['/auth/login']); },
+      next: () => {
+        this.cargando = false;
+        this.router.navigate(['/auth/login']);
+      },
       error: (err: any) => {
+        this.cargando = false;
         const msg: string = (err.error?.message ?? '').toLowerCase();
         if (msg.includes('código') || msg.includes('válido') || msg.includes('expirado')) {
           this.mensajeError = 'El código es inválido o ha expirado.';
