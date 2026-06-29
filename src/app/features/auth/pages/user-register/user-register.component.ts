@@ -64,7 +64,8 @@ export class RegisterComponent implements OnInit {
         Validators.pattern(RegexPatterns.passwordVoltic)
       ]],
       confirmPassword: ['', [Validators.required]],
-      acceptTerms: [false, Validators.requiredTrue]
+      acceptTerms: [false, Validators.requiredTrue],
+      acceptPolicies: [false, Validators.requiredTrue]
     }, { validators: passwordMatchValidator('password', 'confirmPassword') });
   }
 

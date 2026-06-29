@@ -118,7 +118,16 @@
 
       <label class="vf-field">
         <span>Descripción</span>
-        <textarea formControlName="description" placeholder="Describe el motivo de la sanción"></textarea>
+        <textarea
+          formControlName="description"
+          maxlength="250"
+          placeholder="Describe el motivo de la sanción"></textarea>
+        <small class="vf-error" *ngIf="form.get('description')?.hasError('maxlength')">
+          La descripcion no puede superar 250 caracteres.
+        </small>
+        <small class="vf-muted">
+          {{ form.value.description?.length || 0 }}/{{ descriptionMaxLength }}
+        </small>
       </label>
 
       <div class="vf-actions">

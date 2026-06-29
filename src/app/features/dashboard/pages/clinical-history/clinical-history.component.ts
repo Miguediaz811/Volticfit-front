@@ -25,9 +25,10 @@ export class ClinicalHistoryComponent implements OnInit {
   message = '';
   error = '';
   userSearchTerm = '';
+  readonly descriptionMaxLength = 100;
   form = this.fb.group({
     date: [new Date().toISOString().slice(0, 10), [Validators.required]],
-    description: ['', [Validators.required, Validators.minLength(5)]],
+    description: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100)]],
   });
 
   constructor(

@@ -213,6 +213,12 @@ textarea {
   color: #9ca3af;
 }
 
+.field-counter {
+  color: #8b8b8b;
+  font-size: 0.75rem;
+  justify-self: end;
+}
+
 @media (max-width: 720px) {
   .section-title,
   .history-card,

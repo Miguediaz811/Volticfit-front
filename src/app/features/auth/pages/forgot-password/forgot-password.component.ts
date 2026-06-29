@@ -28,6 +28,9 @@ export class ForgotPasswordComponent {
   mostrarContrasena = false;
   emailGuardado     = '';
 
+  showPassword = false;
+  showConfirmPassword = false;
+
   constructor(
     private fb:          FormBuilder,
     private authService: AuthService,

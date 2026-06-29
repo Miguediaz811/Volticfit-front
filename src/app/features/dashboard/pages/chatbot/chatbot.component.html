@@ -105,11 +105,16 @@
         </label>
         <label class="chat-field">
           <span>Descripción *</span>
-          <textarea formControlName="description" placeholder="Cuéntanos qué necesitas revisar con el instructor"></textarea>
-        </label>
-        <label class="chat-field">
-          <span>Adjunto opcional</span>
-          <input type="text" formControlName="attachment" placeholder="Nombre o referencia del archivo" />
+          <textarea
+            formControlName="description"
+            maxlength="250"
+            placeholder="Cuéntanos qué necesitas revisar con el instructor"></textarea>
+          <small class="chat-error" *ngIf="instructorForm.get('description')?.hasError('maxlength')">
+            La descripcion no puede superar 250 caracteres.
+          </small>
+          <small class="chat-counter">
+            {{ instructorForm.value.description?.length || 0 }}/{{ instructorDescriptionMaxLength }}
+          </small>
         </label>
 
         <p class="chat-error" *ngIf="error">{{ error }}</p>
