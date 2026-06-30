@@ -195,7 +195,8 @@
 
     <ng-container *ngIf="showHistory">
       <p class="vf-muted" *ngIf="historyLoading">Cargando historial...</p>
-      <p class="vf-empty" *ngIf="!historyLoading && reportHistory.length === 0">
+      <p class="vf-alert vf-alert--error" *ngIf="!historyLoading && historyError">{{ historyError }}</p>
+      <p class="vf-empty" *ngIf="!historyLoading && !historyError && reportHistory.length === 0">
         Aún no has generado ningún reporte.
       </p>
 

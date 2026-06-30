@@ -82,7 +82,8 @@ export class ReportsComponent implements OnInit {
   // Historial de reportes generados (Realiza_Reporte)
   reportHistory: ReportRecord[] = [];
   historyLoading = false;
-  showHistory = false;
+  historyError = '';
+  showHistory = true;
 
   constructor(private api: DashboardApiService) {}
 
@@ -239,7 +240,7 @@ export class ReportsComponent implements OnInit {
         this.message = `Reporte exportado como ${format.toUpperCase()}.`;
         this.loading = false;
         // Registrar exportación en BD
-        this.persistReportRecord(reportKey, () => this.loadReportHistory());
+        this.persistReportRecord(reportKey, () => this.loadReportHistory(), format);
       },
       error: err => {
         this.error = err?.error?.message || err?.message || 'No se pudo exportar el reporte.';
@@ -250,14 +251,24 @@ export class ReportsComponent implements OnInit {
 
   loadReportHistory(): void {
     this.historyLoading = true;
-    this.api.getMyReports().subscribe({
+    this.historyError = '';
+    this.api.getAllReports().subscribe({
       next: reports => {
-        this.reportHistory = reports;
+        this.reportHistory = this.normalizeReportHistory(reports);
         this.historyLoading = false;
       },
-      error: () => {
-        this.reportHistory = [];
-        this.historyLoading = false;
+      error: firstError => {
+        this.api.getMyReports().subscribe({
+          next: reports => {
+            this.reportHistory = this.normalizeReportHistory(reports);
+            this.historyLoading = false;
+          },
+          error: () => {
+            this.reportHistory = [];
+            this.historyError = firstError?.error?.message || 'No se pudo cargar el historial de reportes.';
+            this.historyLoading = false;
+          },
+        });
       },
     });
   }
@@ -269,10 +280,10 @@ export class ReportsComponent implements OnInit {
     }
   }
 
-  private persistReportRecord(type: string, callback?: () => void): void {
+  private persistReportRecord(type: string, callback?: () => void, format = 'internal'): void {
     this.api.generateReport({
       type,
-      format: 'internal',
+      format,
       startDate: this.fromDate || undefined,
       endDate: this.toDate || undefined,
     }).subscribe({
@@ -341,5 +352,18 @@ export class ReportsComponent implements OnInit {
 
   private normalize(value: string): string {
     return value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+  }
+
+  private normalizeReportHistory(reports: any[]): ReportRecord[] {
+    return (reports || [])
+      .map(report => ({
+        id: report.id ?? report.idReporte ?? report.id_reporte,
+        type: report.type ?? report.tipo ?? 'Reporte',
+        format: report.format ?? report.formato ?? 'internal',
+        generationDate: report.generationDate ?? report.fechaGeneracion ?? report.fecha_generacion,
+        content: report.content ?? report.contenido,
+      }))
+      .filter(report => report.id !== undefined)
+      .sort((a, b) => new Date(b.generationDate || 0).getTime() - new Date(a.generationDate || 0).getTime());
   }
 }
