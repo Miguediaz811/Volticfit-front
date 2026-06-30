@@ -87,6 +87,18 @@ export class AttendanceAccessComponent implements OnDestroy {
     });
   }
 
+  isSanctionBlocked(): boolean {
+    return this.result?.status === 'INVALID_SANCTION';
+  }
+
+  sanctionDescription(): string {
+    return String(this.result?.['sanctionDescription'] || '');
+  }
+
+  sanctionEndDate(): string {
+    return String(this.result?.['sanctionEndDate'] || '');
+  }
+
   private serverMessage(err: any, fallback: string): string {
     const message = err?.error?.message || err?.error?.error || err?.message;
 

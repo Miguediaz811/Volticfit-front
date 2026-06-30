@@ -25,11 +25,13 @@
     <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
 
     <!-- Alerta de sanción — se muestra tras escanear si hay resultado -->
-    <div class="sanction-wrapper" *ngIf="result">
-      <app-sanction-alert></app-sanction-alert>
+    <div class="sanction-wrapper" *ngIf="isSanctionBlocked()">
+      <p><strong>Usuario bloqueado por sancion activa</strong></p>
+      <p *ngIf="sanctionDescription()">{{ sanctionDescription() }}</p>
+      <p *ngIf="sanctionEndDate()">Vigente hasta: {{ sanctionEndDate() }}</p>
     </div>
 
-    <p class="vf-alert vf-alert--success" *ngIf="result">{{ result.message || 'Asistencia registrada correctamente.' }}</p>
+    <p class="vf-alert vf-alert--success" *ngIf="result && !isSanctionBlocked()">{{ result.message || 'Asistencia registrada correctamente.' }}</p>
 
     <button class="vf-btn" type="submit" [disabled]="loading">{{ loading ? 'Validando...' : 'Validar acceso' }}</button>
   </form>
