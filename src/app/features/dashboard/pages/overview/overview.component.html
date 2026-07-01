@@ -1,0 +1,163 @@
+<section class="member-dashboard" *ngIf="rol !== 'admin'; else adminDashboard">
+  <header class="member-hero">
+    <div>
+      <p>Hola,</p>
+      <h1>{{ profile?.names || 'Usuario' }}</h1>
+      <span>Panel de acceso, turnos, progreso y asistencia</span>
+    </div>
+    <a class="qr-shortcut" routerLink="qr">
+      <span class="vf-nav-icon"></span>
+      <strong>Mi QR de acceso</strong>
+    </a>
+  </header>
+
+  <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
+
+  <section class="member-info">
+    <div>
+      <h2>Información general</h2>
+      <div class="mini-stats">
+        <article *ngFor="let stat of memberStats">
+          <span>{{ stat.label }}</span>
+          <strong [class.danger]="stat.danger">{{ stat.value }}</strong>
+        </article>
+        <article>
+          <span>Estado</span>
+          <strong [class.danger]="memberStatus === 'Inactivo'">{{ memberStatus }}</strong>
+        </article>
+      </div>
+    </div>
+    <span class="status-pill" [class.status-pill--inactive]="memberStatus === 'Inactivo'">{{ memberStatus }}</span>
+  </section>
+
+  <div class="member-actions">
+    <a class="action-card" *ngFor="let action of memberActions" [routerLink]="action.route" [ngClass]="'tone-' + action.tone">
+      <span class="action-icon"></span>
+      <h3>{{ action.title }}</h3>
+      <p>{{ action.text }}</p>
+      <strong>Entrar</strong>
+    </a>
+  </div>
+</section>
+
+<ng-template #adminDashboard>
+  <section class="admin-dashboard">
+    <header class="admin-header">
+      <div>
+        <h1>Dashboard</h1>
+        <p>Panel administrativo VolticFit</p>
+      </div>
+      <a class="admin-bell" routerLink="notifications">!</a>
+    </header>
+
+    <div class="admin-stats">
+      <article *ngFor="let stat of adminStats" [ngClass]="'tone-' + stat.tone">
+        <span>{{ stat.label }}</span>
+        <strong>{{ stat.value }}</strong>
+        <div class="stat-footer">
+          <small>{{ stat.note }}</small>
+          <a [routerLink]="stat.route" class="stat-link">Ver →</a>
+        </div>
+      </article>
+    </div>
+
+    <div class="admin-grid">
+
+      <section class="admin-panel attendance-panel">
+        <div class="panel-title">
+          <h2>Asistencia semanal</h2>
+          <a routerLink="reports">Ver reporte</a>
+        </div>
+        <div class="line-chart" *ngIf="weekBars.length > 0; else loadingChart">
+          <span
+            *ngFor="let bar of weekBars"
+            [style.height]="bar.heightPct"
+            [title]="bar.label + ': ' + bar.count + ' registros'">
+            <i></i>
+            <small>{{ bar.label }}</small>
+            <em *ngIf="bar.count > 0">{{ bar.count }}</em>
+          </span>
+        </div>
+        <ng-template #loadingChart>
+          <div class="chart-empty">Sin registros esta semana</div>
+        </ng-template>
+        <p class="chart-total" *ngIf="totalAttendanceWeek > 0">
+          Total: <strong>{{ totalAttendanceWeek }}</strong> asistencias esta semana
+        </p>
+      </section>
+
+      <section class="admin-panel donut-panel">
+        <h2>Usuarios por turno</h2>
+        <div class="donut" [style.background]="donutStyle">
+          <strong>{{ totalAttendanceWeek }}</strong>
+        </div>
+        <div class="donut-legend">
+          <div *ngFor="let s of shiftSlices; let i = index" class="legend-item" [ngClass]="'legend-' + i">
+            <span class="legend-dot"></span>
+            <span>{{ s.label }}</span>
+            <strong>{{ s.count }}</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="admin-panel">
+        <div class="panel-title"><h2>Usuarios</h2><a routerLink="users">Ver lista</a></div>
+        <p>Consulta, revisa detalle y edita usuarios desde el listado del sistema.</p>
+        <div class="panel-links">
+          <a routerLink="users">Lista de usuarios</a>
+          <a routerLink="reservations">Reservas de turnos</a>
+          <a routerLink="evaluations">Evaluaciones físicas</a>
+        </div>
+      </section>
+
+      <section class="admin-panel">
+        <div class="panel-title"><h2>Asistencias</h2><a routerLink="manual-attendance">Registrar</a></div>
+        <p>Escanea códigos QR o registra asistencias manuales.</p>
+        <div class="panel-links">
+          <a routerLink="access">Escanear QR</a>
+          <a routerLink="manual-attendance">Registro manual</a>
+          <a routerLink="reports">Reporte asistencia</a>
+        </div>
+      </section>
+
+      <section class="admin-panel">
+        <div class="panel-title"><h2>Sanciones recientes</h2><a routerLink="reports">Reporte</a></div>
+        <p>Administra el historial, registra nuevas sanciones y consulta reportes.</p>
+        <div class="panel-links">
+          <a routerLink="sanctions">Registrar sanciones</a>
+          <a routerLink="sanctions">Historial sanciones</a>
+          <a routerLink="reports">Reporte sanciones</a>
+        </div>
+      </section>
+
+      <section class="admin-panel">
+        <div class="panel-title"><h2>Notificaciones</h2><a routerLink="notifications/create">Crear nueva</a></div>
+        <p>Gestiona novedades para usuarios y revisa el historial de envios.</p>
+        <div class="panel-links">
+          <a routerLink="notifications/create">Crear notificacion</a>
+          <a routerLink="notifications/history">Historial</a>
+        </div>
+      </section>
+
+      <section class="admin-panel">
+        <div class="panel-title"><h2>Fallas reportadas</h2><a routerLink="failures/history">Gestionar</a></div>
+        <p>Revisa fallas enviadas por usuarios y prepara reportes de mantenimiento.</p>
+        <div class="panel-links">
+          <a routerLink="failures/history">Historial fallas</a>
+          <a routerLink="reports">Reporte mantenimiento</a>
+        </div>
+      </section>
+
+      <section class="admin-panel">
+        <div class="panel-title"><h2>Equipos</h2><a routerLink="machines/list">Ver lista</a></div>
+        <p>Registra equipos, consulta inventario e ingresa al modulo de mantenimiento.</p>
+        <div class="panel-links">
+          <a routerLink="machines">Registro de equipos</a>
+          <a routerLink="machines/list">Lista de equipos</a>
+          <a routerLink="maintenance/history">Mantenimiento</a>
+        </div>
+      </section>
+
+    </div>
+  </section>
+</ng-template>

@@ -1,0 +1,147 @@
+<!-- Trigger button -->
+<button type="button" class="da-trigger-btn" (click)="abrirModal()">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+  </svg>
+  Inactivar mi cuenta
+</button>
+
+<!-- Full-page modal overlay -->
+<div class="da-overlay" *ngIf="mostrarModal">
+  <div class="da-page">
+
+    <!-- Back -->
+    <button type="button" class="da-back-btn" (click)="cancelar()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      Volver al perfil
+    </button>
+
+    <!-- Warning banner -->
+    <div class="da-warning-banner">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      <div>
+        <strong>Acción irreversible</strong>
+        <p>Una vez inactivada, tu cuenta quedará suspendida. Contacta al administrador si deseas reactivarla.</p>
+      </div>
+    </div>
+
+    <!-- User card -->
+    <div class="da-user-card" *ngIf="usuarioPerfil">
+      <div class="da-avatar">{{ (usuarioPerfil.names || 'U').charAt(0) }}</div>
+      <div>
+        <strong>{{ usuarioPerfil.names }}</strong>
+        <span>ID: {{ usuarioPerfil.idUser }} · {{ usuarioPerfil.email }} · Miembro activo</span>
+      </div>
+    </div>
+
+    <!-- What will be affected -->
+    <p class="da-section-label">¿QUÉ SE VERá AFECTADO?</p>
+
+    <div class="da-items-list">
+      <div class="da-item">
+        <span class="da-dot"></span>
+        <div>
+          <strong>Acceso a la plataforma</strong>
+          <span> — no podrás ingresar con este correo</span>
+        </div>
+      </div>
+      <div class="da-item">
+        <span class="da-dot"></span>
+        <div>
+          <strong>Reservas activas</strong>
+          <span> — tus turnos pendientes serán cancelados</span>
+        </div>
+      </div>
+      <div class="da-item">
+        <span class="da-dot"></span>
+        <div>
+          <strong>Progreso e historial</strong>
+          <span> — permanecerá guardado si reactivas tu cuenta</span>
+        </div>
+      </div>
+      <div class="da-item">
+        <span class="da-dot"></span>
+        <div>
+          <strong>Notificaciones</strong>
+          <span> — dejarás de recibirlas mientras esté inactiva</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirm steps -->
+    <p class="da-section-label">PARA CONFIRMAR, SIGUE ESTOS PASOS</p>
+
+    <div class="da-steps">
+      <div class="da-step">
+        <span class="da-step-num">1</span>
+        <div>
+          <strong>Escribe tu correo electrónico</strong>
+          <p>Confirma que eres el titular de la cuenta escribiendo <strong class="da-highlight">{{ usuarioPerfil?.email }}</strong></p>
+        </div>
+      </div>
+      <div class="da-step">
+        <span class="da-step-num">2</span>
+        <div>
+          <strong>Escribe INACTIVAR para confirmar</strong>
+          <p>Escribe la palabra exacta para habilitar el botón de inactivación</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inputs -->
+    <div class="da-field-group">
+      <label class="da-label">CORREO ELECTRÓNICO</label>
+      <input
+        type="email"
+        class="da-input"
+        [class.da-input--error]="emailTouched && !emailValido"
+        placeholder="{{ usuarioPerfil?.email }}"
+        [(ngModel)]="emailIngresado"
+        (input)="onEmailChange()"
+      />
+      <span class="da-field-hint" [class.da-field-hint--error]="emailTouched && !emailValido">
+        Escribe: <strong>{{ usuarioPerfil?.email }}</strong>
+      </span>
+    </div>
+
+    <div class="da-field-group">
+      <label class="da-label">CONFIRMACIÓN</label>
+      <input
+        type="text"
+        class="da-input"
+        [class.da-input--error]="confirmTouched && !confirmValido"
+        placeholder="Escribe INACTIVAR"
+        [(ngModel)]="confirmacionIngresada"
+        (input)="onConfirmChange()"
+      />
+      <span class="da-field-hint" [class.da-field-hint--error]="confirmTouched && !confirmValido">
+        Escribe exactamente: <strong>INACTIVAR</strong>
+      </span>
+    </div>
+
+    <!-- Error -->
+    <p class="da-error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <!-- Actions -->
+    <div class="da-actions">
+      <button type="button" class="da-cancel-btn" (click)="cancelar()" [disabled]="cargando">Cancelar</button>
+      <button
+        type="button"
+        class="da-confirm-btn"
+        (click)="confirmarInactivar()"
+        [disabled]="cargando || !puedeConfirmar()"
+      >
+        <svg *ngIf="!cargando" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        {{ cargando ? 'Inactivando...' : 'Inactivar cuenta' }}
+      </button>
+    </div>
+
+  </div>
+</div>

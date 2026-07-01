@@ -1,0 +1,165 @@
+<nav class="navbar">
+  <a class="navbar__brand" routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMenu()">
+    <img src="assets/images/volticfit.png" alt="Voltic Fit Logo" class="navbar__logo" />
+  </a>
+
+  <button
+    class="navbar__toggle"
+    type="button"
+    aria-label="Abrir menú"
+    [attr.aria-expanded]="menuOpen"
+    (click)="toggleMenu()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <div class="navbar__menu" [class.navbar__menu--open]="menuOpen">
+    <a href="javascript:void(0)" (click)="scrollTo('top')">Inicio</a>
+    <a href="javascript:void(0)" (click)="scrollTo('categorias')">Categorías</a>
+    <a href="javascript:void(0)" (click)="scrollTo('sobre-nosotros')">Sobre nosotros</a>
+
+    <div class="navbar__actions">
+      <button class="btn btn--outline" routerLink="/auth/login" routerLinkActive="is-active" (click)="closeMenu()">Iniciar Sesión</button>
+      <button class="btn btn--primary" routerLink="/auth/register" routerLinkActive="is-active" (click)="closeMenu()">Registrarse</button>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero__content">
+    <span class="hero__badge">
+      <span class="hero__badge__icon">VF</span>
+      BIENVENIDO A VOLTIC FIT
+    </span>
+
+    <h1 class="hero__title">
+      Tu mejor versi&oacute;n<br />
+      empieza <span class="text--accent">aqu&iacute;</span>
+    </h1>
+
+    <p class="hero__subtitle">
+      Entrena con los mejores equipos, instructores certificados y una comunidad
+      que te motiva a superar tus límites cada día.
+    </p>
+
+    <button class="btn btn--primary btn--lg" routerLink="/auth/register">Comenzar Ahora</button>
+
+    <div class="hero__image-placeholder">
+      <img src="assets/images/landingPageImg.jpeg" alt="Gimnasio SENA">
+    </div>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="stats__container">
+    <div class="stats__item" *ngFor="let stat of stats; let i = index">
+      <span class="stats__value">{{ stat.value }}</span>
+      <span class="stats__label">{{ stat.label }}</span>
+      <div class="stats__divider" *ngIf="i < stats.length - 1"></div>
+    </div>
+  </div>
+</section>
+
+<section class="features" id="categorias">
+  <div class="features__header">
+    <span class="section__eyebrow">POR QUE ELEGIRNOS</span>
+    <h2 class="section__title">
+      Todo lo que <span class="text--accent">necesitas</span>
+    </h2>
+    <p class="section__subtitle">
+      Diseñamos cada detalle del gimnasio para que tu experiencia sea
+      única, cómoda y efectiva.
+    </p>
+  </div>
+
+  <div class="features__grid">
+    <div class="feature-card" *ngFor="let feature of features">
+      <div class="feature-card__icon" [ngSwitch]="feature.icon">
+        <!-- Equipos modernos (EQ) -->
+        <svg *ngSwitchCase="'EQ'" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6.5 6.5h11"/>
+          <path d="M6.5 17.5h11"/>
+          <path d="M3 10v4"/>
+          <path d="M21 10v4"/>
+          <path d="M6.5 5v14"/>
+          <path d="M17.5 5v14"/>
+        </svg>
+        <!-- App intuitiva (APP) -->
+        <svg *ngSwitchCase="'APP'" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+          <line x1="12" y1="18" x2="12" y2="18.01"/>
+        </svg>
+        <!-- Seguimiento real (PR) -->
+        <svg *ngSwitchCase="'PR'" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10"/>
+          <line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6" y1="20" x2="6" y2="14"/>
+        </svg>
+        <!-- Instructores (IN) -->
+        <svg *ngSwitchCase="'IN'" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        <!-- Seguridad (SE) -->
+        <svg *ngSwitchCase="'SE'" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        <!-- Acceso rapido (QR) -->
+        <svg *ngSwitchCase="'QR'" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7"/>
+          <rect x="14" y="3" width="7" height="7"/>
+          <rect x="14" y="14" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/>
+          <line x1="7" y1="7" x2="7" y2="7.01"/>
+          <line x1="17" y1="7" x2="17" y2="7.01"/>
+          <line x1="17" y1="17" x2="17" y2="17.01"/>
+          <line x1="7" y1="17" x2="7" y2="17.01"/>
+        </svg>
+      </div>
+      <h3 class="feature-card__title">{{ feature.title }}</h3>
+      <p class="feature-card__desc">{{ feature.description }}</p>
+    </div>
+  </div>
+</section>
+
+
+<section class="about" id="sobre-nosotros">
+  <div class="about__image-placeholder">
+    <img src="assets/images/aboutUsImg.jpeg" alt="Sobre nosotros">
+  </div>
+
+  <div class="about__content">
+    <span class="section__eyebrow">SOBRE NOSOTROS</span>
+    <h2 class="section__title">
+      Un gimnasio<br />
+      <span class="text--accent">diferente</span>
+    </h2>
+    <p class="about__desc">
+      No somos solo un gimnasio. Somos una comunidad comprometida con tu
+      transformación física y mental, con instalaciones de primer nivel y
+      un equipo humano que te acompa&ntilde;a.
+    </p>
+    <ul class="about__list">
+      <li class="about__list-item" *ngFor="let point of aboutPoints">
+        <svg class="about__check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        {{ point }}
+      </li>
+    </ul>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer__brand">
+    <img src="assets/images/volticfit.png" alt="Voltic Fit" class="footer__logo" />
+    <p class="footer__tagline">Tu mejor versi&oacute;n empieza aqu&iacute;.</p>
+  </div>
+  <div class="footer__links">
+    <a routerLink="/politicas">Términos y Políticas</a>
+  </div>
+  <p class="footer__copy">&copy; 2026 Voltic Fit. Todos los derechos reservados.</p>
+</footer>

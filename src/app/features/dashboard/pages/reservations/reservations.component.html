@@ -1,0 +1,124 @@
+<section class="vf-page">
+  <div class="vf-header">
+    <h1>{{ isAdmin ? 'Administrar reservas' : 'Horarios, reservas y aforo' }}</h1>
+    <p>{{ isAdmin ? 'Consulta la disponibilidad de turnos y cupos por franja.' : 'Consulta disponibilidad, reserva turnos y visualiza cupos por franja.' }}</p>
+  </div>
+
+  <!-- Panel reserva gimnasio completo (solo Funcionario) -->
+  <div class="vf-panel" *ngIf="isFuncionario">
+    <div class="vf-panel-heading">
+      <div>
+        <h2>Reservar gimnasio completo</h2>
+        <p class="vf-muted">Reserva el gimnasio entero para un evento o actividad institucional.</p>
+      </div>
+    </div>
+
+    <form class="vf-grid" [formGroup]="fullGymForm" (ngSubmit)="reserveFullGym()">
+      <label class="vf-field">
+        <span>Fecha *</span>
+        <input type="date" formControlName="reservationDate" [min]="minFullGymDate" />
+        <small class="vf-error" *ngIf="fullGymForm.get('reservationDate')?.touched && fullGymForm.get('reservationDate')?.invalid">
+          La fecha es obligatoria.
+        </small>
+      </label>
+
+      <label class="vf-field">
+        <span>Hora inicio *</span>
+        <input type="time" formControlName="startTime" min="08:00" max="17:00" step="3600" />
+      </label>
+
+      <label class="vf-field">
+        <span>Hora fin *</span>
+        <input type="time" formControlName="endTime" min="09:00" max="18:00" step="3600" />
+      </label>
+
+      <label class="vf-field" style="grid-column: 1 / -1">
+        <span>Motivo *</span>
+        <textarea formControlName="reason" placeholder="Describe el motivo de la reserva" rows="3"></textarea>
+        <small class="vf-error" *ngIf="fullGymForm.get('reason')?.touched && fullGymForm.get('reason')?.invalid">
+          El motivo debe tener al menos 5 caracteres.
+        </small>
+      </label>
+
+      <div class="vf-actions" style="grid-column: 1 / -1">
+        <button class="vf-btn" type="submit" [disabled]="loading">
+          {{ loading ? 'Reservando...' : 'Reservar gimnasio completo' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="vf-panel">
+    <form class="vf-actions" [formGroup]="form" (ngSubmit)="loadShifts()">
+      <label class="vf-field vf-field--inline"><span>Fecha</span><input type="date" formControlName="date" [min]="minDate" /></label>
+      <button class="vf-btn" type="submit" [disabled]="loading">Consultar</button>
+    </form>
+
+    <p class="vf-alert vf-alert--success" *ngIf="message">{{ message }}</p>
+    <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
+    <p class="vf-muted" *ngIf="loading">Actualizando disponibilidad...</p>
+
+    <div class="vf-grid vf-grid--cards">
+      <article class="vf-card" *ngFor="let shift of shifts">
+        <span class="vf-chip">{{ shift.available === false ? 'Completo' : 'Disponible' }}</span>
+        <h2>{{ shift.startTime || 'Inicio' }} - {{ shift.endTime || 'Fin' }}</h2>
+        <p>Cupos: {{ shift.availableSpots ?? 'Por confirmar' }} / {{ shift.totalSpots ?? shift.capacity ?? '-' }}</p>
+        <button class="vf-small-btn" type="button" (click)="reserve(shift)" [disabled]="shift.available === false" *ngIf="canReserve">Reservar</button>
+      </article>
+    </div>
+
+    <ng-container *ngIf="canReserve">
+    <h2>Mis reservas activas</h2>
+    <p class="vf-empty" *ngIf="reservations.length === 0">No tienes reservas activas.</p>
+    <div class="vf-table-wrap" *ngIf="reservations.length > 0">
+      <table class="vf-table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Estado</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let reservation of reservations">
+            <td>{{ reservation.date }}</td>
+            <td>{{ reservation.startTime }} - {{ reservation.endTime }}</td>
+            <td><span class="vf-chip">{{ reservation.state ? 'Activa' : 'Cancelada' }}</span></td>
+            <td><button class="vf-small-btn vf-small-btn--danger" type="button" (click)="cancelReservation(reservation)" [disabled]="!reservation.state">Cancelar</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    </ng-container>
+
+    <ng-container *ngIf="isAdmin">
+      <h2>Reservas de usuarios</h2>
+      <p class="vf-empty" *ngIf="adminReservations.length === 0">No hay reservas activas para mostrar.</p>
+      <div class="vf-table-wrap" *ngIf="adminReservations.length > 0">
+        <table class="vf-table">
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Documento</th>
+              <th>Fecha</th>
+              <th>Hora</th>
+              <th>Estado</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let reservation of adminReservations">
+              <td>{{ userName(reservation) }}</td>
+              <td>{{ userDocument(reservation) }}</td>
+              <td>{{ reservation.date }}</td>
+              <td>{{ reservation.startTime }} - {{ reservation.endTime }}</td>
+              <td><span class="vf-chip">{{ reservation.state ? 'Activa' : 'Cancelada' }}</span></td>
+              <td><button class="vf-small-btn vf-small-btn--danger" type="button" (click)="cancelReservation(reservation)" [disabled]="!reservation.state">Cancelar</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </ng-container>
+  </div>
+</section>

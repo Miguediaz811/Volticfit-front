@@ -1,0 +1,80 @@
+<section class="machines-page">
+  <header class="machines-header">
+    <div>
+      <p class="eyebrow">Inventario</p>
+      <h1>Máquinas</h1>
+      <p>Registra y consulta las máquinas disponibles en el gimnasio.</p>
+    </div>
+  </header>
+
+  <p class="vf-alert vf-alert--success" *ngIf="message">{{ message }}</p>
+  <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
+
+  <section class="panel" #machineFormPanel>
+    <h2>Nueva máquina</h2>
+    <form [formGroup]="form" (ngSubmit)="editing ? update() : save()" class="machine-form">
+      <label>
+        <span>Nombre *</span>
+        <input type="text" formControlName="name" placeholder="Ej. Prensa de pierna" />
+      </label>
+
+      <label>
+        <span>Tipo *</span>
+        <input type="text" formControlName="type" placeholder="Ej. Fuerza, cardio, movilidad" />
+      </label>
+
+      <label>
+        <span>Estado *</span>
+        <select formControlName="state">
+          <option [ngValue]="true">Activa</option>
+          <option [ngValue]="false">Inactiva</option>
+        </select>
+      </label>
+
+      <div class="vf-actions">
+        <button class="vf-btn" type="submit" [disabled]="saving || form.invalid">
+          {{ saving ? 'Guardando...' : (editing ? 'Actualizar máquina' : 'Registrar máquina') }}
+        </button>
+        <button class="vf-btn vf-btn--secondary" type="button" *ngIf="editing" (click)="cancelEdit()">Cancelar</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="panel">
+    <div class="section-title">
+      <h2>Máquinas registradas</h2>
+      <button class="vf-btn vf-btn--secondary" type="button" (click)="loadMachines()" [disabled]="loading">
+        Actualizar
+      </button>
+    </div>
+
+    <p class="vf-muted" *ngIf="loading">Cargando máquinas...</p>
+
+    <div class="machine-list" *ngIf="!loading && machines.length">
+      <article class="machine-card" *ngFor="let machine of machines">
+        <div>
+          <h3>{{ machine.name }}</h3>
+          <p>{{ machine.type }}</p>
+          <small>Creación: {{ machine.registrationDate || 'Sin fecha' }}</small>
+        </div>
+        <div class="machine-card__right">
+          <span [class.is-inactive]="machine.state === false">
+            {{ machine.state === false ? 'Inactiva' : 'Activa' }}
+          </span>
+          <div class="vf-actions vf-actions--compact">
+            <button class="vf-small-btn" type="button" (click)="openEdit(machine)">Editar</button>
+            <button class="vf-small-btn" type="button" (click)="inactivate(machine)" [disabled]="machine.state === false" [title]="machine.state === false ? 'Ya está inactiva' : 'Inactivar'">
+              Inactivar
+            </button>
+            <button class="vf-small-btn vf-small-btn--danger" type="button" (click)="deleteMachine(machine)">Eliminar</button>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && !machines.length">
+      <h3>No hay máquinas registradas</h3>
+      <p>Cuando agregues una máquina aparecerá en este listado.</p>
+    </div>
+  </section>
+</section>

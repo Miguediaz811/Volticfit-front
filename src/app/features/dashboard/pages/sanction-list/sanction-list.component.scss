@@ -1,0 +1,84 @@
+:host { display: block; }
+
+.user-search-suggestions {
+  margin: 0.5rem 0 1rem;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid #444;
+  border-radius: 12px;
+  background: #181818;
+}
+
+.user-search-suggestions p {
+  margin: 0 0 0.5rem;
+  color: #999;
+  font-size: 0.88rem;
+}
+
+.user-search-suggestions ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.user-search-suggestions li {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.vf-link-button {
+  width: 100%;
+  display: block;
+  text-align: left;
+  padding: 0.65rem 0.75rem;
+  border: none;
+  background: transparent;
+  color: #f7f7f7;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.vf-link-button:hover {
+  background: rgba(245, 166, 35, 0.1);
+}
+
+/* Chips de clasificación */
+.vf-chip--leve {
+  background-color: #fef9c3;
+  color: #854d0e;
+}
+
+.vf-chip--moderada {
+  background-color: #fed7aa;
+  color: #9a3412;
+}
+
+.vf-chip--grave {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+/* Botón Desactivar cuando la sanción ya está inactiva */
+.vf-small-btn--inactive {
+  display: inline-flex;
+  align-items: center;
+  opacity: 0.38;
+  cursor: not-allowed;
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (max-width: 720px) {
+  .user-search-suggestions {
+    padding: .65rem;
+  }
+
+  .vf-link-button {
+    font-size: .86rem;
+  }
+
+  :host ::ng-deep .vf-table {
+    font-size: .82rem;
+  }
+}

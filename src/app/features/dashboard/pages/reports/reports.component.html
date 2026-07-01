@@ -1,0 +1,225 @@
+<section class="reports-page">
+  <header class="reports-header">
+    <span>Reportes</span>
+    <h1>Generacion de reportes</h1>
+    <p>Selecciona el tipo de reporte y aplica filtros antes de generar o descargar resultados.</p>
+  </header>
+
+  <div class="report-options">
+    <button
+      type="button"
+      *ngFor="let option of reportOptions"
+      [class.is-active]="selectedType === option.id"
+      (click)="selectReport(option.id)">
+      <strong>{{ option.title }}</strong>
+      <small>{{ option.description }}</small>
+    </button>
+  </div>
+
+  <section class="report-panel">
+    <div class="panel-title">
+      <h2>{{ selectedReport.title }}</h2>
+      <span>{{ selectedReport.description }}</span>
+    </div>
+
+    <div class="filter-grid">
+      <label>
+        <span>Fecha inicial</span>
+        <input type="date" [(ngModel)]="fromDate" [max]="maxDate" />
+      </label>
+      <label>
+        <span>Fecha final</span>
+        <input type="date" [(ngModel)]="toDate" [max]="maxDate" />
+      </label>
+      <label *ngIf="selectedType === 'sanctions' || selectedType === 'machines'">
+        <span>Estado</span>
+        <select [(ngModel)]="status">
+          <option value="">Todos</option>
+          <option value="activo">Activo</option>
+          <option value="inactivo">Inactivo</option>
+        </select>
+      </label>
+      <label *ngIf="selectedType === 'attendance' || selectedType === 'sanctions'" class="vf-user-search">
+        <span>Usuario</span>
+        <input type="search" [(ngModel)]="userSearchTerm" placeholder="Buscar por nombre, correo o documento" />
+        <div class="user-search-suggestions" *ngIf="userSearchTerm.trim()">
+          <p class="vf-muted" *ngIf="filteredUsers.length === 0">No se encontraron usuarios.</p>
+          <ul *ngIf="filteredUsers.length > 0">
+            <li *ngFor="let user of filteredUsers">
+              <button type="button" class="vf-link-button" (click)="selectUser(user)">
+                {{ userLabel(user) }}
+              </button>
+            </li>
+          </ul>
+        </div>
+        <select [(ngModel)]="selectedUserId">
+          <option value="">Todos los usuarios</option>
+          <option *ngFor="let user of filteredUsers" [value]="user.idUser">
+            {{ userLabel(user) }}
+          </option>
+        </select>
+      </label>
+    </div>
+
+    <div class="expected-fields">
+      <span *ngFor="let field of selectedReport.fields">{{ field }}</span>
+    </div>
+
+    <div class="vf-actions">
+      <button class="vf-btn" type="button" (click)="generateReport()" [disabled]="loading">
+        {{ loading ? 'Generando...' : 'Generar reporte' }}
+      </button>
+      <button class="vf-btn vf-btn--secondary" type="button" (click)="exportReport('pdf')" [disabled]="loading">
+        Exportar PDF
+      </button>
+      <button class="vf-btn vf-btn--secondary" type="button" (click)="exportReport('excel')" [disabled]="loading">
+        Exportar Excel
+      </button>
+    </div>
+
+    <p class="vf-alert vf-alert--success" *ngIf="message">{{ message }}</p>
+    <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
+
+    <!-- Previsualización asistencia -->
+    <div class="vf-table-wrap" *ngIf="attendanceRows.length > 0">
+      <table class="vf-table">
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Documento</th>
+            <th>Tipo registro</th>
+            <th>Ingreso</th>
+            <th>Salida</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of attendanceRows">
+            <td>{{ row.fullName || row.names }}</td>
+            <td>{{ row.docNumber }}</td>
+            <td>{{ row.registrationType }}</td>
+            <td>{{ row.entryTime | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ row.exitTime ? (row.exitTime | date:'HH:mm') : 'En gimnasio' }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="pagination" *ngIf="totalPages > 1">
+        <button class="vf-small-btn" (click)="changePage(currentPage - 1)" [disabled]="currentPage === 0">‹</button>
+        <span>{{ currentPage + 1 }} / {{ totalPages }}</span>
+        <button class="vf-small-btn" (click)="changePage(currentPage + 1)" [disabled]="currentPage >= totalPages - 1">›</button>
+      </div>
+    </div>
+
+    <!-- Previsualización mantenimiento -->
+    <div class="vf-table-wrap" *ngIf="maintenanceRows.length > 0">
+      <table class="vf-table">
+        <thead>
+          <tr>
+            <th>Equipo</th>
+            <th>Tipo</th>
+            <th>Descripción</th>
+            <th>Fecha</th>
+            <th>Responsable</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of maintenanceRows">
+            <td>{{ row.machine?.name || '-' }}</td>
+            <td>{{ row.type }}</td>
+            <td>{{ row.description }}</td>
+            <td>{{ row.date | date:'dd/MM/yyyy' }}</td>
+            <td>{{ row.responsible }}</td>
+            <td>{{ row.state ? 'Activo' : 'Inactivo' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Previsualización sanciones -->
+    <div class="vf-table-wrap" *ngIf="machineRows.length > 0">
+      <table class="vf-table">
+        <thead>
+          <tr>
+            <th>Equipo</th>
+            <th>Tipo</th>
+            <th>Fecha registro</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of machineRows">
+            <td>{{ row.name }}</td>
+            <td>{{ row.type }}</td>
+            <td>{{ row.registrationDate || '-' }}</td>
+            <td>{{ row.state ? 'Activa' : 'Inactiva' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="vf-table-wrap" *ngIf="sanctionRows.length > 0">
+      <table class="vf-table">
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Documento</th>
+            <th>Clasificación</th>
+            <th>Descripción</th>
+            <th>Inicio</th>
+            <th>Fin</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of sanctionRows">
+            <td>{{ row.userNames }} {{ row.userSurnames }}</td>
+            <td>{{ row.userDoc }}</td>
+            <td>{{ row.clasificacion }}</td>
+            <td>{{ row.description }}</td>
+            <td>{{ row.startDate | date:'dd/MM/yyyy' }}</td>
+            <td>{{ row.endDate | date:'dd/MM/yyyy' }}</td>
+            <td>{{ row.state ? 'Activa' : 'Inactiva' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </section>
+
+  <!-- Historial de reportes generados -->
+  <section class="report-panel report-history">
+    <div class="panel-title panel-title--clickable" (click)="toggleHistory()">
+      <h2>Historial de reportes generados</h2>
+      <span class="toggle-icon">{{ showHistory ? '▲' : '▼' }}</span>
+    </div>
+
+    <ng-container *ngIf="showHistory">
+      <p class="vf-muted" *ngIf="historyLoading">Cargando historial...</p>
+      <p class="vf-alert vf-alert--error" *ngIf="!historyLoading && historyError">{{ historyError }}</p>
+      <p class="vf-empty" *ngIf="!historyLoading && !historyError && reportHistory.length === 0">
+        Aún no has generado ningún reporte.
+      </p>
+
+      <div class="vf-table-wrap" *ngIf="!historyLoading && reportHistory.length > 0">
+        <table class="vf-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Tipo</th>
+              <th>Formato</th>
+              <th>Fecha generación</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of reportHistory">
+              <td>{{ r.id }}</td>
+              <td>{{ translateType(r.type) }}</td>
+              <td>{{ translateFormat(r.format) }}</td>
+              <td>{{ r.generationDate | date:'dd/MM/yyyy' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </ng-container>
+  </section>
+</section>

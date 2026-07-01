@@ -1,0 +1,40 @@
+:host { display: block; }
+
+.scanner-box {
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+}
+
+video {
+  width: 100%;
+  max-width: 50%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border: 1px solid #343434;
+  border-radius: 8px;
+  background: #111;
+}
+
+.scanner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+@media (max-width: 900px) {
+  video {
+    max-width: min(420px, 100%);
+  }
+}
+
+@media (max-width: 560px) {
+  .scanner-actions {
+    width: 100%;
+  }
+
+  .scanner-actions > * {
+    flex: 1 1 100%;
+  }
+}

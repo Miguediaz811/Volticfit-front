@@ -1,0 +1,123 @@
+.metric-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.metric-grid article {
+  background: #181818;
+  border: 1px solid #303030;
+  border-radius: 8px;
+  padding: 18px;
+}
+
+.metric-grid span {
+  color: #9ca3af;
+  display: block;
+  font-size: .82rem;
+}
+
+.metric-grid strong {
+  display: block;
+  font-size: 1.8rem;
+  margin-top: 8px;
+}
+
+.metric-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.metric-tabs button {
+  min-height: 34px;
+  padding: 8px 10px;
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  background: #1e1e1e;
+  color: #d1d5db;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.metric-tabs button.is-active {
+  background: #f5a800;
+  border-color: #f5a800;
+  color: #111;
+}
+
+.progress-chart {
+  display: grid;
+  gap: 14px;
+}
+
+.progress-chart svg {
+  width: 100%;
+  height: 260px;
+  overflow: visible;
+  border: 1px solid #303030;
+  border-radius: 8px;
+  background:
+    linear-gradient(rgba(255, 255, 255, .04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .04) 1px, transparent 1px),
+    #181818;
+  background-size: 100% 42px, 72px 100%, auto;
+}
+
+.progress-chart line {
+  stroke: #484848;
+  stroke-width: 2;
+}
+
+.progress-chart polyline {
+  fill: none;
+  stroke: #f5a800;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 4;
+}
+
+.progress-chart circle {
+  fill: #f5a800;
+  stroke: #1e1e1e;
+  stroke-width: 3;
+}
+
+.chart-points {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 8px;
+}
+
+.chart-points span {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid #303030;
+  border-radius: 8px;
+  background: #181818;
+}
+
+.chart-points strong {
+  color: #f5a800;
+}
+
+.chart-points small {
+  color: #9ca3af;
+}
+
+@media (max-width: 860px) {
+  .metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .progress-chart svg {
+    height: 220px;
+  }
+}
+
+@media (max-width: 560px) {
+  .metric-grid {
+    grid-template-columns: 1fr;
+  }
+}

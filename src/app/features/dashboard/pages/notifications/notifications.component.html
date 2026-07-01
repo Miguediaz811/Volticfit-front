@@ -1,0 +1,153 @@
+<section class="vf-page">
+  <div class="vf-header">
+    <h1>Notificaciones</h1>
+    <p>{{ isAdmin ? 'Crea avisos para usuarios y consulta tus notificaciones.' : 'Consulta novedades y avisos enviados por administracion.' }}</p>
+  </div>
+
+  <div class="vf-panel" *ngIf="isAdmin">
+    <div class="vf-panel-heading">
+      <div>
+        <h2>Crear notificacion</h2>
+        <p class="vf-muted">Elige el destinatario y redacta el aviso.</p>
+      </div>
+    </div>
+
+    <!-- Selector de destinatario -->
+    <div class="notif-target-toggle">
+      <button
+        type="button"
+        class="vf-small-btn notif-tab-btn"
+        [class.is-active]="targetMode === 'specific'"
+        (click)="setTargetMode('specific')">
+        Usuario específico
+      </button>
+      <button
+        type="button"
+        class="vf-small-btn notif-tab-btn"
+        [class.is-active]="targetMode === 'all'"
+        (click)="setTargetMode('all')">
+        Todos los usuarios
+      </button>
+    </div>
+
+    <form class="notification-form" [formGroup]="form" (ngSubmit)="create()">
+
+      <!-- Solo mostrar selector de usuario si el modo es 'specific' -->
+      <label class="vf-field" *ngIf="targetMode === 'specific'">
+        <span>Usuario</span>
+        <select formControlName="usuarioDestinoId">
+          <option value="">Selecciona un usuario</option>
+          <option *ngFor="let user of users" [value]="user.idUser">{{ userLabel(user) }}</option>
+        </select>
+        <small class="vf-error" *ngIf="form.get('usuarioDestinoId')?.touched && form.get('usuarioDestinoId')?.invalid">
+          Debes seleccionar un usuario.
+        </small>
+      </label>
+
+      <p class="vf-muted notif-all-notice" *ngIf="targetMode === 'all'">
+        Esta notificación será enviada a todos los usuarios activos del sistema.
+      </p>
+
+      <label class="vf-field">
+        <span>Tipo</span>
+        <select formControlName="tipo">
+          <option value="General">General</option>
+          <option value="Mantenimiento">Mantenimiento</option>
+          <option value="Sancion">Sanción</option>
+          <option value="Evaluacion">Evaluación</option>
+        </select>
+      </label>
+
+      <label class="vf-field">
+        <span>Título</span>
+        <input type="text" formControlName="titulo" placeholder="Título del aviso" />
+        <small class="vf-error" *ngIf="form.get('titulo')?.touched && form.get('titulo')?.invalid">
+          El título debe tener al menos 3 caracteres.
+        </small>
+      </label>
+
+      <label class="vf-field">
+        <span>Vigente hasta</span>
+        <input type="date" formControlName="fechaExpiracion" [min]="minDate" />
+      </label>
+
+      <label class="vf-field notification-message">
+        <span>Mensaje</span>
+        <textarea formControlName="mensaje" placeholder="Escribe el mensaje para el usuario"></textarea>
+        <small class="vf-error" *ngIf="form.get('mensaje')?.touched && form.get('mensaje')?.invalid">
+          El mensaje debe tener al menos 6 caracteres.
+        </small>
+      </label>
+
+      <button class="vf-btn" type="submit" [disabled]="saving">
+        {{ saving ? 'Enviando...' : (targetMode === 'all' ? 'Enviar a todos' : 'Crear notificacion') }}
+      </button>
+    </form>
+  </div>
+
+  <p class="vf-alert vf-alert--success" *ngIf="message">{{ message }}</p>
+  <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
+
+  <div class="vf-panel" *ngIf="!isAdmin">
+    <div class="vf-panel-heading">
+      <div>
+        <h2>Mis notificaciones</h2>
+        <p class="vf-muted">Avisos vigentes para tu usuario.</p>
+      </div>
+      <button class="vf-small-btn" type="button" (click)="loadNotifications()">Actualizar</button>
+    </div>
+
+    <p class="vf-muted" *ngIf="loading">Cargando notificaciones...</p>
+    <p class="vf-empty" *ngIf="!loading && notifications.length === 0">No tienes notificaciones.</p>
+
+    <div class="notification-list" *ngIf="notifications.length > 0">
+      <article class="notification-card" *ngFor="let notification of notifications" [class.is-read]="notification.leida">
+        <div>
+          <span>{{ notification.tipo || 'General' }}</span>
+          <h3>{{ notification.titulo }}</h3>
+          <p>{{ notification.mensaje }}</p>
+          <small>{{ notification.fechaEnvio || 'Sin fecha' }}</small>
+        </div>
+        <div class="vf-actions vf-actions--compact">
+          <button class="vf-small-btn" type="button" (click)="markAsRead(notification)" [disabled]="notification.leida">Leida</button>
+          <button class="vf-small-btn vf-small-btn--danger" type="button" (click)="delete(notification)">Eliminar</button>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <!-- Todas las notificaciones (solo admin) -->
+  <div class="vf-panel" *ngIf="isAdmin">
+    <div class="vf-panel-heading">
+      <div>
+        <h2>Todas las notificaciones</h2>
+        <p class="vf-muted">Historial completo de notificaciones enviadas a usuarios específicos y a todos.</p>
+      </div>
+      <button class="vf-small-btn" type="button" (click)="loadAllNotifications()">Actualizar</button>
+    </div>
+
+    <p class="vf-muted" *ngIf="allNotifsLoading">Cargando...</p>
+    <p class="vf-empty" *ngIf="!allNotifsLoading && allNotifications.length === 0">No hay notificaciones registradas.</p>
+
+    <div class="notification-list" *ngIf="allNotifications.length > 0">
+      <article class="notification-card" *ngFor="let notif of allNotifications" [class.is-read]="notif.leida">
+        <div>
+          <span>{{ notif.tipo || 'General' }}</span>
+          <h3>{{ notif.titulo }}</h3>
+          <p>{{ notif.mensaje }}</p>
+          <small *ngIf="notif.usuarioDestinoNombre">Para: {{ notif.usuarioDestinoNombre }}</small>
+          <small *ngIf="notif.usuarioDestinoId && !notif.usuarioDestinoNombre">Para usuario #{{ notif.usuarioDestinoId }}</small>
+          <small *ngIf="!notif.usuarioDestinoId && !notif.usuarioDestinoNombre" class="broadcast-badge-inline">Para: Enviada a todos los usuarios</small>
+          <small *ngIf="notif.fechaExpiracion">Vigente hasta: {{ notif.fechaExpiracion }}</small>
+          <small>{{ notif.fechaEnvio }}</small>
+        </div>
+        <div class="broadcast-badge">
+          <span [class.status--active]="!notif.leida" [class.status--done]="notif.leida">
+            {{ notif.leida ? 'Leída' : 'Sin leer' }}
+          </span>
+        </div>
+      </article>
+    </div>
+  </div>
+
+</section>

@@ -1,0 +1,130 @@
+<section class="evaluations-page">
+  <header class="evaluations-header">
+    <div>
+      <p class="eyebrow">Evaluación física</p>
+      <h1>{{ isAdmin ? 'Administrar evaluaciones' : 'Agenda de evaluación' }}</h1>
+      <p>{{ isAdmin ? 'Consulta la disponibilidad de instructores y revisa todas las evaluaciones agendadas.' : 'Consulta disponibilidad, agenda una valoración física y administra tus citas.' }}</p>
+    </div>
+  </header>
+
+  <p class="vf-alert vf-alert--success" *ngIf="message">{{ message }}</p>
+  <p class="vf-alert vf-alert--error" *ngIf="error">{{ error }}</p>
+
+  <!-- Panel de disponibilidad: visible para todos los roles -->
+  <section class="panel" #availabilityPanel>
+    <div class="section-title">
+      <h2>{{ isAdmin ? 'Disponibilidad de instructores' : (rescheduling ? 'Reprogramar evaluación' : 'Agendar evaluación') }}</h2>
+      <button class="vf-btn vf-btn--secondary" type="button" *ngIf="rescheduling" (click)="cancelReschedule()">
+        Cancelar reprogramación
+      </button>
+    </div>
+
+    <!-- Mensaje si ya tiene una evaluación agendada -->
+    <div class="vf-alert vf-alert--success" *ngIf="!isAdmin && hasScheduledEvaluation() && !rescheduling" style="margin-bottom: 18px;">
+      Ya tienes una evaluación física programada. Si deseas cambiar la fecha o el horario, utiliza la opción <strong>Reprogramar</strong> en la sección "Mis evaluaciones" de abajo.
+    </div>
+
+    <!-- Formulario de agendado: solo visible para aprendiz y funcionario si pueden agendar -->
+    <form [formGroup]="form" class="schedule-form" (ngSubmit)="save()" *ngIf="!isAdmin && canSchedule">
+      <label>
+        <span>Fecha *</span>
+        <input type="date" formControlName="date" [min]="minDate" (change)="loadAvailability()" />
+      </label>
+
+      <label>
+        <span>Notas <span *ngIf="form.get('notes')?.hasError('maxlength')" style="color: #fca5a5; margin-left: 8px; text-transform: none;">— máximo 100 caracteres</span></span>
+        <input type="text" formControlName="notes" [maxlength]="notesMaxLength" placeholder="Objetivo, lesión o comentario para el instructor" />
+        <small class="field-counter">
+          {{ form.value.notes?.length || 0 }}/{{ notesMaxLength }}
+        </small>
+      </label>
+
+      <button class="vf-btn" type="submit" [disabled]="saving || !selectedSlot || form.invalid">
+        {{ saving ? 'Guardando...' : (rescheduling ? 'Reprogramar' : 'Agendar') }}
+      </button>
+    </form>
+
+    <!-- Selector de fecha para admin (sin el formulario completo) -->
+    <div class="schedule-form" *ngIf="isAdmin">
+      <label>
+        <span>Fecha</span>
+        <input type="date" [value]="form.value.date" [min]="minDate" (change)="form.patchValue({ date: $any($event.target).value }); loadAvailability()" />
+      </label>
+      <button class="vf-btn" type="button" *ngIf="rescheduling" (click)="save()" [disabled]="saving || !selectedSlot">
+        {{ saving ? 'Guardando...' : 'Guardar reprogramacion' }}
+      </button>
+    </div>
+
+    <p class="vf-muted" *ngIf="loadingAvailability">Cargando disponibilidad...</p>
+
+    <div class="slot-grid" *ngIf="!loadingAvailability && availability.length">
+      <button
+        class="slot-card"
+        type="button"
+        *ngFor="let slot of availability"
+        [disabled]="!slot.available || (isAdmin && !rescheduling)"
+        [class.is-selected]="selectedSlot === slot"
+        (click)="selectSlot(slot)"
+      >
+        <strong>{{ slot.startTime }} - {{ slot.endTime }}</strong>
+        <small>{{ slot.available ? 'Disponible' : 'Ocupado' }}</small>
+      </button>
+    </div>
+
+    <div class="empty-state" *ngIf="!loadingAvailability && !availability.length">
+      <h3>No hay disponibilidad para esta fecha</h3>
+      <p>Prueba con otra fecha para encontrar horarios disponibles.</p>
+    </div>
+  </section>
+
+  <!-- Panel de evaluaciones -->
+  <section class="panel">
+    <div class="section-title">
+      <h2>{{ isAdmin ? 'Todas las evaluaciones' : 'Mis evaluaciones' }}</h2>
+      <button class="vf-btn vf-btn--secondary" type="button" (click)="loadEvaluations()" [disabled]="loadingEvaluations">
+        Actualizar
+      </button>
+    </div>
+
+    <p class="vf-muted" *ngIf="loadingEvaluations">Cargando evaluaciones...</p>
+
+    <div class="evaluation-list" *ngIf="!loadingEvaluations && evaluations.length">
+      <article class="evaluation-card" *ngFor="let evaluation of evaluations">
+        <div>
+          <h3>{{ evaluation.date }} · {{ evaluation.startTime }} - {{ evaluation.endTime }}</h3>
+          <p *ngIf="isAdmin">Usuario: {{ evaluation.user?.names || 'Sin usuario' }} {{ evaluation.user?.surnames || '' }}</p>
+          <p>Instructor: {{ evaluation.instructor?.names || 'Sin instructor' }} {{ evaluation.instructor?.surnames || '' }}</p>
+          <small>{{ evaluation.notes || 'Sin notas' }}</small>
+        </div>
+        <div class="actions">
+          <span [class.is-cancelled]="evaluation.status === 'cancelada'">{{ evaluation.status === 'programada' ? 'Programada' : evaluation.status }}</span>
+          <ng-container *ngIf="isAdmin">
+            <button class="vf-btn vf-btn--secondary" type="button" (click)="startReschedule(evaluation)" [disabled]="isFinished(evaluation) || isRescheduling(evaluation)">
+              Reprogramar
+            </button>
+            <button class="vf-btn vf-btn--danger" type="button" (click)="cancelEvaluation(evaluation)" [disabled]="isFinished(evaluation)">
+              Cancelar
+            </button>
+            <button class="vf-btn" type="button" (click)="markAsCompleted(evaluation)" [disabled]="isFinished(evaluation)">
+              Realizada
+            </button>
+          </ng-container>
+
+          <ng-container *ngIf="!isAdmin">
+            <button class="vf-btn vf-btn--secondary" type="button" (click)="startReschedule(evaluation)" [disabled]="isFinished(evaluation) || isRescheduling(evaluation)">
+              Reprogramar
+            </button>
+            <button class="vf-btn vf-btn--danger" type="button" (click)="cancelEvaluation(evaluation)" [disabled]="isFinished(evaluation)">
+              Cancelar
+            </button>
+          </ng-container>
+        </div>
+      </article>
+    </div>
+
+    <div class="empty-state" *ngIf="!loadingEvaluations && !evaluations.length">
+      <h3>{{ isAdmin ? 'No hay evaluaciones registradas' : 'No tienes evaluaciones agendadas' }}</h3>
+      <p>{{ isAdmin ? 'Aún no se han agendado evaluaciones en el sistema.' : 'Selecciona una fecha y un horario disponible para agendar tu primera evaluación.' }}</p>
+    </div>
+  </section>
+</section>

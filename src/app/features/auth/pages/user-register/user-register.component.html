@@ -1,0 +1,207 @@
+<app-navbar-forms
+  backRoute="/"
+  linkText="¿Ya tienes cuenta?"
+  linkLabel="Iniciar sesión"
+  linkRoute="/auth/login"
+  bannerText="Únete a Voltic Fit — tu transformación comienza hoy"
+/>
+
+<div class="register-page">
+  <div class="register-wrapper">
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+      <div class="section-card">
+        <div class="section-card__header">
+          <div class="section-card__icon">
+            <img src="assets/images/avatar.png" alt="avatar" width="20" height="20">
+          </div>
+          <div>
+            <p class="section-card__title">Datos personales</p>
+            <p class="section-card__subtitle">Información básica de identificación</p>
+          </div>
+        </div>
+
+        <div class="form-grid">
+
+        <div class="form-field">
+          <app-input
+            name="firstName"
+            text="Nombre(s) *"
+            type="text"
+            placeholder="Ej. Juan David"
+            [control]="form.get('firstName')!"
+          />
+            <div class="field-errors" *ngIf="form.get('firstName')?.invalid && form.get('firstName')?.touched">
+              <span *ngIf="form.get('firstName')?.hasError('required')">El nombre es obligatorio.</span>
+              <span *ngIf="form.get('firstName')?.hasError('minlength')">Debe tener al menos 2 caracteres.</span>
+              <span *ngIf="form.get('firstName')?.hasError('pattern')">Solo se permiten letras y espacios.</span>
+            </div>
+          </div>
+
+          <div class="form-field">
+          <app-input
+            name="lastName"
+            text="Apellidos *"
+            type="text"
+            placeholder="Ej. Martínez Rodríguez"
+            [control]="form.get('lastName')!"
+          />
+            <div class="field-errors" *ngIf="form.get('lastName')?.invalid && form.get('lastName')?.touched">
+              <span *ngIf="form.get('lastName')?.hasError('required')">Los apellidos son obligatorios.</span>
+              <span *ngIf="form.get('lastName')?.hasError('minlength')">Debe tener al menos 2 caracteres.</span>
+              <span *ngIf="form.get('lastName')?.hasError('pattern')">Solo se permiten letras y espacios.</span>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <app-input
+              name="email"
+              text="Correo Electrónico *"
+              type="email"
+              placeholder="Ej. correo@ejemplo.com"
+              [control]="form.get('email')!"
+            />
+            <div class="field-errors" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+              <span *ngIf="form.get('email')?.hasError('required')">El correo es obligatorio.</span>
+              <span *ngIf="form.get('email')?.hasError('email') || form.get('email')?.hasError('pattern')">Ingrese un correo válido.</span>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <app-input
+              name="phone"
+              text="Teléfono *"
+              type="text"
+              placeholder="1234567890"
+              [control]="form.get('phone')!"
+            />
+            <div class="field-errors" *ngIf="form.get('phone')?.invalid && form.get('phone')?.touched">
+              <span *ngIf="form.get('phone')?.hasError('required')">El teléfono es obligatorio.</span>
+              <span *ngIf="form.get('phone')?.hasError('pattern')">Solo números, mínimo 10 dígitos.</span>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="documentType">Tipo de documento *</label>
+            <select id="documentType" formControlName="documentType">
+              <option value="">Selecciona...</option>
+              <option *ngFor="let type of documentTypes" [value]="type">{{ type }}</option>
+            </select>
+            <div class="field-errors" *ngIf="form.get('documentType')?.invalid && form.get('documentType')?.touched">
+              <span>Debe seleccionar un tipo de documento.</span>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <app-input
+              name="documentNumber"
+              text="Número de documento *"
+              type="text"
+              placeholder="Ej. 1234567890"
+              [control]="form.get('documentNumber')!"
+            />
+            <div class="field-errors" *ngIf="form.get('documentNumber')?.invalid && form.get('documentNumber')?.touched">
+              <span *ngIf="form.get('documentNumber')?.hasError('required')">El número de documento es obligatorio.</span>
+              <span *ngIf="form.get('documentNumber')?.hasError('pattern')">Solo se permiten números.</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-card__header">
+          <div class="section-card__iconLock">
+            <img src="assets/images/candado.png" alt="candado" width="20" height="20">
+          </div>
+          <div>
+            <p class="section-card__title">Datos de acceso</p>
+            <p class="section-card__subtitle">Credenciales para ingresar a la plataforma</p>
+          </div>
+        </div>
+
+        <div class="form-grid form-grid--full">
+
+          <div class="form-field">
+            <app-input
+              name="password"
+              text="Contraseña *"
+              [type]="showPassword ? 'text' : 'password'"
+              placeholder="Mínimo 8 caracteres"
+              [control]="form.get('password')!"
+            >
+            <button type="button" class="password-toggle" (click)="showPassword = !showPassword">
+              <img 
+                [src]="showPassword ? 'assets/images/esconder.png' : 'assets/images/ojo.png'"
+                alt="toggle password"
+                width="20"
+                height="20"
+              />
+            </button>
+            </app-input>
+            <div class="password-hints">
+              <span [class.valid]="hasMinLength()">Mínimo 8 caracteres</span>
+<span [class.valid]="hasUppercase()">Una mayúscula</span>
+<span [class.valid]="hasNumber()">Un número</span>
+<span [class.valid]="hasSpecialChar()">Un carácter especial</span>
+            </div>
+            <div class="field-errors" *ngIf="form.get('password')?.invalid && form.get('password')?.touched">
+              <span *ngIf="form.get('password')?.hasError('required')">La contraseña es obligatoria.</span>
+              <span *ngIf="form.get('password')?.hasError('minlength')">Debe tener al menos 8 caracteres.</span>
+              <span *ngIf="form.get('password')?.hasError('pattern')">Debe incluir mayúscula, minúscula, número y carácter especial.</span>
+            </div>
+          </div>
+
+          
+          <div class="form-field">
+            <app-input
+              name="confirmPassword"
+              text="Confirmar contraseña *"
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              placeholder="Repite tu contraseña"
+              [control]="form.get('confirmPassword')!"
+            >
+            <button type="button" class="password-toggle" (click)="showConfirmPassword = !showConfirmPassword">
+              <img 
+                [src]="showConfirmPassword ? 'assets/images/esconder.png' : 'assets/images/ojo.png'"
+                alt="toggle password"
+                width="20"
+                height="20"
+              />
+            </button>
+            </app-input>
+            <div class="field-errors" *ngIf="form.get('confirmPassword')?.touched">
+              <span *ngIf="form.get('confirmPassword')?.hasError('required')">Debe confirmar la contraseña.</span>
+              <span *ngIf="form.get('confirmPassword')?.hasError('passwordMismatch')">Las contraseñas no coinciden.</span>
+            </div>
+          </div>
+
+      <div class="terms-field">
+        <label class="terms-label">
+          <input type="checkbox" formControlName="acceptTerms" id="acceptTerms" />
+          <span>Acepto el <a href="https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=49981" target="_blank" rel="noopener noreferrer">tratamiento de datos personales</a> conforme a la Ley 1581 de 2012 de Colombia. *</span>
+        </label>
+        <div class="field-errors" *ngIf="form.get('acceptTerms')?.invalid && form.get('acceptTerms')?.touched">
+          <span>Debe aceptar el tratamiento de datos personales para continuar.</span>
+        </div>
+      </div>
+
+      <div class="terms-field">
+        <label class="terms-label">
+          <input type="checkbox" formControlName="acceptPolicies" id="acceptPolicies" />
+          <span>Acepto los <a routerLink="/politicas" [queryParams]="{ returnUrl: '/auth/register' }" target="_blank">Términos y Condiciones y la Política de Privacidad</a> de Volticfit. *</span>
+        </label>
+        <div class="field-errors" *ngIf="form.get('acceptPolicies')?.invalid && form.get('acceptPolicies')?.touched">
+          <span>Debe aceptar los términos y condiciones y la política de privacidad para continuar.</span>
+        </div>
+      </div>
+
+      <p class="success-message" *ngIf="successMessage">{{ successMessage }}</p>
+      <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+      <button type="submit" class="submit-btn" [disabled]="form.invalid">
+        Registrarse
+      </button>
+
+
