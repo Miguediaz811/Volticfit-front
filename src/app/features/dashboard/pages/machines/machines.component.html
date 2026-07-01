@@ -55,7 +55,7 @@
         <div>
           <h3>{{ machine.name }}</h3>
           <p>{{ machine.type }}</p>
-          <small>Registro: {{ machine.registrationDate || 'Sin fecha' }}</small>
+          <small>Creación: {{ machine.registrationDate || 'Sin fecha' }}</small>
         </div>
         <div class="machine-card__right">
           <span [class.is-inactive]="machine.state === false">
