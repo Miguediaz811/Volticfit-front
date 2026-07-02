@@ -71,7 +71,20 @@ export class PhysicalEvaluationsComponent implements OnInit {
 
     this.api.getEvaluationAvailability(date).subscribe({
       next: availability => {
-        this.availability = availability;
+        // Group by startTime to avoid duplicate hour slots in the UI (since there can be multiple instructors)
+        const groupedMap = new Map<string, InstructorAvailability>();
+        for (const slot of availability) {
+          const existing = groupedMap.get(slot.startTime);
+          if (!existing) {
+            groupedMap.set(slot.startTime, slot);
+          } else if (!existing.available && slot.available) {
+            // Prefer the slot with available: true if we find an available instructor for this time
+            groupedMap.set(slot.startTime, slot);
+          }
+        }
+        this.availability = Array.from(groupedMap.values()).sort((a, b) =>
+          a.startTime.localeCompare(b.startTime)
+        );
         this.loadingAvailability = false;
       },
       error: err => {
